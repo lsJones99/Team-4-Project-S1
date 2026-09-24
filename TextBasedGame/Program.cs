@@ -4,7 +4,13 @@
     {
         static void Main()
         {
-            
+            FunctionExample();
+            Console.ReadLine();
+        }
+
+        static void FunctionExample()
+        {
+            Console.WriteLine("THIS IS A FUNCTION EXAMPLE");
         }
     }
 }
