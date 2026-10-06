@@ -27,6 +27,9 @@
                 case 'r':
                     Console.WriteLine("Run");
                     break;
+                case 'i':
+                    Console.WriteLine("Investigate");
+                    break;
                 default:
                     Console.WriteLine("Unrecognised command");
                     break;
