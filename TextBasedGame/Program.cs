@@ -164,6 +164,8 @@ namespace TextBasedGame
                 case 's':
                     Console.WriteLine($"{playerName} moves south");
                     break;
+                default: Console.WriteLine("enter a valid key");
+                    break;
             }
         }
 
