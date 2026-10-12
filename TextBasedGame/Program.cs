@@ -2,11 +2,7 @@
 {
     internal class Program
     {
-<<<<<<< HEAD
-=======
-        // Beginner stats
-        const int MAX_INVENTORY_SIZE = 5;
->>>>>>> 41dd795fb567fa12602064cae9933e0a4adb1aa5
+
 
         //Player information
         const int MAX_INVENTORY_SIZE = 5;
@@ -19,13 +15,13 @@
         static Random rand = new Random();
         static int randomEnemyEncounter = 0;
 
-<<<<<<< HEAD
+
         //Enemies
         static string[] enemies = ["Skeletons", "Ghouls", "Zombie"];
         static string currentEnemy = Enemy(enemies);
-=======
+
         // Main void for running game then ending
->>>>>>> 41dd795fb567fa12602064cae9933e0a4adb1aa5
+
         static void Main()
         {
             bool gameRunning = true;
@@ -109,18 +105,16 @@
             return true;
         }
 
-<<<<<<< HEAD
+
         //Enemy generator
         static string Enemy(string[] enemyArray)
-=======
-        // Fight command
-        static bool Fight()
->>>>>>> 41dd795fb567fa12602064cae9933e0a4adb1aa5
         {
             randomEnemyEncounter = rand.Next(0, enemyArray.Length);
             return enemyArray[randomEnemyEncounter];
         }
 
+
+        // Fight command
         static bool Fight(string enemyName)
         {
             Console.WriteLine("An encounter happens!");
@@ -129,7 +123,7 @@
             int damage = rand.Next(5, 16);
             playerHealth -= damage;
 
-            Console.WriteLine($"You defeat the ghoul but take {damage} damage.");
+            Console.WriteLine($"You defeat the {enemyName} but take {damage} damage.");
 
             if (playerHealth <= 0)
             {
