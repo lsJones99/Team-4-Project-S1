@@ -4,6 +4,7 @@
     {
         const int MAX_INVENTORY_SIZE = 5;
 
+        static string playerName = "";
         static int playerHealth = 100;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
@@ -30,7 +31,8 @@
             Console.WriteLine("==============================");
             Console.WriteLine("       MEDIEVAL FANTASY");
             Console.WriteLine("==============================");
-
+            Console.Write("Hero, what is your name? ");
+            playerName = Console.ReadLine();
             Console.WriteLine("\nYou enter a dark forest.");
             Console.WriteLine("Something is moving between the trees...");
         }
@@ -43,6 +45,7 @@
             Console.WriteLine("[I] Investigate");
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[Q] Quit");
+            Console.WriteLine($"Name: {playerName}");
             Console.WriteLine($"Health: {playerHealth}/100");
 
             Console.Write("\nEnter command: ");
