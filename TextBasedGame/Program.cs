@@ -45,21 +45,10 @@ namespace TextBasedGame
             Console.WriteLine("==============================");
             Console.WriteLine("       MEDIEVAL FANTASY");
             Console.WriteLine("==============================");
-            Console.WriteLine("You are a student from Otago Polytechnic that got sent into another world.");
-            Console.ReadLine();
-            Console.WriteLine("You suddenly hear a voice.");
-            Console.ReadLine();
             Console.Write("Hero, what is your name? ");
             playerName = Console.ReadLine();
-            Console.WriteLine($"So, you are {playerName}, a fitting name for a hero.");
-            Console.ReadLine();
-            Console.WriteLine("You are confused and asked the entity why you are here, what is happening but it ignored you.");
-            Console.ReadLine();
-            Console.WriteLine("Our world is being ravaged and we need your help. Please save our world.");
-            Console.ReadLine();
-            Console.WriteLine("The voice is now gone and you don't know what to do.");
-            Console.ReadLine();
-            Console.WriteLine("You hear the bushes disturbed.");
+            Console.WriteLine("\nYou enter a dark forest.");
+            Console.WriteLine("Something is moving between the trees...");
         }
 
         // Menu commands
@@ -227,14 +216,6 @@ namespace TextBasedGame
 
             Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
 
-<<<<<<< HEAD
-                    playerHealth += 30;
-                    if (playerHealth > 100)
-                    {
-                        playerHealth = 100;
-                    }
-                }
-=======
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
             Console.WriteLine("[T] Throw out an item");
@@ -255,7 +236,18 @@ namespace TextBasedGame
                 default:
                     Menu();
                     break;
->>>>>>> 0cb3422d2cd3cd49780130704ad1e1628a1a79f7
+            }
+
+            // Using items
+            static void UseItems()
+            {
+
+            }
+
+            // Disposing of items
+            static void ThrowItems()
+            {
+
             }
         }
     }
