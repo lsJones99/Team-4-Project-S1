@@ -41,6 +41,7 @@
             Console.WriteLine("[F] Fight");
             Console.WriteLine("[R] Run");
             Console.WriteLine("[I] Investigate");
+            Console.WriteLine("[U] Use item");
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[Q] Quit");
             Console.WriteLine($"Health: {playerHealth}/100");
@@ -67,6 +68,10 @@
 
                 case 'i':
                     Investigate();
+                    break;
+
+                case 'u':
+                    UseItem();
                     break;
 
                 case 'v':
@@ -162,6 +167,24 @@
 
             Console.WriteLine(
                 $"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
+            
+        }
+        static void UseItem()
+        {
+            for (int i = 0; i < inventoryCount; i++)
+            {
+                if (inventory[i] == "Healing Potion")
+                    Console.WriteLine("The potion has been used");
+                {
+
+                    playerHealth += 30;
+                    if (playerHealth > 100)
+                    {
+                        playerHealth = 100;
+                        
+                    }
+                }
+            }
         }
     }
 }
