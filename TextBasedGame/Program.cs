@@ -1,4 +1,6 @@
-﻿namespace TextBasedGame
+﻿using System;
+
+namespace TextBasedGame
 {
     internal class Program
     {
@@ -145,8 +147,26 @@
         // Run command
         static void Run()
         {
-            Console.WriteLine("\nYou escape deeper into the forest.");
+            Console.WriteLine("Which direction do you want to go to?");
+            Console.WriteLine("A for west,W for north, S for south, D for east");
+            char playerChoice = char.ToLower(Console.ReadKey().KeyChar);
+            switch (playerChoice)
+            {
+                case 'a':
+                    Console.WriteLine($"{playerName} moves west");
+                    break;
+                case 'w':
+                    Console.WriteLine($"{playerName} moves north");
+                    break;
+                case 'd':
+                    Console.WriteLine($"{playerName} moves east");
+                    break;
+                case 's':
+                    Console.WriteLine($"{playerName} moves south");
+                    break;
+            }
         }
+
 
         // Investigation command
         static void Investigate()
