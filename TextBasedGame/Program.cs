@@ -2,14 +2,17 @@
 {
     internal class Program
     {
+        // Beginner stats
         const int MAX_INVENTORY_SIZE = 5;
 
+        static string playerName = "";
         static int playerHealth = 100;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
 
         static Random rand = new Random();
 
+        // Main void for running game then ending
         static void Main()
         {
             bool gameRunning = true;
@@ -25,16 +28,19 @@
             Console.ReadLine();
         }
 
+        // Intro
         static void Intro()
         {
             Console.WriteLine("==============================");
             Console.WriteLine("       MEDIEVAL FANTASY");
             Console.WriteLine("==============================");
-
+            Console.Write("Hero, what is your name? ");
+            playerName = Console.ReadLine();
             Console.WriteLine("\nYou enter a dark forest.");
             Console.WriteLine("Something is moving between the trees...");
         }
 
+        // Menu commands
         static bool Menu()
         {
             Console.WriteLine("\n---------- ACTIONS ----------");
@@ -44,6 +50,7 @@
             Console.WriteLine("[U] Use item");
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[Q] Quit");
+            Console.WriteLine($"Name: {playerName}");
             Console.WriteLine($"Health: {playerHealth}/100");
 
             Console.Write("\nEnter command: ");
@@ -89,6 +96,7 @@
             return true;
         }
 
+        // Fight command
         static bool Fight()
         {
             Console.WriteLine("\nA forest ghoul attacks!");
@@ -108,11 +116,13 @@
             return true;
         }
 
+        // Run command
         static void Run()
         {
             Console.WriteLine("\nYou escape deeper into the forest.");
         }
 
+        // Investigation command
         static void Investigate()
         {
             int result = rand.Next(1, 4);
@@ -135,6 +145,7 @@
             }
         }
 
+        // Adding items to the inventory
         static void AddItem(string item)
         {
             if (inventoryCount < MAX_INVENTORY_SIZE)
@@ -150,6 +161,7 @@
             }
         }
 
+        // Viewing the inventory
         static void ViewInventory()
         {
             Console.WriteLine("\n---------- INVENTORY ----------");
