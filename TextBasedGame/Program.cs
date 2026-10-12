@@ -239,7 +239,7 @@ namespace TextBasedGame
             // Using items
             static void UseItems()
             {
-
+                
             }
 
             // Disposing of items
