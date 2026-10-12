@@ -214,6 +214,14 @@ namespace TextBasedGame
 
             Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
 
+<<<<<<< HEAD
+                    playerHealth += 30;
+                    if (playerHealth > 100)
+                    {
+                        playerHealth = 100;
+                    }
+                }
+=======
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
             Console.WriteLine("[T] Throw out an item");
@@ -234,6 +242,7 @@ namespace TextBasedGame
                 default:
                     Menu();
                     break;
+>>>>>>> 0cb3422d2cd3cd49780130704ad1e1628a1a79f7
             }
 
             // Using items
