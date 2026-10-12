@@ -181,6 +181,8 @@
                 $"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
             
         }
+
+        // Using items
         static void UseItem()
         {
             for (int i = 0; i < inventoryCount; i++)
