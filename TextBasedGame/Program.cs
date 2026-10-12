@@ -193,7 +193,6 @@
                     if (playerHealth > 100)
                     {
                         playerHealth = 100;
-                        
                     }
                 }
             }
