@@ -86,10 +86,6 @@
                     Investigate();
                     break;
 
-                case 'u':
-                    UseItem();
-                    break;
-
                 case 'v':
                     ViewInventory();
                     break;
@@ -180,7 +176,7 @@
             }
         }
 
-        // Viewing the inventory
+        // View inv & inv commands
         static void ViewInventory()
         {
             Console.WriteLine("\n---------- INVENTORY ----------");
@@ -196,27 +192,28 @@
                 Console.WriteLine($"{i + 1}. {inventory[i]}");
             }
 
-            Console.WriteLine(
-                $"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
-            
-        }
+            Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
 
-        // Using items
-        static void UseItem()
-        {
-            for (int i = 0; i < inventoryCount; i++)
+            Console.WriteLine("\nWhat do you want to do?");
+            Console.WriteLine("\n[U] Use an item");
+            Console.WriteLine("[T] Throw out an item");
+            Console.WriteLine("[ANY OTHER INPUT] Nothing");
+
+            char invChoice = Convert.ToChar(Console.ReadKey());
+
+            switch (invChoice)
             {
-                if (inventory[i] == "Healing Potion")
-                    Console.WriteLine("The potion has been used");
-                {
+                case 'u':
+                    UseItems();
+                    break;
 
-                    playerHealth += 30;
-                    if (playerHealth > 100)
-                    {
-                        playerHealth = 100;
-                        
-                    }
-                }
+                case 't':
+                    ThrowItems();
+                    break;
+
+                default:
+                    Menu();
+                    break;
             }
         }
     }
