@@ -2,6 +2,11 @@
 {
     internal class Program
     {
+<<<<<<< HEAD
+=======
+        // Beginner stats
+        const int MAX_INVENTORY_SIZE = 5;
+>>>>>>> 41dd795fb567fa12602064cae9933e0a4adb1aa5
 
         //Player information
         const int MAX_INVENTORY_SIZE = 5;
@@ -14,9 +19,13 @@
         static Random rand = new Random();
         static int randomEnemyEncounter = 0;
 
+<<<<<<< HEAD
         //Enemies
         static string[] enemies = ["Skeletons", "Ghouls", "Zombie"];
         static string currentEnemy = Enemy(enemies);
+=======
+        // Main void for running game then ending
+>>>>>>> 41dd795fb567fa12602064cae9933e0a4adb1aa5
         static void Main()
         {
             bool gameRunning = true;
@@ -32,6 +41,7 @@
             Console.ReadLine();
         }
 
+        // Intro
         static void Intro()
         {
             Console.WriteLine("==============================");
@@ -43,12 +53,14 @@
             Console.WriteLine("Something is moving between the trees...");
         }
 
+        // Menu commands
         static bool Menu()
         {
             Console.WriteLine("\n---------- ACTIONS ----------");
             Console.WriteLine("[F] Fight");
             Console.WriteLine("[R] Run");
             Console.WriteLine("[I] Investigate");
+            Console.WriteLine("[U] Use item");
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[Q] Quit");
             Console.WriteLine($"Name: {playerName}");
@@ -78,6 +90,10 @@
                     Investigate();
                     break;
 
+                case 'u':
+                    UseItem();
+                    break;
+
                 case 'v':
                     ViewInventory();
                     break;
@@ -93,8 +109,13 @@
             return true;
         }
 
+<<<<<<< HEAD
         //Enemy generator
         static string Enemy(string[] enemyArray)
+=======
+        // Fight command
+        static bool Fight()
+>>>>>>> 41dd795fb567fa12602064cae9933e0a4adb1aa5
         {
             randomEnemyEncounter = rand.Next(0, enemyArray.Length);
             return enemyArray[randomEnemyEncounter];
@@ -120,11 +141,13 @@
             return true;
         }
 
+        // Run command
         static void Run()
         {
             Console.WriteLine("\nYou escape deeper into the forest.");
         }
 
+        // Investigation command
         static void Investigate()
         {
             int result = rand.Next(1, 4);
@@ -147,6 +170,7 @@
             }
         }
 
+        // Adding items to the inventory
         static void AddItem(string item)
         {
             if (inventoryCount < MAX_INVENTORY_SIZE)
@@ -162,6 +186,7 @@
             }
         }
 
+        // Viewing the inventory
         static void ViewInventory()
         {
             Console.WriteLine("\n---------- INVENTORY ----------");
@@ -179,6 +204,26 @@
 
             Console.WriteLine(
                 $"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
+            
+        }
+
+        // Using items
+        static void UseItem()
+        {
+            for (int i = 0; i < inventoryCount; i++)
+            {
+                if (inventory[i] == "Healing Potion")
+                    Console.WriteLine("The potion has been used");
+                {
+
+                    playerHealth += 30;
+                    if (playerHealth > 100)
+                    {
+                        playerHealth = 100;
+                        
+                    }
+                }
+            }
         }
     }
 }
