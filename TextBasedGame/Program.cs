@@ -2,15 +2,21 @@
 {
     internal class Program
     {
-        const int MAX_INVENTORY_SIZE = 5;
 
+        //Player information
+        const int MAX_INVENTORY_SIZE = 5;
         static string playerName = "";
         static int playerHealth = 100;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
 
+        //Randomizer
         static Random rand = new Random();
+        static int randomEnemyEncounter = 0;
 
+        //Enemies
+        static string[] enemies = ["Skeletons", "Ghouls", "Zombie"];
+        static string currentEnemy = Enemy(enemies);
         static void Main()
         {
             bool gameRunning = true;
@@ -62,7 +68,7 @@
             switch (user)
             {
                 case 'f':
-                    return Fight();
+                    return Fight(currentEnemy);
 
                 case 'r':
                     Run();
@@ -87,9 +93,17 @@
             return true;
         }
 
-        static bool Fight()
+        //Enemy generator
+        static string Enemy(string[] enemyArray)
         {
-            Console.WriteLine("\nA forest ghoul attacks!");
+            randomEnemyEncounter = rand.Next(0, enemyArray.Length);
+            return enemyArray[randomEnemyEncounter];
+        }
+
+        static bool Fight(string enemyName)
+        {
+            Console.WriteLine("An encounter happens!");
+            Console.WriteLine($"-> You engage in battle with the {enemyName}");
 
             int damage = rand.Next(5, 16);
             playerHealth -= damage;
