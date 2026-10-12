@@ -2,17 +2,26 @@
 {
     internal class Program
     {
-        // Beginner stats
-        const int MAX_INVENTORY_SIZE = 5;
 
+
+        //Player information
+        const int MAX_INVENTORY_SIZE = 5;
         static string playerName = "";
         static int playerHealth = 100;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
 
+        //Randomizer
         static Random rand = new Random();
+        static int randomEnemyEncounter = 0;
+
+
+        //Enemies
+        static string[] enemies = ["Skeletons", "Ghouls", "Zombie"];
+        static string currentEnemy = Enemy(enemies);
 
         // Main void for running game then ending
+
         static void Main()
         {
             bool gameRunning = true;
@@ -34,10 +43,21 @@
             Console.WriteLine("==============================");
             Console.WriteLine("       MEDIEVAL FANTASY");
             Console.WriteLine("==============================");
+            Console.WriteLine("You are a student from Otago Polytechnic that got sent into another world.");
+            Console.ReadLine();
+            Console.WriteLine("You suddenly hear a voice.");
+            Console.ReadLine();
             Console.Write("Hero, what is your name? ");
             playerName = Console.ReadLine();
-            Console.WriteLine("\nYou enter a dark forest.");
-            Console.WriteLine("Something is moving between the trees...");
+            Console.WriteLine($"So, you are {playerName}, a fitting name for a hero.");
+            Console.ReadLine();
+            Console.WriteLine("You are confused and asked the entity why you are here, what is happening but it ignored you.");
+            Console.ReadLine();
+            Console.WriteLine("Our world is being ravaged and we need your help. Please save our world.");
+            Console.ReadLine();
+            Console.WriteLine("The voice is now gone and you don't know what to do.");
+            Console.ReadLine();
+            Console.WriteLine("You hear the bushes disturbed.");
         }
 
         // Menu commands
@@ -67,7 +87,7 @@
             switch (user)
             {
                 case 'f':
-                    return Fight();
+                    return Fight(currentEnemy);
 
                 case 'r':
                     Run();
@@ -75,10 +95,6 @@
 
                 case 'i':
                     Investigate();
-                    break;
-
-                case 'u':
-                    UseItem();
                     break;
 
                 case 'v':
@@ -96,15 +112,25 @@
             return true;
         }
 
-        // Fight command
-        static bool Fight()
+
+        //Enemy generator
+        static string Enemy(string[] enemyArray)
         {
-            Console.WriteLine("\nA forest ghoul attacks!");
+            randomEnemyEncounter = rand.Next(0, enemyArray.Length);
+            return enemyArray[randomEnemyEncounter];
+        }
+
+
+        // Fight command
+        static bool Fight(string enemyName)
+        {
+            Console.WriteLine("An encounter happens!");
+            Console.WriteLine($"-> You engage in battle with the {enemyName}");
 
             int damage = rand.Next(5, 16);
             playerHealth -= damage;
 
-            Console.WriteLine($"You defeat the ghoul but take {damage} damage.");
+            Console.WriteLine($"You defeat the {enemyName} but take {damage} damage.");
 
             if (playerHealth <= 0)
             {
@@ -161,7 +187,7 @@
             }
         }
 
-        // Viewing the inventory
+        // View inv & inv commands
         static void ViewInventory()
         {
             Console.WriteLine("\n---------- INVENTORY ----------");
@@ -177,24 +203,37 @@
                 Console.WriteLine($"{i + 1}. {inventory[i]}");
             }
 
-            Console.WriteLine(
-                $"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
-            
-        }
-        static void UseItem()
-        {
-            for (int i = 0; i < inventoryCount; i++)
-            {
-                if (inventory[i] == "Healing Potion")
-                    Console.WriteLine("The potion has been used");
-                {
+            Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
 
+<<<<<<< HEAD
                     playerHealth += 30;
                     if (playerHealth > 100)
                     {
                         playerHealth = 100;
                     }
                 }
+=======
+            Console.WriteLine("\nWhat do you want to do?");
+            Console.WriteLine("\n[U] Use an item");
+            Console.WriteLine("[T] Throw out an item");
+            Console.WriteLine("[ANY OTHER INPUT] Nothing");
+
+            char invChoice = Convert.ToChar(Console.ReadKey());
+
+            switch (invChoice)
+            {
+                case 'u':
+                    UseItems();
+                    break;
+
+                case 't':
+                    ThrowItems();
+                    break;
+
+                default:
+                    Menu();
+                    break;
+>>>>>>> 0cb3422d2cd3cd49780130704ad1e1628a1a79f7
             }
         }
     }
