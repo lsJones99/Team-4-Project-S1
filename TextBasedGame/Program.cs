@@ -45,6 +45,7 @@ namespace TextBasedGame
         {
             Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
+            Console.Clear();
         }
         // Intro
         static void Intro()
@@ -108,6 +109,7 @@ namespace TextBasedGame
         // Menu commands
         static bool Menu()
         {
+            Console.Clear();
             Console.WriteLine("\n---------- EXPLORATION ----------");
             Console.WriteLine("[R] Start Navigating");
             Console.WriteLine("[I] Investigate");
@@ -135,6 +137,7 @@ namespace TextBasedGame
 
                 case 'i':
                     Investigate();
+                    PauseStory();
                     break;
 
                 case 'v':
@@ -145,6 +148,7 @@ namespace TextBasedGame
 
                 default:
                     Console.WriteLine("Unrecognised command.");
+                    PauseStory();
                     break;
             }
 
@@ -157,11 +161,19 @@ namespace TextBasedGame
         {
             int enemyHealth = 50;
             bool inCombat = true;
+
+            Console.Clear();
+
             Console.WriteLine("\n========== ENCOUNTER ==========");
             Console.WriteLine($"A {enemyName} approaches!");
+            Console.WriteLine("\nPress Enter to begin combat.");
+            Console.ReadLine();
 
             while (inCombat && playerHealth > 0 && enemyHealth > 0)
             {
+
+                Console.Clear();
+
                 Console.WriteLine("\n---------- COMBAT ----------");
                 Console.WriteLine($"{playerName}: {playerHealth}/100 HP");
                 Console.WriteLine($"{enemyName}: {enemyHealth}/50 HP");
@@ -191,13 +203,17 @@ namespace TextBasedGame
                         break;
 
                     case 'm':
-                        // Magic can be implemented later.
+                        //implement magic as the hero progresses
                         Console.WriteLine("You have not learned any magic yet.");
+                        Console.WriteLine("\nPress Enter to continue.");
+                        Console.ReadLine();
                         continue;
 
                     case 'i':
-                        // Inventory use can be connected later.
+                        //item use to be implemented later on
                         Console.WriteLine("Item use is not available during combat yet.");
+                        Console.WriteLine("\nPress Enter to continue.");
+                        Console.ReadLine();
                         continue;
 
                     case 'r':
@@ -221,6 +237,8 @@ namespace TextBasedGame
 
                 if (!inCombat)
                 {
+                    Console.WriteLine("\nPress Enter to return to exploration.");
+                    Console.ReadLine();
                     break;
                 }
 
@@ -229,9 +247,10 @@ namespace TextBasedGame
                 if (enemyHealth <= 0)
                 {
                     enemyHealth = 0;
-                    Console.WriteLine($"You have defeated the {enemyName}");
-                    inCombat = false;
-                    continue;
+                    Console.WriteLine($"You have defeated the {enemyName}!");
+                    Console.WriteLine("\nPress Enter to return to exploration.");
+                    Console.ReadLine();
+                    break;
                 }
 
                 //enemy attacks
@@ -247,7 +266,12 @@ namespace TextBasedGame
                     inCombat = false;
                 }
 
-                
+                //Combat pause
+                if (inCombat && playerHealth > 0 && enemyHealth > 0)
+                {
+                    Console.WriteLine("\nPress Enter for the next turn.");
+                    Console.ReadLine();
+                }
             }
                 return true;
         }
@@ -263,6 +287,7 @@ namespace TextBasedGame
         // Run command
         static void Run()
         {
+            Console.Clear();
             Console.WriteLine("\n---------- NAVIGATION ----------");
             Console.WriteLine("[W] Move north");
             Console.WriteLine("[A] Move west");
@@ -297,16 +322,23 @@ namespace TextBasedGame
 
                 case 'q':
                     Console.WriteLine("You stop navigating.");
+                    PauseStory();
                     return;
 
                 default:
                     Console.WriteLine("Enter a valid navigation command.");
+                    PauseStory();
                     return;
             }
 
             Console.WriteLine($"{playerName} moves {direction}.");
 
             CheckForEncounter();
+
+            if(playerHealth > 0)
+            {
+                PauseStory();
+            }
         }
 
         //Check for enemy encounter
@@ -371,6 +403,8 @@ namespace TextBasedGame
         // View inv & inv commands
         static void ViewInventory()
         {
+            Console.Clear();
+
             Console.WriteLine("\n---------- INVENTORY ----------");
 
             if (inventoryCount == 0)
