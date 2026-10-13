@@ -149,19 +149,19 @@ namespace TextBasedGame
         {
             Console.WriteLine("Which direction do you want to go to?");
             Console.WriteLine("A for west,W for north, S for south, D for east");
-            char playerChoice = char.ToLower(Console.ReadKey().KeyChar);
+            string playerChoice = Console.ReadLine().ToLower().ToString();
             switch (playerChoice)
             {
-                case 'a':
+                case "a":
                     Console.WriteLine($"{playerName} moves west");
                     break;
-                case 'w':
+                case "w":
                     Console.WriteLine($"{playerName} moves north");
                     break;
-                case 'd':
+                case "d":
                     Console.WriteLine($"{playerName} moves east");
                     break;
-                case 's':
+                case "s":
                     Console.WriteLine($"{playerName} moves south");
                     break;
                 default: Console.WriteLine("enter a valid key");
