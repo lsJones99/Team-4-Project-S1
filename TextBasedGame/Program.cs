@@ -31,7 +31,7 @@ namespace TextBasedGame
             bool gameRunning = true;
 
             Intro();
-
+            CreateCharacter();
             while (gameRunning && playerHealth > 0)
             {
                 gameRunning = Menu();
@@ -105,7 +105,74 @@ namespace TextBasedGame
 
             PauseStory();
         }
-
+        // Character Selection
+        static void CreateCharacter()
+        {
+            string userInput = "";
+            string verify = "";
+            int check = 0;
+            bool valid = false;
+            do
+            {
+                Console.WriteLine("Class selection prompt");
+                do
+                {
+                    userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
+                } while (userInput.Length == 0);
+                char user = Convert.ToChar(userInput[0]);
+                switch (user)
+                {
+                    case 'w':
+                        Console.WriteLine("Warrior text");
+                        valid = true;
+                        break;
+                    case 'r':
+                        Console.WriteLine("Rogue text");
+                        valid = true;
+                        break;
+                    case 'm':
+                        Console.WriteLine("Mage text");
+                        valid = true;
+                        break;
+                    case 'c':
+                        CustomStats();
+                        valid = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid");
+                        break;
+                }
+                Console.WriteLine("Verify prompt");
+                do
+                {
+                    verify = Console.ReadLine()?.Trim().ToLower() ?? "";
+                } while (verify.Length == 0);
+                char VerifyCheck = Convert.ToChar(verify[0]);
+                do
+                {
+                    switch (VerifyCheck)
+                    {
+                        case 'y':
+                            Console.WriteLine("Confirm prompt");
+                            check = 1;
+                            break;
+                        case 'n':
+                            Console.WriteLine("Negative prompt");
+                            valid = false;
+                            check = 1;
+                            break;
+                        default:
+                            Console.WriteLine("Error prompt");
+                            break;
+                    }
+                } while (check == 0);
+            } while (valid == false);
+        }
+        // Custom Character
+        static void CustomStats()
+        {
+            Console.WriteLine("Custom Stats Text");
+        }
         // Menu commands
         static bool Menu()
         {
