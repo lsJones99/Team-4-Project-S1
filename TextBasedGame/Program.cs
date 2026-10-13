@@ -1,18 +1,22 @@
-﻿using System;
-
-namespace TextBasedGame
+﻿namespace TextBasedGame
 {
     internal class Program
     {
 
 
         //Player information
-        const int MAX_INVENTORY_SIZE = 5;
+        static int MAX_INVENTORY_SIZE = 5;
         static string playerName = "";
         static int playerHealth = 100;
+        static int playerMaxHealth = 100;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
         static int playerDamage = 0;
+        static int playerStrength = 0;
+        static int playerFinesse = 0;
+        static int playerResilience = 0;
+        static int playerArcane = 0;
+
 
         //Randomizer
         static Random rand = new Random();
@@ -78,7 +82,7 @@ namespace TextBasedGame
             {
                 playerName = "Anon";
             }
-            
+
             Console.WriteLine($"\n\"{playerName}... A fitting name for the one chosen to save our world.\"");
             PauseStory();
 
@@ -106,7 +110,7 @@ namespace TextBasedGame
             PauseStory();
         }
         // Character Selection
-        static void CreateCharacter()
+        public static void CreateCharacter()
         {
             string userInput = "";
             string verify = "";
@@ -124,6 +128,9 @@ namespace TextBasedGame
                 {
                     case 'w':
                         Console.WriteLine("Warrior text");
+                        playerStrength = 5;
+                        playerFinesse = 2;
+                        playerResilience = 3;
                         valid = true;
                         break;
                     case 'r':
@@ -167,6 +174,10 @@ namespace TextBasedGame
                     }
                 } while (check == 0);
             } while (valid == false);
+            MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
+            playerMaxHealth = playerMaxHealth + (10 * playerResilience);
+            playerHealth = playerHealth + (10 * playerResilience);
+
         }
         // Custom Character
         static void CustomStats()
@@ -183,7 +194,7 @@ namespace TextBasedGame
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[Q] Quit");
             Console.WriteLine($"Name: {playerName}");
-            Console.WriteLine($"Health: {playerHealth}/100");
+            Console.WriteLine($"Health: {playerHealth}/{playerMaxHealth}");
 
             Console.Write("\nEnter command: ");
             string userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
@@ -286,7 +297,7 @@ namespace TextBasedGame
                     case 'r':
                         escapeChance = rand.Next(1, 101);
 
-                        if(escapeChance <= 50)
+                        if (escapeChance <= 50)
                         {
                             Console.WriteLine($"You have successfully escaped from {enemyName}!");
                             inCombat = false;
@@ -326,7 +337,7 @@ namespace TextBasedGame
                 Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
 
                 //check for player hp
-                if(playerHealth <= 0)
+                if (playerHealth <= 0)
                 {
                     playerHealth = 0;
                     Console.WriteLine($"{playerName} has been defeated.");
@@ -340,7 +351,7 @@ namespace TextBasedGame
                     Console.ReadLine();
                 }
             }
-                return true;
+            return true;
         }
 
         //Enemy generator
@@ -402,7 +413,7 @@ namespace TextBasedGame
 
             CheckForEncounter();
 
-            if(playerHealth > 0)
+            if (playerHealth > 0)
             {
                 PauseStory();
             }
@@ -413,7 +424,7 @@ namespace TextBasedGame
         {
             int encounterChance = rand.Next(1, 101);
 
-            if(encounterChance <= 30)
+            if (encounterChance <= 30)
             {
                 string encounteredEnemy = Enemy(enemies);
 
@@ -512,7 +523,7 @@ namespace TextBasedGame
             // Using items
             static void UseItems()
             {
-                
+
             }
 
             // Disposing of items
