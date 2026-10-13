@@ -17,6 +17,7 @@ namespace TextBasedGame
         //Randomizer
         static Random rand = new Random();
         static int randomEnemyEncounter = 0;
+        static int escapeChance = 0;
 
 
         //Enemies
@@ -200,13 +201,27 @@ namespace TextBasedGame
                         continue;
 
                     case 'r':
-                        // Generate an escape chance.
-                        // Change inCombat to false if successful.
+                        escapeChance = rand.Next(1, 101);
+
+                        if(escapeChance <= 50)
+                        {
+                            Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                            inCombat = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You failed to escape!");
+                        }
                         break;
 
                     default:
                         Console.WriteLine("Unrecognised combat command.");
                         continue;
+                }
+
+                if (!inCombat)
+                {
+                    break;
                 }
 
 
