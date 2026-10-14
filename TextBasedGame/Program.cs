@@ -131,6 +131,7 @@ namespace TextBasedGame
             bool valid = false;
             do
             {
+                Console.Clear();
                 Console.WriteLine("\n---------- CHOOSE YOUR CLASS ----------");
                 Console.WriteLine("[W] Warrior - strong and tough");
                 Console.WriteLine("[R] Rogue   - fast and resilient");
@@ -164,8 +165,8 @@ namespace TextBasedGame
                         Console.WriteLine("Mage text");
                         playerStrength = 1;
                         playerFinesse = 2;
-                        playerResilience = 2;
-                        playerArcane = 5;
+                        playerResilience = 1;
+                        playerArcane = 6;
                         valid = true;
                         break;
                     case 'c':
@@ -176,6 +177,12 @@ namespace TextBasedGame
                         Console.WriteLine("Invalid choice. Please enter W, R, M, or C.");
                         continue;
                 }
+                Console.Clear();
+                Console.WriteLine("\n---------- Stat Allocation ----------\n");
+                Console.WriteLine($"Strength   : {playerStrength}\n");
+                Console.WriteLine($"Finesse    : {playerFinesse}\n");
+                Console.WriteLine($"Resilience : {playerResilience}\n");
+                Console.WriteLine($"Arcane     : {playerArcane}\n");
                 Console.Write("Are you happy with this class? (Y/N): ");
                 check = 0;
                 while (check == 0)
@@ -202,7 +209,14 @@ namespace TextBasedGame
             inventory = new string[MAX_INVENTORY_SIZE];
             playerMaxHealth = playerMaxHealth + (10 * playerResilience);
             playerHealth = playerHealth + (10 * playerResilience);
-
+            playerMaxMana = playerMaxMana + (3 * playerArcane);
+            playerMana = playerMana + (3 * playerArcane);
+            playerMeleeHit = playerMeleeHit + playerStrength;
+            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
+            playerRangeHit = playerRangeHit + playerFinesse;
+            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
+            playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
+            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
         }
         // Custom Character
         static void CustomStats()
