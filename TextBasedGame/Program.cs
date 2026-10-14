@@ -215,12 +215,13 @@ namespace TextBasedGame
             if (userInput.Length == 0)
             {
                 Console.WriteLine("You did not enter a command.");
+                PauseStory();
                 return true;
             }
 
-            char user = userInput[0];
+            char temp = userInput[0];
 
-            switch (user)
+            switch (temp)
             {
                 case 'r':
                     Run();
@@ -517,9 +518,10 @@ namespace TextBasedGame
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
             Console.WriteLine("[T] Throw out an item");
-            Console.WriteLine("[ANY OTHER INPUT] Nothing");
+            Console.WriteLine("[ANY OTHER INPUT] Return");
 
-            char invChoice = char.ToLower(Console.ReadKey(true).KeyChar);
+            char invChoice = Console.ReadLine()[0];
+            Console.Clear();
 
             switch (invChoice)
             {
@@ -539,15 +541,32 @@ namespace TextBasedGame
             // Using items
             static void UseItems()
             {
+                Console.WriteLine("\n---------- INVENTORY ----------");
+
+                for (int i = 0; i < inventory.Length; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {inventory[i]}");
+                }
+
+                Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
+
                 Console.WriteLine("\nWhich slot do you wish to use?");
                 int useChoice = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                Console.WriteLine("\n---------- INVENTORY ----------");
 
                 // What happens when using a healing potion
                 if (inventory[useChoice-1] == "Healing Potion")
                 {
                     playerHealth = playerHealth + 30;
+                    inventory[useChoice - 1] = null;
                     Console.WriteLine("The healing potion was used! +30 HP");
+                    if (playerHealth > playerMaxHealth)
+                    {
+                        playerHealth = playerMaxHealth;
+                    }
                     Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
+                    PauseStory();
                 }
                 // What happens when using a rusty sword
                 else if (inventory[useChoice-1] == "Rusty Sword")
@@ -563,7 +582,12 @@ namespace TextBasedGame
                         inventoryCount -= 1;
                     }
                     equippedWpn = "Rusty Sword";
-                    Console.WriteLine("\nYou equipped the Rusty Sword.");
+                    Console.WriteLine("You equipped the Rusty Sword.");
+                    PauseStory();
+                }
+                else 
+                {
+                    Console.WriteLine("That input is unrecognised.");
                     PauseStory();
                 }
             }
