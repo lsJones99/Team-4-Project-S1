@@ -303,8 +303,10 @@ namespace TextBasedGame
                 Console.Clear();
 
                 Console.WriteLine("\n---------- COMBAT ----------");
-                Console.WriteLine($"{playerName}: {playerHealth}/{playerMaxHealth} HP");
-                Console.WriteLine($"{enemyName}: {enemyHealth}/50 HP");
+                Console.WriteLine($"{playerName}:");
+                Console.WriteLine($"{playerHealth}/{playerMaxHealth} HP");
+                Console.WriteLine($"{playerMana}/{playerMaxMana} MP");
+                Console.WriteLine($"\n{enemyName}: \n{enemyHealth}/50 HP");
 
                 Console.WriteLine("\n[A] Attack");
                 Console.WriteLine("[M] Magic");
