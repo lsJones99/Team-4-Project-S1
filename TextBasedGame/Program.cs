@@ -175,6 +175,7 @@
                 } while (check == 0);
             } while (valid == false);
             MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
+            inventory = new string[MAX_INVENTORY_SIZE];
             playerMaxHealth = playerMaxHealth + (10 * playerResilience);
             playerHealth = playerHealth + (10 * playerResilience);
 
