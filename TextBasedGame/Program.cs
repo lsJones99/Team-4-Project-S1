@@ -308,54 +308,56 @@ namespace TextBasedGame
                 Console.Write("\nChoose an action: ");
                 string combatInput = Console.ReadLine()?.Trim().ToLower() ?? "";
 
-                if (combatInput.Length == 0)
+
+                if (combatInput.Equals(""))
                 {
-                    Console.WriteLine("You did not enter a command.");
-                    PauseStory();
-                    return true;
+                    Console.WriteLine("You did not enter any command! Try again!");
+                    Console.ReadLine();
+                    continue;
                 }
-
-                char combatChoice = combatInput[0];
-
-                switch (combatChoice)
+                else
                 {
-                    case 'a':
-                        playerDamage = rand.Next(8, 16);
-                        enemyHealth -= playerDamage;
-                        Console.WriteLine($"You attack the {enemyName} for {playerDamage} damage.");
-                        break;
+                    char combatChoice = combatInput[0];
+                    switch (combatChoice)
+                    {
+                        case 'a':
+                            playerDamage = rand.Next(8, 16);
+                            enemyHealth -= playerDamage;
+                            Console.WriteLine($"You attack the {enemyName} for {playerDamage} damage.");
+                            break;
 
-                    case 'm':
-                        //implement magic as the hero progresses
-                        Console.WriteLine("You have not learned any magic yet.");
-                        Console.WriteLine("\nPress Enter to continue.");
-                        Console.ReadLine();
-                        continue;
+                        case 'm':
+                            //implement magic as the hero progresses
+                            Console.WriteLine("You have not learned any magic yet.");
+                            Console.WriteLine("\nPress Enter to continue.");
+                            Console.ReadLine();
+                            continue;
 
-                    case 'i':
-                        //item use to be implemented later on
-                        Console.WriteLine("Item use is not available during combat yet.");
-                        Console.WriteLine("\nPress Enter to continue.");
-                        Console.ReadLine();
-                        continue;
+                        case 'i':
+                            //item use to be implemented later on
+                            Console.WriteLine("Item use is not available during combat yet.");
+                            Console.WriteLine("\nPress Enter to continue.");
+                            Console.ReadLine();
+                            continue;
 
-                    case 'r':
-                        escapeChance = rand.Next(1, 101);
+                        case 'r':
+                            escapeChance = rand.Next(1, 101);
 
-                        if (escapeChance <= 50)
-                        {
-                            Console.WriteLine($"You have successfully escaped from {enemyName}!");
-                            inCombat = false;
-                        }
-                        else
-                        {
-                            Console.WriteLine("You failed to escape!");
-                        }
-                        break;
+                            if (escapeChance <= 50)
+                            {
+                                Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                                inCombat = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("You failed to escape!");
+                            }
+                            break;
 
-                    default:
-                        Console.WriteLine("Unrecognised combat command.");
-                        continue;
+                        default:
+                            Console.WriteLine("Unrecognised combat command.");
+                            continue;
+                    }
                 }
 
                 if (!inCombat)
@@ -408,58 +410,77 @@ namespace TextBasedGame
         // Run command
         static void Run()
         {
-            Console.Clear();
-            Console.WriteLine("\n---------- NAVIGATION ----------");
-            Console.WriteLine("[W] Move north");
-            Console.WriteLine("[A] Move west");
-            Console.WriteLine("[S] Move south");
-            Console.WriteLine("[D] Move east");
-            Console.WriteLine("[Q] Stop navigating");
-
-            Console.Write("\nChoose a direction: ");
-            char playerChoice = char.ToLower(Console.ReadKey(true).KeyChar);
-
-            Console.WriteLine();
-
-            string direction = "";
-
-            switch (playerChoice)
+            //Variables
+            bool isNavigating = true;
+            while(isNavigating && playerHealth > 0)
             {
-                case 'w':
-                    direction = "north";
-                    break;
+                Console.Clear();
+                Console.WriteLine("\n---------- NAVIGATION ----------");
+                Console.WriteLine("[W] Move north");
+                Console.WriteLine("[A] Move west");
+                Console.WriteLine("[S] Move south");
+                Console.WriteLine("[D] Move east");
+                Console.WriteLine("[M] Map");
+                Console.WriteLine("[Q] Stop navigating");
 
-                case 'a':
-                    direction = "west";
-                    break;
 
-                case 's':
-                    direction = "south";
-                    break;
+                Console.Write("\nChoose a direction: ");
+                char playerChoice = char.ToLower(Console.ReadKey(true).KeyChar);
 
-                case 'd':
-                    direction = "east";
-                    break;
+                Console.WriteLine();
 
-                case 'q':
-                    Console.WriteLine("You stop navigating.");
-                    PauseStory();
-                    return;
+                string direction = "";
+                bool validMovement = false;
 
-                default:
-                    Console.WriteLine("Enter a valid navigation command.");
-                    PauseStory();
-                    return;
-            }
+                switch (playerChoice)
+                {
+                    case 'w':
+                        direction = "north";
+                        validMovement = true;
+                        break;
 
-            Console.WriteLine($"{playerName} moves {direction}.");
+                    case 'a':
+                        direction = "west";
+                        validMovement = true;
+                        break;
 
-            CheckForEncounter();
+                    case 's':
+                        direction = "south";
+                        validMovement = true;
+                        break;
 
-            if (playerHealth > 0)
-            {
-                PauseStory();
-            }
+                    case 'd':
+                        direction = "east";
+                        validMovement = true;
+                        break;
+
+                    case 'm':
+                        Map();
+                        validMovement = false;
+                        continue;
+
+                    case 'q':
+                        Console.WriteLine("You stop navigating.");
+                        isNavigating = false;
+                        PauseStory();
+                        return;
+
+                    default:
+                        Console.WriteLine("Enter a valid navigation command.");
+                        PauseStory();
+                        continue;
+                }
+
+                if (validMovement == true)
+                {
+                    Console.WriteLine($"{playerName} moves {direction}.");
+                    CheckForEncounter();
+                    if (playerHealth > 0)
+                    {
+                        PauseStory();
+                    }
+                }               
+            }       
         }
 
         //Check for enemy encounter
