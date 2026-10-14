@@ -1,4 +1,6 @@
-﻿namespace TextBasedGame
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace TextBasedGame
 {
     internal class Program
     {
@@ -120,7 +122,12 @@
             bool valid = false;
             do
             {
-                Console.WriteLine("Class selection prompt");
+                Console.WriteLine("\n---------- CHOOSE YOUR CLASS ----------");
+                Console.WriteLine("[W] Warrior - strong and tough");
+                Console.WriteLine("[R] Rogue   - fast and resilient");
+                Console.WriteLine("[M] Mage    - arcane power");
+                Console.WriteLine("[C] Custom  - choose your own stats");
+                Console.Write("\nEnter a letter: ");
                 do
                 {
                     userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
@@ -137,10 +144,16 @@
                         break;
                     case 'r':
                         Console.WriteLine("Rogue text");
+                        playerStrength = 2;
+                        playerFinesse = 5;
+                        playerResilience = 3;
                         valid = true;
                         break;
                     case 'm':
                         Console.WriteLine("Mage text");
+                        playerStrength = 1;
+                        playerArcane = 5;
+                        playerResilience = 2;
                         valid = true;
                         break;
                     case 'c':
@@ -148,10 +161,10 @@
                         valid = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid");
+                        Console.WriteLine("Invalid choice. Please enter W, R, M, or C.");
                         continue;
                 }
-                Console.WriteLine("Verify prompt");
+                Console.Write("Are you happy with this class? (Y/N): ");
                 check = 0;
                 while (check == 0)
                 {
@@ -169,7 +182,7 @@
                     }
                     else
                     {
-                        Console.WriteLine("Error prompt");
+                        Console.WriteLine("Please enter Y for yes or N for no.");
                     }
                 }
             } while (valid == false);
@@ -267,7 +280,8 @@
                 if (combatInput.Length == 0)
                 {
                     Console.WriteLine("You did not enter a command.");
-                    continue;
+                    PauseStory();
+                    return true;
                 }
 
                 char combatChoice = combatInput[0];
