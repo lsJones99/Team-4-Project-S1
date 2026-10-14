@@ -11,13 +11,21 @@ namespace TextBasedGame
         static string playerName = "";
         static int playerHealth = 100;
         static int playerMaxHealth = 100;
+        static int playerMana = 5;
+        static int playerMaxMana = 5;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
         static int playerDamage = 0;
         static int playerStrength = 0;
+        static int playerMeleeHit = 0;
+        static int playerMeleeDmg = 0;
         static int playerFinesse = 0;
+        static int playerRangeHit = 0;
+        static int playerRangeDmg = 0;
         static int playerResilience = 0;
         static int playerArcane = 0;
+        static int playerSpellMiscast = 0;
+        static int playerSpellDmg = 0;
         static string equippedWpn = "";
         static string equippedAmr = "";
 
@@ -140,20 +148,23 @@ namespace TextBasedGame
                         playerStrength = 5;
                         playerFinesse = 2;
                         playerResilience = 3;
+                        playerArcane = 0;
                         valid = true;
                         break;
                     case 'r':
                         Console.WriteLine("Rogue text");
                         playerStrength = 2;
                         playerFinesse = 5;
-                        playerResilience = 3;
+                        playerResilience = 2;
+                        playerArcane = 1;
                         valid = true;
                         break;
                     case 'm':
                         Console.WriteLine("Mage text");
                         playerStrength = 1;
-                        playerArcane = 5;
+                        playerFinesse = 2;
                         playerResilience = 2;
+                        playerArcane = 5;
                         valid = true;
                         break;
                     case 'c':
