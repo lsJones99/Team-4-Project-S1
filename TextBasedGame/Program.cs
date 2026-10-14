@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace TextBasedGame
@@ -337,9 +338,12 @@ namespace TextBasedGame
                         case 'm':
                             //implement magic as the hero progresses
                             Console.WriteLine("Choose a spell to cast");
-                            Console.WriteLine("[m] - Magic Missile");
+                            Console.WriteLine("[M] - Magic Missile - 3 MP");
                             Console.WriteLine("[0] - Return to previous menu");
-                            string userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
+                            int valid = 0;
+                            string userselect = "\0";
+                            char spellselect = '\0';
+                            userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
                             do
                             {
                                 if (userselect.Length == 0)
@@ -347,69 +351,81 @@ namespace TextBasedGame
                                     Console.WriteLine("Invalid selection, please try again");
                                 }
                             } while (userselect.Length == 0);
-                            char spellselect = userselect[0];
-                            int valid = 0;
-                            do
+                            spellselect = userselect[0];
+                            switch (spellselect)
                             {
-                                switch (spellselect)
-                                {
-                                    case 'm':
+                                case 'm':
+                                    if (playerMana >= 3)
+                                    {
                                         int casting = rand.Next(1, 101) - (playerSpellMiscast);
                                         if (casting <= 75)
                                         {
-                                            playerDamage = rand.Next(5, 16) + playerSpellDmg;
+                                            playerDamage = rand.Next(8, 25) + playerSpellDmg;
                                             enemyHealth -= playerDamage;
                                             Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
+                                            valid = 1;
                                         }
                                         else
                                         {
                                             playerDamage = rand.Next(1, 11);
                                             playerHealth -= playerDamage;
                                             Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
-                                        }
-                                        valid = 1;
-                                        break;
-                                    case '0':
-                                        {
-                                            Console.WriteLine("Leaving magic menu");
                                             valid = 1;
-                                            break;
                                         }
-                                    default:
-                                        {
-                                            Console.WriteLine("Invalid option, please choose again");
-                                            break;
-                                        }
+                                        playerMana -= 3;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("You do not have enough Mana to cast magic missile");
+                                        break;
+                                    }
+                                case '0':
+                                {
+                                    Console.WriteLine("Leaving magic menu");
+                                    break;
                                 }
-                            } while (valid == 0);
-                            Console.ReadLine();
-                            continue;
-
-                        case 'i':
-                            //item use to be implemented later on
-                            Console.WriteLine("Item use is not available during combat yet.");
-                            Console.WriteLine("\nPress Enter to continue.");
-                            Console.ReadLine();
-                            continue;
-
-                        case 'r':
-                            escapeChance = rand.Next(1, 101);
-
-                            if (escapeChance <= 50)
+                                default:
+                                {
+                                    Console.WriteLine("Invalid option, please choose again");
+                                    break;
+                                }
+                            }
+                            if (valid == 1)
                             {
-                                Console.WriteLine($"You have successfully escaped from {enemyName}!");
-                                inCombat = false;
+                                break;
                             }
                             else
                             {
-                                Console.WriteLine("You failed to escape!");
+                                Console.ReadLine();
+                                continue;
                             }
-                            break;
 
-                        default:
-                            Console.WriteLine("Unrecognised combat command.");
-                            continue;
-                    }
+                        case 'i':
+                                    //item use to be implemented later on
+                                    Console.WriteLine("Item use is not available during combat yet.");
+                                    Console.WriteLine("\nPress Enter to continue.");
+                                    Console.ReadLine();
+                                    continue;
+
+                                case 'r':
+                                    escapeChance = rand.Next(1, 101);
+
+                                    if (escapeChance <= 50)
+                                    {
+                                        Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                                        inCombat = false;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("You failed to escape!");
+                                    }
+                                    break;
+
+                                default:
+                                    Console.WriteLine("Unrecognised combat command.");
+                                    continue;
+                                }
                 }
 
                 if (!inCombat)
