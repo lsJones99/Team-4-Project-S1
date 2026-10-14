@@ -147,32 +147,29 @@
                         break;
                     default:
                         Console.WriteLine("Invalid");
-                        break;
+                        continue;
                 }
                 Console.WriteLine("Verify prompt");
-                do
+                check = 0;
+                while (check == 0)
                 {
                     verify = Console.ReadLine()?.Trim().ToLower() ?? "";
-                } while (verify.Length == 0);
-                char VerifyCheck = Convert.ToChar(verify[0]);
-                do
-                {
-                    switch (VerifyCheck)
+                    if (verify.StartsWith("y"))
                     {
-                        case 'y':
-                            Console.WriteLine("Confirm prompt");
-                            check = 1;
-                            break;
-                        case 'n':
-                            Console.WriteLine("Negative prompt");
-                            valid = false;
-                            check = 1;
-                            break;
-                        default:
-                            Console.WriteLine("Error prompt");
-                            break;
+                        Console.WriteLine("Confirm prompt");
+                        check = 1;
                     }
-                } while (check == 0);
+                    else if (verify.StartsWith("n"))
+                    {
+                        Console.WriteLine("Negative prompt");
+                        valid = false;
+                        check = 1;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error prompt");
+                    }
+                }
             } while (valid == false);
             MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
             inventory = new string[MAX_INVENTORY_SIZE];
