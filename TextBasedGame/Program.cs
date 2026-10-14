@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TextBasedGame
 {
@@ -28,6 +29,10 @@ namespace TextBasedGame
         static int playerSpellDmg = 0;
         static string equippedWpn = "";
         static string equippedAmr = "";
+        static int playerX = 2; // Start in Dark Forest
+        static int playerY = 2;
+        static int markerScreenX;
+        static int markerScreenY;
 
 
         //Randomizer
@@ -364,7 +369,6 @@ namespace TextBasedGame
                 {
                     Console.WriteLine("\nPress Enter to return to exploration.");
                     Console.ReadLine();
-                    break;
                 }
 
 
@@ -415,6 +419,7 @@ namespace TextBasedGame
             while(isNavigating && playerHealth > 0)
             {
                 Console.Clear();
+                Map(true);
                 Console.WriteLine("\n---------- NAVIGATION ----------");
                 Console.WriteLine("[W] Move north");
                 Console.WriteLine("[A] Move west");
@@ -425,33 +430,37 @@ namespace TextBasedGame
 
 
                 Console.Write("\nChoose a direction: ");
-                char playerChoice = char.ToLower(Console.ReadKey(true).KeyChar);
+                char playerChoice = ReadBlinkingDirection();
 
                 Console.WriteLine();
-
                 string direction = "";
+                int nextX = playerX;
+                int nextY = playerY;
                 bool validMovement = false;
-
                 switch (playerChoice)
                 {
                     case 'w':
                         direction = "north";
                         validMovement = true;
+                        nextY++;
                         break;
 
                     case 'a':
                         direction = "west";
                         validMovement = true;
+                        nextX--;
                         break;
 
                     case 's':
                         direction = "south";
                         validMovement = true;
+                        nextY--;
                         break;
 
                     case 'd':
                         direction = "east";
                         validMovement = true;
+                        nextX++;
                         break;
 
                     case 'm':
@@ -468,17 +477,25 @@ namespace TextBasedGame
                     default:
                         Console.WriteLine("Enter a valid navigation command.");
                         PauseStory();
-                        continue;
+                        continue; 
                 }
+
+                // Border map check
+                if (nextX < 0 || nextX >= 5 || nextY < 0 || nextY >= 5)
+                {
+                    Console.WriteLine("You cannot move beyond the map!");
+                    PauseStory();
+                    return;
+                }
+                playerX = nextX;
+                playerY = nextY;
+                Map(true);
+                Console.WriteLine($"{playerName} moves {direction}.");
 
                 if (validMovement == true)
                 {
                     Console.WriteLine($"{playerName} moves {direction}.");
                     CheckForEncounter();
-                    if (playerHealth > 0)
-                    {
-                        PauseStory();
-                    }
                 }               
             }       
         }
@@ -650,11 +667,12 @@ namespace TextBasedGame
             }
         }
         // Map
-        public static void Map()
+        public static void Map(bool navigating = false)
         {
             Console.Clear ();
-
-            Console.WriteLine(@"
+            if (!navigating)
+            {
+                Console.WriteLine(@"
                                                   #####    #####     ###    #######   #####   ######   #######  ######    #####
                                                  ##   ##  ##   ##   ## ##      ##    ##   ##  ##   ##  ##       ##   ##  ##   ##
                                                  ##   ##  ##       ##   ##     ##    ##   ##  ##   ##  ##       ##   ##  ##
@@ -663,7 +681,9 @@ namespace TextBasedGame
                                                  ##   ##  ##   ##  ##   ##     ##    ##   ##  ##   ##  ##       ##  ##   ##   ##
                                                   #####    #####   ##   ##     ##     #####   ######   #######  ##   ##   #####
                                             ");
-            Console.WriteLine(@"
+            }
+
+            string mapArt = @"
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
                                 |          /\          |        /^^^^\        |        \ | /         |      |^^| |^^|       |      .-.   .-.       |
                                 |       __/~~\__       |       /  __  \       |     --- (O) ---      |     _|[]|_|[]|_      |     (o o) (o o)      |
@@ -679,7 +699,7 @@ namespace TextBasedGame
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
                                 |        .-O-.         |       /\   /\        |      /\/\ /\/\       |        +   +         |     |^^|   |^^|      |
                                 |       /|###|\        |      /  \ /  \       |      /\/\\/\/\       |       /|\ /|\        |     |  |___|  |      |
-                                |        /   \         |        ||  ||        |       || @ ||        |       / \ / \        |     |__|   |__|      |
+                                |        /   \         |        ||  ||        |       ||   ||        |       / \ / \        |     |__|   |__|      |
                                 |    The lost Giant    |      Wilderness      |     Dark forest      |      Crusaders       |    The lost city     |
                                 |                      |                      |                      |                      |                      |
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
@@ -694,9 +714,71 @@ namespace TextBasedGame
                                 |      ~~  ~~  ~~      |      |___[]__|       |      '--------'      |     ~~~~ / \ ~~~     |      ~~~ || ~~~      |
                                 |  Sands of lost ones  |    Renard's keep     |        Casino        |    song of siren     |     Gnome Island     |
                                 |                      |                      |                      |                      |                      |
-                                +----------------------+----------------------+----------------------+----------------------+----------------------+");
+                                +----------------------+----------------------+----------------------+----------------------+----------------------+";
 
-            Console.ReadLine();
+            string[] mapLines = mapArt.Split('\n');
+
+            int markerLine = 2 + (4 - playerY) * 6;
+            int leftBorder = mapLines[markerLine].IndexOf('|');
+            int markerColumn = leftBorder + 2 + playerX * 23;
+
+            char[] characters = mapLines[markerLine].ToCharArray();
+
+            string markerText = "-> " + playerName;
+
+            // Keep the marker inside its map cell
+            if (markerText.Length > 20)
+            {
+                markerText = markerText.Substring(0, 20);
+            }
+
+            for (int i = 0; i < markerText.Length; i++)
+            {
+                characters[markerColumn + i] = markerText[i];
+            }
+
+            mapLines[markerLine] = new string(characters); Console.WriteLine(string.Join("\n", mapLines));
+            markerScreenX = markerColumn;
+            markerScreenY = Console.CursorTop - (mapLines.Length - markerLine);
+            if (!navigating)
+            {
+                Console.ReadLine();
+            }
+        }
+        //Blinking player location
+        public static char ReadBlinkingDirection()
+        {
+            int cursorX = Console.CursorLeft;
+            int cursorY = Console.CursorTop;
+
+            bool visible = true;
+
+            while (!Console.KeyAvailable)
+            {
+                Console.SetCursorPosition(markerScreenX, markerScreenY);
+
+                if (visible)
+                {
+                    Console.Write(" ");
+                }
+                else
+                {
+                    Console.Write("->");
+                }
+
+                visible = !visible;
+
+                Console.SetCursorPosition(cursorX, cursorY);
+
+                Thread.Sleep(500);
+            }
+
+            Console.SetCursorPosition(markerScreenX, markerScreenY);
+            Console.Write("->");
+
+            Console.SetCursorPosition(cursorX, cursorY);
+
+            return char.ToLower(Console.ReadKey(true).KeyChar);
         }
     }
 }
