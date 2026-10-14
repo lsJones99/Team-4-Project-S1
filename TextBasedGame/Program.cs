@@ -120,7 +120,12 @@ namespace TextBasedGame
             bool valid = false;
             do
             {
-                Console.WriteLine("Class selection prompt");
+                Console.WriteLine("\n---------- CHOOSE YOUR CLASS ----------");
+                Console.WriteLine("[W] Warrior - strong and tough");
+                Console.WriteLine("[R] Rogue   - fast and resilient");
+                Console.WriteLine("[M] Mage    - arcane power");
+                Console.WriteLine("[C] Custom  - choose your own stats");
+                Console.Write("\nEnter a letter: ");
                 do
                 {
                     userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
@@ -154,10 +159,10 @@ namespace TextBasedGame
                         valid = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid");
+                        Console.WriteLine("Invalid choice. Please enter W, R, M, or C.");
                         continue;
                 }
-                Console.WriteLine("Verify prompt");
+                Console.Write("Are you happy with this class? (Y/N): ");
                 check = 0;
                 while (check == 0)
                 {
@@ -175,7 +180,7 @@ namespace TextBasedGame
                     }
                     else
                     {
-                        Console.WriteLine("Error prompt");
+                        Console.WriteLine("Please enter Y for yes or N for no.");
                     }
                 }
             } while (valid == false);
