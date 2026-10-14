@@ -588,8 +588,13 @@ namespace TextBasedGame
             Console.WriteLine("[T] Throw out an item");
             Console.WriteLine("[ANY OTHER INPUT] Return");
 
-            char invChoice = Console.ReadLine()[0];
-            Console.Clear();
+            string inputChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
+            if(string.IsNullOrWhiteSpace(inputChoice))
+            {
+                Console.WriteLine("Returning to exploration.");
+                return;
+            }
+            char invChoice = inputChoice[0];
 
             switch (invChoice)
             {
@@ -663,7 +668,27 @@ namespace TextBasedGame
             // Disposing of items
             static void ThrowItems()
             {
-
+                Console.WriteLine("\n---------- THROW ITEM ----------");
+                for (int i = 0; i < inventoryCount; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {inventory[i]}");
+                }
+                Console.Write($"\nWhich slot to throw? (1 to {inventoryCount}): ");
+                if (!int.TryParse(Console.ReadLine(), out int throwChoice) || throwChoice < 1 || throwChoice > inventoryCount)
+                {
+                    Console.WriteLine("Invalid choice. Returning to inventory.");
+                    PauseStory();
+                    return;
+                }
+                string removedItem = inventory[throwChoice - 1];
+                for (int i = throwChoice - 1; i < inventoryCount - 1; i++)
+                {
+                    inventory[i] = inventory[i + 1];
+                }
+                inventory[inventoryCount - 1] = null;
+                inventoryCount--;
+                Console.WriteLine($"You threw away the {removedItem}.");
+                PauseStory();
             }
         }
         // Map
