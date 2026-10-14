@@ -36,6 +36,7 @@ namespace TextBasedGame
 
         static void Main()
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
 
             Intro();
@@ -237,6 +238,9 @@ namespace TextBasedGame
                     break;
                 case 'q':
                     return false;
+                case 'm':
+                    Map();
+                    break;
 
                 default:
                     Console.WriteLine("Unrecognised command.");
@@ -597,6 +601,10 @@ namespace TextBasedGame
             {
 
             }
+        }
+        public static void Map()
+        {
+            Console.WriteLine("Ogatoberg");
         }
     }
 }
