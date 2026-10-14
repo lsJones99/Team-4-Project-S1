@@ -1,4 +1,6 @@
-﻿namespace TextBasedGame
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace TextBasedGame
 {
     internal class Program
     {
@@ -265,7 +267,8 @@
                 if (combatInput.Length == 0)
                 {
                     Console.WriteLine("You did not enter a command.");
-                    continue;
+                    PauseStory();
+                    return true;
                 }
 
                 char combatChoice = combatInput[0];
@@ -486,6 +489,7 @@
             if (inventoryCount == 0)
             {
                 Console.WriteLine("Your inventory is empty.");
+                PauseStory();
                 return;
             }
 
