@@ -240,6 +240,7 @@ namespace TextBasedGame
             Console.WriteLine("[M] Map");
             Console.WriteLine($"Name: {playerName}");
             Console.WriteLine($"Health: {playerHealth}/{playerMaxHealth}");
+            Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
 
             Console.Write("\nEnter command: ");
             string userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
@@ -333,8 +334,52 @@ namespace TextBasedGame
 
                         case 'm':
                             //implement magic as the hero progresses
-                            Console.WriteLine("You have not learned any magic yet.");
-                            Console.WriteLine("\nPress Enter to continue.");
+                            Console.WriteLine("Choose a spell to cast");
+                            Console.WriteLine("[m] - Magic Missile");
+                            Console.WriteLine("[0] - Return to previous menu");
+                            string userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
+                            do
+                            {
+                                if (userselect.Length == 0)
+                                {
+                                    Console.WriteLine("Invalid selection, please try again");
+                                }
+                            } while (userselect.Length == 0);
+                            char spellselect = userselect[0];
+                            int valid = 0;
+                            do
+                            {
+                                switch (spellselect)
+                                {
+                                    case 'm':
+                                        int casting = rand.Next(1, 101) - (playerSpellMiscast);
+                                        if (casting <= 75)
+                                        {
+                                            playerDamage = rand.Next(5, 16) + playerSpellDmg;
+                                            enemyHealth -= playerDamage;
+                                            Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
+                                        }
+                                        else
+                                        {
+                                            playerDamage = rand.Next(1, 11);
+                                            playerHealth -= playerDamage;
+                                            Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
+                                        }
+                                        valid = 1;
+                                        break;
+                                    case '0':
+                                        {
+                                            Console.WriteLine("Leaving magic menu");
+                                            valid = 1;
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Console.WriteLine("Invalid option, please choose again");
+                                            break;
+                                        }
+                                }
+                            } while (valid == 0);
                             Console.ReadLine();
                             continue;
 
