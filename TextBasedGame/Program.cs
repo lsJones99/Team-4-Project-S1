@@ -16,6 +16,8 @@
         static int playerFinesse = 0;
         static int playerResilience = 0;
         static int playerArcane = 0;
+        static string equippedWpn = "";
+        static string equippedAmr = "";
 
 
         //Randomizer
@@ -71,10 +73,10 @@
             Console.WriteLine("Towering trees surround you, and a cold wind moves through their branches.");
             PauseStory();
 
-            Console.WriteLine("\nA mysterious voice echoes inside your mind...");
+            Console.WriteLine("A mysterious voice echoes inside your mind...");
             PauseStory();
 
-            Console.Write("\n\"Hero, tell me your name.\" ");
+            Console.Write("\"Hero, tell me your name.\" ");
             playerName = Console.ReadLine();
 
             //prevents the players from having a blank name
@@ -83,10 +85,10 @@
                 playerName = "Anon";
             }
 
-            Console.WriteLine($"\n\"{playerName}... A fitting name for the one chosen to save our world.\"");
+            Console.WriteLine($"\"{playerName}... A fitting name for the one chosen to save our world.\"");
             PauseStory();
 
-            Console.WriteLine("\nYou demand answers, but the mysterious voice ignores your questions.");
+            Console.WriteLine("You demand answers, but the mysterious voice ignores your questions.");
             PauseStory();
 
             Console.WriteLine("\"Our kingdom is being ravaged by creatures of darkness.\"");
@@ -95,16 +97,16 @@
             Console.WriteLine("\"Travel north and find the village of Greymoor. Your journey begins there.\"");
             PauseStory();
 
-            Console.WriteLine("\nBefore you can ask anything else, the voice disappears.");
+            Console.WriteLine("Before you can ask anything else, the voice disappears.");
             PauseStory();
 
             Console.WriteLine("You are alone. You have no idea where you are or how you arrived here.");
             PauseStory();
 
-            Console.WriteLine("\nSuddenly, you hear something moving in the nearby bushes...");
+            Console.WriteLine("Suddenly, you hear something moving in the nearby bushes...");
             PauseStory();
 
-            Console.WriteLine("\nYou take a deep breath and prepare to move.");
+            Console.WriteLine("You take a deep breath and prepare to move.");
             Console.WriteLine("Your journey begins now.");
 
             PauseStory();
@@ -251,7 +253,7 @@
                 Console.Clear();
 
                 Console.WriteLine("\n---------- COMBAT ----------");
-                Console.WriteLine($"{playerName}: {playerHealth}/100 HP");
+                Console.WriteLine($"{playerName}: {playerHealth}/{playerMaxHealth} HP");
                 Console.WriteLine($"{enemyName}: {enemyHealth}/50 HP");
 
                 Console.WriteLine("\n[A] Attack");
@@ -324,8 +326,6 @@
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
-                    Console.WriteLine("\nPress Enter to return to exploration.");
-                    Console.ReadLine();
                     break;
                 }
 
@@ -486,15 +486,19 @@
             if (inventoryCount == 0)
             {
                 Console.WriteLine("Your inventory is empty.");
+                PauseStory();
                 return;
             }
 
-            for (int i = 0; i < inventoryCount; i++)
+            for (int i = 0; i < inventory.Length; i++)
             {
                 Console.WriteLine($"{i + 1}. {inventory[i]}");
             }
 
             Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
+
+            Console.WriteLine($"\nEquipped weapon: {equippedWpn}");
+            Console.WriteLine($"Equipped armor: {equippedAmr}");
 
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
@@ -521,7 +525,33 @@
             // Using items
             static void UseItems()
             {
+                Console.WriteLine("\nWhich slot do you wish to use?");
+                int useChoice = Convert.ToInt32(Console.ReadLine());
 
+                // What happens when using a healing potion
+                if (inventory[useChoice-1] == "Healing Potion")
+                {
+                    playerHealth = playerHealth + 30;
+                    Console.WriteLine("The healing potion was used! +30 HP");
+                    Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
+                }
+                // What happens when using a rusty sword
+                else if (inventory[useChoice-1] == "Rusty Sword")
+                {
+                    // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
+                    if (equippedWpn != "")
+                    {
+                        inventory[useChoice-1] = equippedWpn;
+                    }
+                    else
+                    {
+                        inventory[useChoice-1] = null;
+                        inventoryCount -= 1;
+                    }
+                    equippedWpn = "Rusty Sword";
+                    Console.WriteLine("\nYou equipped the Rusty Sword.");
+                    PauseStory();
+                }
             }
 
             // Disposing of items
