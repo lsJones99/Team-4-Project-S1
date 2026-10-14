@@ -251,7 +251,7 @@
                 Console.Clear();
 
                 Console.WriteLine("\n---------- COMBAT ----------");
-                Console.WriteLine($"{playerName}: {playerHealth}/100 HP");
+                Console.WriteLine($"{playerName}: {playerMaxHealth} HP");
                 Console.WriteLine($"{enemyName}: {enemyHealth}/50 HP");
 
                 Console.WriteLine("\n[A] Attack");
