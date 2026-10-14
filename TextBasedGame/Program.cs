@@ -137,10 +137,16 @@ namespace TextBasedGame
                         break;
                     case 'r':
                         Console.WriteLine("Rogue text");
+                        playerStrength = 2;
+                        playerFinesse = 5;
+                        playerResilience = 3;
                         valid = true;
                         break;
                     case 'm':
                         Console.WriteLine("Mage text");
+                        playerStrength = 1;
+                        playerArcane = 5;
+                        playerResilience = 2;
                         valid = true;
                         break;
                     case 'c':
