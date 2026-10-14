@@ -503,7 +503,7 @@
             Console.WriteLine("[T] Throw out an item");
             Console.WriteLine("[ANY OTHER INPUT] Nothing");
 
-            char invChoice = Convert.ToChar(Console.ReadKey());
+            char invChoice = char.ToLower(Console.ReadKey(true).KeyChar);
 
             switch (invChoice)
             {
