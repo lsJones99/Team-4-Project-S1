@@ -636,7 +636,7 @@ namespace TextBasedGame
                 return;
             }
 
-            for (int i = 0; i < inventory.Length; i++)
+            for (int i = 0; i < inventoryCount; i++)
             {
                 Console.WriteLine($"{i + 1}. {inventory[i]}");
             }
@@ -677,9 +677,10 @@ namespace TextBasedGame
             // Using items
             static void UseItems()
             {
+                bool slotEmpty = false;
                 Console.WriteLine("\n---------- INVENTORY ----------");
 
-                for (int i = 0; i < inventory.Length; i++)
+                for (int i = 0; i < inventoryCount; i++)
                 {
                     Console.WriteLine($"{i + 1}. {inventory[i]}");
                 }
@@ -695,7 +696,7 @@ namespace TextBasedGame
                 if (inventory[useChoice-1] == "Healing Potion")
                 {
                     playerHealth = playerHealth + 30;
-                    inventory[useChoice - 1] = null;
+                    slotEmpty = true;
                     Console.WriteLine("The healing potion was used! +30 HP");
                     if (playerHealth > playerMaxHealth)
                     {
@@ -714,8 +715,7 @@ namespace TextBasedGame
                     }
                     else
                     {
-                        inventory[useChoice-1] = null;
-                        inventoryCount -= 1;
+                        slotEmpty = true;
                     }
                     equippedWpn = "Rusty Sword";
                     Console.WriteLine("You equipped the Rusty Sword.");
@@ -725,6 +725,17 @@ namespace TextBasedGame
                 {
                     Console.WriteLine("That input is unrecognised.");
                     PauseStory();
+                }
+
+                if (slotEmpty == true)
+                {
+                    string usedItem = inventory[useChoice - 1];
+                    for (int i = useChoice - 1; i < inventoryCount - 1; i++)
+                    {
+                        inventory[i] = inventory[i + 1];
+                    }
+                    inventory[inventoryCount - 1] = null;
+                    inventoryCount--;
                 }
             }
 
@@ -739,7 +750,7 @@ namespace TextBasedGame
                 Console.Write($"\nWhich slot to throw? (1 to {inventoryCount}): ");
                 if (!int.TryParse(Console.ReadLine(), out int throwChoice) || throwChoice < 1 || throwChoice > inventoryCount)
                 {
-                    Console.WriteLine("Invalid choice. Returning to inventory.");
+                    Console.WriteLine("Invalid choice. Returning to exploration.");
                     PauseStory();
                     return;
                 }
