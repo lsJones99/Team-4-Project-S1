@@ -21,6 +21,9 @@ namespace TextBasedGame
         static int playerMaxHealth = 100;
         static int playerMana = 5;
         static int playerMaxMana = 5;
+        static int playerLevel = 1;
+        static int playerCurrentXP = 0;
+        static int playerNextXP = 0;
         static string[] inventory = new string[MAX_INVENTORY_SIZE];
         static int inventoryCount = 0;
         static int playerDamage = 0;
@@ -30,10 +33,17 @@ namespace TextBasedGame
         static int playerFinesse = 0;
         static int playerRangeHit = 0;
         static int playerRangeDmg = 0;
+        static int playerRunBonus = 0;
+        static int playerDodge = 0;
+        static int playerCritChance = 0;
         static int playerResilience = 0;
+        static int playerPhysicalResist = 0;
+        static int playerBlockChance = 0;
+        static int playerBlockReduction = 0;
         static int playerArcane = 0;
         static int playerSpellMiscast = 0;
         static int playerSpellDmg = 0;
+        static int playerMagicResist = 0;
         static string playerWpn = "";
         static string playerAmr = "";
         static int playerX = 2; // Start in Dark Forest
@@ -394,6 +404,9 @@ namespace TextBasedGame
                     }
                 }
             } while (valid == false);
+            playerLevel = 1;
+            playerCurrentXP = 0;
+            playerNextXP = playerLevel * 50;
             MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
             inventory = new string[MAX_INVENTORY_SIZE];
             playerMaxHealth = playerMaxHealth + (10 * playerResilience);
@@ -404,8 +417,15 @@ namespace TextBasedGame
             playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
             playerRangeHit = playerRangeHit + playerFinesse;
             playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
+            playerCritChance = playerCritChance + (playerFinesse * 4);
             playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
             playerSpellDmg = playerSpellDmg + (playerArcane % 2);
+            playerDodge = playerDodge + (playerFinesse * 3);
+            playerRunBonus = playerRunBonus + (2 * playerFinesse);
+            playerBlockChance = playerBlockChance + (4 * playerResilience);
+            playerBlockReduction = playerBlockReduction + (playerResilience / 2);
+            playerPhysicalResist = playerPhysicalResist + (playerResilience / 3);
+            playerMagicResist = playerMagicResist + (playerArcane / 3);
         }
         // Custom Character
         static void CustomStats()
