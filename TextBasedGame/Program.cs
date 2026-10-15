@@ -1,4 +1,7 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -7,7 +10,7 @@ namespace TextBasedGame
 {
     internal class Program
     {
-
+        private static readonly string saveFile = "savedata.txt";
 
         //Player information
         static int MAX_INVENTORY_SIZE = 5;
@@ -51,6 +54,9 @@ namespace TextBasedGame
 
         static void Main()
         {
+            // Loading a save if there is one
+            Load();
+
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
 
@@ -74,7 +80,128 @@ namespace TextBasedGame
             Console.WriteLine("[D] Delete save");
             Console.WriteLine("[ANY OTHER INPUT] Return");
 
-            char saveChoice = Console.ReadLine()[0];
+            string saveChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
+            if (string.IsNullOrWhiteSpace(saveChoice))
+            {
+                return;
+            }
+
+            char saveInput = saveChoice[0];
+
+            switch (saveInput)
+            {
+                case 's':
+                    string inventoryString = string.Join(",", inventory);
+
+                    System.Collections.Generic.List<string> linesToSave = new System.Collections.Generic.List<string>
+                    {
+                    $"playerName={playerName}",
+                    $"inventory={inventoryString}",
+                    $"inventoryCount={inventoryCount}",
+                    $"MAX_INVENTORY_SIZE={MAX_INVENTORY_SIZE}",
+                    $"playerHealth={playerHealth}",
+                    $"playerMaxHealth={playerMaxHealth}",
+                    $"playerMana={playerMana}",
+                    $"playerMaxMana={playerMaxMana}",
+                    $"playerStrength={playerStrength}",
+                    $"playerResilience={playerResilience}",
+                    $"playerFinesse={playerFinesse}",
+                    $"playerArcane={playerArcane}",
+                    $"playerMeleeDmg={playerMeleeDmg}",
+                    $"playerMeleeHit={playerMeleeHit}",
+                    $"playerRangeDmg={playerRangeDmg}",
+                    $"playerRangeHit={playerRangeHit}",
+                    $"playerSpellDmg={playerSpellDmg}",
+                    $"playerSpellMiscast={playerSpellMiscast}",
+                    $"markerScreenX={markerScreenX}",
+                    $"markerScreenY={markerScreenY}"
+                    };
+
+                    File.WriteAllLines(saveFile, linesToSave);
+                    Console.WriteLine("Progress successfully saved!");
+                    PauseStory();
+                    break;
+
+                case 'd':
+                    if (File.Exists(saveFile))
+                    {
+                        Console.WriteLine("Are you sure you want to delete the current save file?");
+                        Console.WriteLine("[Y] Confirm");
+                        Console.WriteLine("[ANY OTHER INPUT] Return");
+                        string deleteChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
+                        if (string.IsNullOrWhiteSpace(saveChoice))
+                        {
+                            break;
+                        }
+
+                        char deleteConf = deleteChoice[0];
+
+                        switch (deleteConf)
+                        {
+                            case 'y':
+                                File.Delete(saveFile);
+                                Console.WriteLine("Save file successfully deleted.");
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nThere is no save to delete!");
+                    }
+                    PauseStory();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // Loading save
+        static void Load()
+        {
+            if (File.Exists(saveFile))
+            {
+                var lines = File.ReadAllLines(saveFile);
+                foreach (var line in lines)
+                {
+                    var parts = line.Split('=', 2);
+                    if (parts.Length == 2)
+                    {
+                        string key = parts[0].Trim();
+                        string value = parts[1].Trim();
+
+                        if (key == "playerName") playerName = value;
+                        else if (key == "inventory")
+                        {
+                            inventory = string.IsNullOrEmpty(value) ? new string[0] :
+                                value.Split(',');
+                        }
+                        else if (key == "inventoryCount") int.TryParse(value, out inventoryCount);
+                        else if (key == "MAX_INVENTORY_SIZE") int.TryParse(value, out MAX_INVENTORY_SIZE);
+                        else if (key == "playerHealth") int.TryParse(value, out playerHealth);
+                        else if (key == "playerMaxHealth") int.TryParse(value, out playerMaxHealth);
+                        else if (key == "playerMana") int.TryParse(value, out playerMana);
+                        else if (key == "playerMaxMana") int.TryParse(value, out playerMaxMana);
+                        else if (key == "playerStrength") int.TryParse(value, out playerStrength);
+                        else if (key == "playerResilience") int.TryParse(value, out playerResilience);
+                        else if (key == "playerFinesse") int.TryParse(value, out playerFinesse);
+                        else if (key == "playerArcane") int.TryParse(value, out playerArcane);
+                        else if (key == "playerMeleeDmg") int.TryParse(value, out playerMeleeDmg);
+                        else if (key == "playerMeleeHit") int.TryParse(value, out playerMeleeHit);
+                        else if (key == "playerRangeDmg") int.TryParse(value, out playerRangeDmg);
+                        else if (key == "playerRangeHit") int.TryParse(value, out playerRangeHit);
+                        else if (key == "playerSpellDmg") int.TryParse(value, out playerSpellDmg);
+                        else if (key == "playerSpellMiscast") int.TryParse(value, out playerSpellMiscast);
+                        else if (key == "markerScreenX") int.TryParse(value, out markerScreenX);
+                        else if (key == "markerScreenY") int.TryParse(value, out markerScreenY);
+                    }
+                }
+                Console.WriteLine("--- Settings Loaded from File ---");
+                Thread.Sleep(3000);
+            }
         }
 
         // General function for pausing
