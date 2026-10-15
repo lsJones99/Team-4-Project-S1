@@ -1,4 +1,8 @@
+
 ﻿using System.ComponentModel.Design;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
@@ -8,7 +12,7 @@ namespace TextBasedGame
 {
     internal class Program
     {
-
+        private static readonly string saveFile = "savedata.txt";
 
         //Player information
         static int MAX_INVENTORY_SIZE = 5;
@@ -55,6 +59,9 @@ namespace TextBasedGame
 
         static void Main()
         {
+            // Loading a save if there is one
+            Load();
+
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
 
@@ -78,7 +85,128 @@ namespace TextBasedGame
             Console.WriteLine("[D] Delete save");
             Console.WriteLine("[ANY OTHER INPUT] Return");
 
-            char saveChoice = Console.ReadLine()[0];
+            string saveChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
+            if (string.IsNullOrWhiteSpace(saveChoice))
+            {
+                return;
+            }
+
+            char saveInput = saveChoice[0];
+
+            switch (saveInput)
+            {
+                case 's':
+                    string inventoryString = string.Join(",", inventory);
+
+                    System.Collections.Generic.List<string> linesToSave = new System.Collections.Generic.List<string>
+                    {
+                    $"playerName={playerName}",
+                    $"inventory={inventoryString}",
+                    $"inventoryCount={inventoryCount}",
+                    $"MAX_INVENTORY_SIZE={MAX_INVENTORY_SIZE}",
+                    $"playerHealth={playerHealth}",
+                    $"playerMaxHealth={playerMaxHealth}",
+                    $"playerMana={playerMana}",
+                    $"playerMaxMana={playerMaxMana}",
+                    $"playerStrength={playerStrength}",
+                    $"playerResilience={playerResilience}",
+                    $"playerFinesse={playerFinesse}",
+                    $"playerArcane={playerArcane}",
+                    $"playerMeleeDmg={playerMeleeDmg}",
+                    $"playerMeleeHit={playerMeleeHit}",
+                    $"playerRangeDmg={playerRangeDmg}",
+                    $"playerRangeHit={playerRangeHit}",
+                    $"playerSpellDmg={playerSpellDmg}",
+                    $"playerSpellMiscast={playerSpellMiscast}",
+                    $"markerScreenX={markerScreenX}",
+                    $"markerScreenY={markerScreenY}"
+                    };
+
+                    File.WriteAllLines(saveFile, linesToSave);
+                    Console.WriteLine("Progress successfully saved!");
+                    PauseStory();
+                    break;
+
+                case 'd':
+                    if (File.Exists(saveFile))
+                    {
+                        Console.WriteLine("Are you sure you want to delete the current save file?");
+                        Console.WriteLine("[Y] Confirm");
+                        Console.WriteLine("[ANY OTHER INPUT] Return");
+                        string deleteChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
+                        if (string.IsNullOrWhiteSpace(saveChoice))
+                        {
+                            break;
+                        }
+
+                        char deleteConf = deleteChoice[0];
+
+                        switch (deleteConf)
+                        {
+                            case 'y':
+                                File.Delete(saveFile);
+                                Console.WriteLine("Save file successfully deleted.");
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nThere is no save to delete!");
+                    }
+                    PauseStory();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // Loading save
+        static void Load()
+        {
+            if (File.Exists(saveFile))
+            {
+                var lines = File.ReadAllLines(saveFile);
+                foreach (var line in lines)
+                {
+                    var parts = line.Split('=', 2);
+                    if (parts.Length == 2)
+                    {
+                        string key = parts[0].Trim();
+                        string value = parts[1].Trim();
+
+                        if (key == "playerName") playerName = value;
+                        else if (key == "inventory")
+                        {
+                            inventory = string.IsNullOrEmpty(value) ? new string[0] :
+                                value.Split(',');
+                        }
+                        else if (key == "inventoryCount") int.TryParse(value, out inventoryCount);
+                        else if (key == "MAX_INVENTORY_SIZE") int.TryParse(value, out MAX_INVENTORY_SIZE);
+                        else if (key == "playerHealth") int.TryParse(value, out playerHealth);
+                        else if (key == "playerMaxHealth") int.TryParse(value, out playerMaxHealth);
+                        else if (key == "playerMana") int.TryParse(value, out playerMana);
+                        else if (key == "playerMaxMana") int.TryParse(value, out playerMaxMana);
+                        else if (key == "playerStrength") int.TryParse(value, out playerStrength);
+                        else if (key == "playerResilience") int.TryParse(value, out playerResilience);
+                        else if (key == "playerFinesse") int.TryParse(value, out playerFinesse);
+                        else if (key == "playerArcane") int.TryParse(value, out playerArcane);
+                        else if (key == "playerMeleeDmg") int.TryParse(value, out playerMeleeDmg);
+                        else if (key == "playerMeleeHit") int.TryParse(value, out playerMeleeHit);
+                        else if (key == "playerRangeDmg") int.TryParse(value, out playerRangeDmg);
+                        else if (key == "playerRangeHit") int.TryParse(value, out playerRangeHit);
+                        else if (key == "playerSpellDmg") int.TryParse(value, out playerSpellDmg);
+                        else if (key == "playerSpellMiscast") int.TryParse(value, out playerSpellMiscast);
+                        else if (key == "markerScreenX") int.TryParse(value, out markerScreenX);
+                        else if (key == "markerScreenY") int.TryParse(value, out markerScreenY);
+                    }
+                }
+                Console.WriteLine("--- Settings Loaded from File ---");
+                Thread.Sleep(3000);
+            }
         }
 
         // General function for pausing
@@ -411,15 +539,15 @@ namespace TextBasedGame
                                         break;
                                     }
                                 case '0':
-                                {
-                                    Console.WriteLine("Leaving magic menu");
-                                    break;
-                                }
+                                    {
+                                        Console.WriteLine("Leaving magic menu");
+                                        break;
+                                    }
                                 default:
-                                {
-                                    Console.WriteLine("Invalid option, please choose again");
-                                    break;
-                                }
+                                    {
+                                        Console.WriteLine("Invalid option, please choose again");
+                                        break;
+                                    }
                             }
                             if (valid == 1)
                             {
@@ -432,36 +560,39 @@ namespace TextBasedGame
                             }
 
                         case 'i':
-                                    //item use to be implemented later on
-                                    Console.WriteLine("Item use is not available during combat yet.");
-                                    Console.WriteLine("\nPress Enter to continue.");
-                                    Console.ReadLine();
-                                    continue;
+                            //item use to be implemented later on
+                            Console.WriteLine("Item use is not available during combat yet.");
+                            Console.WriteLine("\nPress Enter to continue.");
+                            Console.ReadLine();
+                            continue;
 
-                                case 'r':
-                                    escapeChance = rand.Next(1, 101);
+                        case 'r':
+                            escapeChance = rand.Next(1, 101);
 
-                                    if (escapeChance <= 50)
-                                    {
-                                        Console.WriteLine($"You have successfully escaped from {enemyName}!");
-                                        inCombat = false;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("You failed to escape!");
-                                    }
-                                    break;
+                            if (escapeChance <= 50)
+                            {
+                                Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                                inCombat = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("You failed to escape!");
+                            }
+                            break;
 
-                                default:
-                                    Console.WriteLine("Unrecognised combat command.");
-                                    continue;
-                                }
+                        default:
+                            Console.WriteLine("Unrecognised combat command.");
+                            continue;
+                    }
+
+                    
                 }
-
+                //command after running away
                 if (!inCombat)
                 {
                     Console.WriteLine("\nPress Enter to return to exploration.");
                     Console.ReadLine();
+                    continue;
                 }
 
 
@@ -470,6 +601,7 @@ namespace TextBasedGame
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
+                    PauseStory();
                     break;
                 }
 
@@ -492,7 +624,9 @@ namespace TextBasedGame
                     Console.WriteLine("\nPress Enter for the next turn.");
                     Console.ReadLine();
                 }
+
             }
+            
             return true;
         }
 
