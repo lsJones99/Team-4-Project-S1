@@ -345,15 +345,17 @@ namespace TextBasedGame
                 switch (user)
                 {
                     case 'w':
-                        Console.WriteLine("Warrior text");
+                        Console.WriteLine("------ Warrior ------");
+                        Console.WriteLine("Prefers close quarters physical melee weapons, able to take a few hits and deal consistant damage, wearing the heaviest of equipment.\nJust maybe avoid anything magically inclined for your own safety");
                         playerStrength = 5;
-                        playerFinesse = 2;
-                        playerResilience = 3;
+                        playerFinesse = 1;
+                        playerResilience = 4;
                         playerArcane = 0;
                         valid = true;
                         break;
                     case 'r':
-                        Console.WriteLine("Rogue text");
+                        Console.WriteLine("------ Rogue ------");
+                        Console.WriteLine("A physical ranged combatant able to dodge most blows while dealing more frequent critical damage and more likely to escape a bad engagement.\nA little bit of arcane skill to bolster their natural skill but be wary of fights dragging on too long.");
                         playerStrength = 2;
                         playerFinesse = 5;
                         playerResilience = 2;
@@ -361,7 +363,8 @@ namespace TextBasedGame
                         valid = true;
                         break;
                     case 'm':
-                        Console.WriteLine("Mage text");
+                        Console.WriteLine("------ Mage ------");
+                        Console.WriteLine("A master of the arcane arts, able to cast a much wider variety of spells with more frequency than other, with loss likely hood of self immolation to boot.\nHowever, your ability to use non-magical equipment is limited and are far more frail than most.");
                         playerStrength = 1;
                         playerFinesse = 2;
                         playerResilience = 1;
@@ -376,7 +379,6 @@ namespace TextBasedGame
                         Console.WriteLine("Invalid choice. Please enter W, R, M, or C.");
                         continue;
                 }
-                Console.Clear();
                 Console.WriteLine("\n---------- STAT ALLOCATION ----------\n");
                 Console.WriteLine($"Strength   : {playerStrength}\n");
                 Console.WriteLine($"Finesse    : {playerFinesse}\n");
@@ -431,7 +433,10 @@ namespace TextBasedGame
         static void CustomStats()
         {
             int pool = 10, value = 0, valid;
-            Console.WriteLine("----- Strength -----");
+            Console.Clear();
+            Console.WriteLine("------ Custom ------");
+            Console.WriteLine("Build your own stat distribution to suit your playstyle! with a more detailed description of stat functions.");
+            Console.WriteLine("\n----- Strength -----");
             Console.WriteLine("Strength affects how much you can carry and proficiency with melee weapons");
             Console.WriteLine("\nHow many points would you like to add to Strength?");
             Console.WriteLine($"You have {pool} points left to allocate");
@@ -439,7 +444,7 @@ namespace TextBasedGame
             do
             {
                 value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool))
+                if ((value <= 6) && (value <= pool) && (value >= 0))
                 {
                     pool = pool - value;
                     playerStrength = value;
@@ -459,7 +464,7 @@ namespace TextBasedGame
             do
             {
                 value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool))
+                if ((value <= 6) && (value <= pool) && (value >= 0))
                 {
                     playerFinesse = value;
                     pool = pool - value;
@@ -479,7 +484,7 @@ namespace TextBasedGame
             do
             {
                 value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool))
+                if ((value <= 6) && (value <= pool) && (value >= 0))
                 {
                     playerResilience = value;
                     pool = pool - value;
@@ -495,10 +500,11 @@ namespace TextBasedGame
             Console.WriteLine("Arcane affects your total mana, ability to cast spells and their damage");
             Console.WriteLine("\nHow many points would you like to add to Arcane?");
             Console.WriteLine($"You have {pool} points left to allocate");
+            valid = 0;
             do
             {
                 value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool))
+                if ((value <= 6) && (value <= pool) && (value >= 0))
                 {
                     playerArcane = value;
                     pool = pool - value;
@@ -508,7 +514,8 @@ namespace TextBasedGame
                 {
                     Console.WriteLine("Invalid value, please try again");
                 }
-            } while (value > 6);
+            } while (valid == 0);
+            Console.Clear();
         }
         // Menu commands
         static bool Menu()
