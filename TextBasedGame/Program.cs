@@ -74,7 +74,7 @@ namespace TextBasedGame
         static void Save()
         {
             Console.Clear();
-            Console.WriteLine("\n---------- SAVING ----------");
+            Console.WriteLine("\n---------- SAVE FILE ----------");
             Console.WriteLine("What do you wish to do?");
             Console.WriteLine("[S] Save (THIS WILL OVERWRITE ANY PREVIOUS SAVE)");
             Console.WriteLine("[D] Delete save");
@@ -118,6 +118,9 @@ namespace TextBasedGame
                     };
 
                     File.WriteAllLines(saveFile, linesToSave);
+
+                    Console.Clear();
+                    Console.WriteLine("\n---------- SAVE FILE ----------");
                     Console.WriteLine("Progress successfully saved!");
                     PauseStory();
                     break;
@@ -125,11 +128,13 @@ namespace TextBasedGame
                 case 'd':
                     if (File.Exists(saveFile))
                     {
+                        Console.Clear();
+                        Console.WriteLine("\n---------- SAVE FILE ----------");
                         Console.WriteLine("Are you sure you want to delete the current save file?");
                         Console.WriteLine("[Y] Confirm");
                         Console.WriteLine("[ANY OTHER INPUT] Return");
                         string deleteChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
-                        if (string.IsNullOrWhiteSpace(saveChoice))
+                        if (string.IsNullOrWhiteSpace(deleteChoice))
                         {
                             break;
                         }
@@ -140,7 +145,11 @@ namespace TextBasedGame
                         {
                             case 'y':
                                 File.Delete(saveFile);
+
+                                Console.Clear();
+                                Console.WriteLine("\n---------- SAVE FILE ----------");
                                 Console.WriteLine("Save file successfully deleted.");
+                                PauseStory();
                                 break;
 
                             default:
@@ -149,9 +158,11 @@ namespace TextBasedGame
                     }
                     else
                     {
+                        Console.Clear();
+                        Console.WriteLine("\n---------- SAVE FILE ----------");
                         Console.WriteLine("\nThere is no save to delete!");
+                        PauseStory();
                     }
-                    PauseStory();
                     break;
 
                 default:
