@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.ComponentModel.Design;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -42,6 +43,9 @@ namespace TextBasedGame
         static int randomEnemyEncounter = 0;
         static int escapeChance = 0;
 
+
+        //Quest
+        static bool activequest = false;
 
         //Enemies
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
@@ -252,9 +256,10 @@ namespace TextBasedGame
             Console.WriteLine("[R] Start Navigating");
             Console.WriteLine("[I] Investigate");
             Console.WriteLine("[V] View inventory");
-            Console.WriteLine("[Q] Quit");
+            Console.WriteLine("[E] Exit");
             Console.WriteLine("[M] Map");
             Console.WriteLine("[S] Save");
+            Console.WriteLine("[Q] Quest");
             Console.WriteLine($"Name: {playerName}");
             Console.WriteLine($"Health: {playerHealth}/{playerMaxHealth}");
             Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
@@ -286,11 +291,14 @@ namespace TextBasedGame
                     ViewInventory();
                     break;
 
-                case 'q':
+                case 'e':
                     return false;
 
                 case 'm':
                     Map();
+                    break;
+                case 'q':
+                    Quest();
                     break;
 
                 case 's':
@@ -899,6 +907,13 @@ namespace TextBasedGame
             Console.SetCursorPosition(cursorX, cursorY);
 
             return char.ToLower(Console.ReadKey(true).KeyChar);
+        }
+        public static void Quest(bool activequest = true)
+        {
+            
+            string quest = "";
+            Console.WriteLine($"{quest}");
+            Console.ReadLine();
         }
     }
 }
