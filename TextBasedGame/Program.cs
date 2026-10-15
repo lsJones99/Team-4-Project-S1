@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace TextBasedGame
@@ -63,13 +64,27 @@ namespace TextBasedGame
             Console.WriteLine("\nThank you for playing.");
             Console.ReadLine();
         }
+        // Saving progress
+        static void Save()
+        {
+            Console.Clear();
+            Console.WriteLine("\n---------- SAVING ----------");
+            Console.WriteLine("What do you wish to do?");
+            Console.WriteLine("[S] Save (THIS WILL OVERWRITE ANY PREVIOUS SAVE)");
+            Console.WriteLine("[D] Delete save");
+            Console.WriteLine("[ANY OTHER INPUT] Return");
 
+            char saveChoice = Console.ReadLine()[0];
+        }
+
+        // General function for pausing
         static void PauseStory()
         {
             Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
             Console.Clear();
         }
+
         // Intro
         static void Intro()
         {
@@ -184,7 +199,7 @@ namespace TextBasedGame
                         continue;
                 }
                 Console.Clear();
-                Console.WriteLine("\n---------- Stat Allocation ----------\n");
+                Console.WriteLine("\n---------- STAT ALLOCATION ----------\n");
                 Console.WriteLine($"Strength   : {playerStrength}\n");
                 Console.WriteLine($"Finesse    : {playerFinesse}\n");
                 Console.WriteLine($"Resilience : {playerResilience}\n");
@@ -239,6 +254,7 @@ namespace TextBasedGame
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[Q] Quit");
             Console.WriteLine("[M] Map");
+            Console.WriteLine("[S] Save");
             Console.WriteLine($"Name: {playerName}");
             Console.WriteLine($"Health: {playerHealth}/{playerMaxHealth}");
             Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
@@ -269,10 +285,16 @@ namespace TextBasedGame
                 case 'v':
                     ViewInventory();
                     break;
+
                 case 'q':
                     return false;
+
                 case 'm':
                     Map();
+                    break;
+
+                case 's':
+                    Save();
                     break;
 
                 default:
@@ -652,11 +674,11 @@ namespace TextBasedGame
             Console.WriteLine("[ANY OTHER INPUT] Return");
 
             string inputChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
-            if(string.IsNullOrWhiteSpace(inputChoice))
+            if (string.IsNullOrWhiteSpace(inputChoice))
             {
-                Console.WriteLine("Returning to exploration.");
                 return;
             }
+
             char invChoice = inputChoice[0];
 
             switch (invChoice)
@@ -670,7 +692,6 @@ namespace TextBasedGame
                     break;
 
                 default:
-                    Console.WriteLine("Returning to exploration.");
                     break;
             }
 
