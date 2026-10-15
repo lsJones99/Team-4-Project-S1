@@ -403,15 +403,15 @@ namespace TextBasedGame
                                         break;
                                     }
                                 case '0':
-                                {
-                                    Console.WriteLine("Leaving magic menu");
-                                    break;
-                                }
+                                    {
+                                        Console.WriteLine("Leaving magic menu");
+                                        break;
+                                    }
                                 default:
-                                {
-                                    Console.WriteLine("Invalid option, please choose again");
-                                    break;
-                                }
+                                    {
+                                        Console.WriteLine("Invalid option, please choose again");
+                                        break;
+                                    }
                             }
                             if (valid == 1)
                             {
@@ -424,36 +424,39 @@ namespace TextBasedGame
                             }
 
                         case 'i':
-                                    //item use to be implemented later on
-                                    Console.WriteLine("Item use is not available during combat yet.");
-                                    Console.WriteLine("\nPress Enter to continue.");
-                                    Console.ReadLine();
-                                    continue;
+                            //item use to be implemented later on
+                            Console.WriteLine("Item use is not available during combat yet.");
+                            Console.WriteLine("\nPress Enter to continue.");
+                            Console.ReadLine();
+                            continue;
 
-                                case 'r':
-                                    escapeChance = rand.Next(1, 101);
+                        case 'r':
+                            escapeChance = rand.Next(1, 101);
 
-                                    if (escapeChance <= 50)
-                                    {
-                                        Console.WriteLine($"You have successfully escaped from {enemyName}!");
-                                        inCombat = false;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("You failed to escape!");
-                                    }
-                                    break;
+                            if (escapeChance <= 50)
+                            {
+                                Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                                inCombat = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("You failed to escape!");
+                            }
+                            break;
 
-                                default:
-                                    Console.WriteLine("Unrecognised combat command.");
-                                    continue;
-                                }
+                        default:
+                            Console.WriteLine("Unrecognised combat command.");
+                            continue;
+                    }
+
+                    
                 }
-
+                //command after running away
                 if (!inCombat)
                 {
                     Console.WriteLine("\nPress Enter to return to exploration.");
                     Console.ReadLine();
+                    continue;
                 }
 
 
@@ -462,6 +465,7 @@ namespace TextBasedGame
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
+                    PauseStory();
                     break;
                 }
 
@@ -484,7 +488,9 @@ namespace TextBasedGame
                     Console.WriteLine("\nPress Enter for the next turn.");
                     Console.ReadLine();
                 }
+
             }
+            
             return true;
         }
 
