@@ -1,3 +1,5 @@
+
+﻿using System.ComponentModel.Design;
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
@@ -45,6 +47,9 @@ namespace TextBasedGame
         static int randomEnemyEncounter = 0;
         static int escapeChance = 0;
 
+
+        //Quest
+        static bool activequest = false;
 
         //Enemies
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
@@ -390,9 +395,10 @@ namespace TextBasedGame
             Console.WriteLine("[R] Start Navigating");
             Console.WriteLine("[I] Investigate");
             Console.WriteLine("[V] View inventory");
-            Console.WriteLine("[Q] Quit");
+            Console.WriteLine("[E] Exit");
             Console.WriteLine("[M] Map");
             Console.WriteLine("[S] Save");
+            Console.WriteLine("[Q] Quest");
             Console.WriteLine($"Name: {playerName}");
             Console.WriteLine($"Health: {playerHealth}/{playerMaxHealth}");
             Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
@@ -424,11 +430,14 @@ namespace TextBasedGame
                     ViewInventory();
                     break;
 
-                case 'q':
+                case 'e':
                     return false;
 
                 case 'm':
                     Map();
+                    break;
+                case 'q':
+                    Quest();
                     break;
 
                 case 's':
@@ -541,15 +550,15 @@ namespace TextBasedGame
                                         break;
                                     }
                                 case '0':
-                                {
-                                    Console.WriteLine("Leaving magic menu");
-                                    break;
-                                }
+                                    {
+                                        Console.WriteLine("Leaving magic menu");
+                                        break;
+                                    }
                                 default:
-                                {
-                                    Console.WriteLine("Invalid option, please choose again");
-                                    break;
-                                }
+                                    {
+                                        Console.WriteLine("Invalid option, please choose again");
+                                        break;
+                                    }
                             }
                             if (valid == 1)
                             {
@@ -562,36 +571,39 @@ namespace TextBasedGame
                             }
 
                         case 'i':
-                                    //item use to be implemented later on
-                                    Console.WriteLine("Item use is not available during combat yet.");
-                                    Console.WriteLine("\nPress Enter to continue.");
-                                    Console.ReadLine();
-                                    continue;
+                            //item use to be implemented later on
+                            Console.WriteLine("Item use is not available during combat yet.");
+                            Console.WriteLine("\nPress Enter to continue.");
+                            Console.ReadLine();
+                            continue;
 
-                                case 'r':
-                                    escapeChance = rand.Next(1, 101);
+                        case 'r':
+                            escapeChance = rand.Next(1, 101);
 
-                                    if (escapeChance <= 50)
-                                    {
-                                        Console.WriteLine($"You have successfully escaped from {enemyName}!");
-                                        inCombat = false;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("You failed to escape!");
-                                    }
-                                    break;
+                            if (escapeChance <= 50)
+                            {
+                                Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                                inCombat = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("You failed to escape!");
+                            }
+                            break;
 
-                                default:
-                                    Console.WriteLine("Unrecognised combat command.");
-                                    continue;
-                                }
+                        default:
+                            Console.WriteLine("Unrecognised combat command.");
+                            continue;
+                    }
+
+                    
                 }
-
+                //command after running away
                 if (!inCombat)
                 {
                     Console.WriteLine("\nPress Enter to return to exploration.");
                     Console.ReadLine();
+                    continue;
                 }
 
 
@@ -600,6 +612,7 @@ namespace TextBasedGame
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
+                    PauseStory();
                     break;
                 }
 
@@ -622,7 +635,9 @@ namespace TextBasedGame
                     Console.WriteLine("\nPress Enter for the next turn.");
                     Console.ReadLine();
                 }
+
             }
+            
             return true;
         }
 
@@ -1037,6 +1052,13 @@ namespace TextBasedGame
             Console.SetCursorPosition(cursorX, cursorY);
 
             return char.ToLower(Console.ReadKey(true).KeyChar);
+        }
+        public static void Quest(bool activequest = true)
+        {
+            
+            string quest = "";
+            Console.WriteLine($"{quest}");
+            Console.ReadLine();
         }
     }
 }
