@@ -34,8 +34,8 @@ namespace TextBasedGame
         static int playerArcane = 0;
         static int playerSpellMiscast = 0;
         static int playerSpellDmg = 0;
-        static string equippedWpn = "";
-        static string equippedAmr = "";
+        static string playerWpn = "";
+        static string playerAmr = "";
         static int playerX = 2; // Start in Dark Forest
         static int playerY = 2;
         static int markerScreenX;
@@ -65,8 +65,12 @@ namespace TextBasedGame
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
 
-            Intro();
-            CreateCharacter();
+            if (File.Exists(saveFile) == false)
+            {
+                Intro();
+                CreateCharacter();
+            }
+
             while (gameRunning && playerHealth > 0)
             {
                 gameRunning = Menu();
@@ -104,6 +108,8 @@ namespace TextBasedGame
                     $"inventory={inventoryString}",
                     $"inventoryCount={inventoryCount}",
                     $"MAX_INVENTORY_SIZE={MAX_INVENTORY_SIZE}",
+                    $"playerWpn={playerWpn}",
+                    $"playerAmr={playerAmr}",
                     $"playerHealth={playerHealth}",
                     $"playerMaxHealth={playerMaxHealth}",
                     $"playerMana={playerMana}",
@@ -197,6 +203,8 @@ namespace TextBasedGame
                         }
                         else if (key == "inventoryCount") int.TryParse(value, out inventoryCount);
                         else if (key == "MAX_INVENTORY_SIZE") int.TryParse(value, out MAX_INVENTORY_SIZE);
+                        else if (key == "playerWpn") playerWpn = value;
+                        else if (key == "playerAmr") playerAmr = value;
                         else if (key == "playerHealth") int.TryParse(value, out playerHealth);
                         else if (key == "playerMaxHealth") int.TryParse(value, out playerMaxHealth);
                         else if (key == "playerMana") int.TryParse(value, out playerMana);
@@ -835,8 +843,8 @@ namespace TextBasedGame
 
             Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
 
-            Console.WriteLine($"\nEquipped weapon: {equippedWpn}");
-            Console.WriteLine($"Equipped armor: {equippedAmr}");
+            Console.WriteLine($"\nEquipped weapon: {playerWpn}");
+            Console.WriteLine($"Equipped armor: {playerAmr}");
 
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
@@ -869,6 +877,7 @@ namespace TextBasedGame
             static void UseItems()
             {
                 bool slotEmpty = false;
+                Console.Clear();
                 Console.WriteLine("\n---------- INVENTORY ----------");
 
                 for (int i = 0; i < inventoryCount; i++)
@@ -879,7 +888,14 @@ namespace TextBasedGame
                 Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
 
                 Console.WriteLine("\nWhich slot do you wish to use?");
-                int useChoice = Convert.ToInt32(Console.ReadLine());
+
+                if (!int.TryParse(Console.ReadLine(), out int useChoice) || useChoice < 1 || useChoice > inventoryCount)
+                {
+                    Console.WriteLine("\nInvalid input.");
+                    PauseStory();
+                    return;
+                }
+
                 Console.Clear();
                 Console.WriteLine("\n---------- INVENTORY ----------");
 
@@ -900,15 +916,15 @@ namespace TextBasedGame
                 else if (inventory[useChoice-1] == "Rusty Sword")
                 {
                     // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
-                    if (equippedWpn != "")
+                    if (playerWpn != "")
                     {
-                        inventory[useChoice-1] = equippedWpn;
+                        inventory[useChoice-1] = playerWpn;
                     }
                     else
                     {
                         slotEmpty = true;
                     }
-                    equippedWpn = "Rusty Sword";
+                    playerWpn = "Rusty Sword";
                     Console.WriteLine("You equipped the Rusty Sword.");
                     PauseStory();
                 }
@@ -930,9 +946,10 @@ namespace TextBasedGame
                 }
             }
 
-            // Disposing of items
+            // Throwing away items
             static void ThrowItems()
             {
+                Console.Clear();
                 Console.WriteLine("\n---------- THROW ITEM ----------");
                 for (int i = 0; i < inventoryCount; i++)
                 {
@@ -941,7 +958,7 @@ namespace TextBasedGame
                 Console.Write($"\nWhich slot to throw? (1 to {inventoryCount}): ");
                 if (!int.TryParse(Console.ReadLine(), out int throwChoice) || throwChoice < 1 || throwChoice > inventoryCount)
                 {
-                    Console.WriteLine("Invalid choice. Returning to exploration.");
+                    Console.WriteLine("\nInvalid input.");
                     PauseStory();
                     return;
                 }
@@ -952,7 +969,7 @@ namespace TextBasedGame
                 }
                 inventory[inventoryCount - 1] = null;
                 inventoryCount--;
-                Console.WriteLine($"You threw away the {removedItem}.");
+                Console.WriteLine($"\nYou threw away the {removedItem}.");
                 PauseStory();
             }
         }
