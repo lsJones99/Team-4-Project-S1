@@ -228,30 +228,47 @@ namespace TextBasedGame
             Console.Clear();
         }
 
+
+        //center the text
+        static void CenterText(string text)
+        {
+            int windowWidth = Console.WindowWidth;
+
+            int padding = (windowWidth - text.Length) / 2;
+
+            if (padding > 0) {
+                Console.WriteLine(text.PadLeft(text.Length + padding));
+            }
+            else
+            {
+                Console.WriteLine(text);
+            }
+        }
+
         // Intro
         static void Intro()
         {
             Console.Clear();
-            Console.WriteLine("==============================");
-            Console.WriteLine("       MEDIEVAL FANTASY");
-            Console.WriteLine("==============================");
+            CenterText("==============================");
+            CenterText("       MEDIEVAL FANTASY");
+            CenterText("==============================");
 
-            Console.WriteLine("\nYou are a student from Otago Polytechnic, walking home after a long day of classes.");
+            CenterText("\nYou are a student from Otago Polytechnic, walking home after a long day of classes.");
             PauseStory();
 
-            Console.WriteLine("Without warning, a blinding light surrounds you.");
+            CenterText("Without warning, a blinding light surrounds you.");
             PauseStory();
 
-            Console.WriteLine("When you open your eyes, you find yourself lying in an unfamiliar forest.");
+            CenterText("When you open your eyes, you find yourself lying in an unfamiliar forest.");
             PauseStory();
 
-            Console.WriteLine("Towering trees surround you, and a cold wind moves through their branches.");
+            CenterText("Towering trees surround you, and a cold wind moves through their branches.");
             PauseStory();
 
-            Console.WriteLine("A mysterious voice echoes inside your mind...");
+            CenterText("A mysterious voice echoes inside your mind...");
             PauseStory();
 
-            Console.Write("\"Hero, tell me your name.\" ");
+            CenterText("\"Hero, tell me your name.\" ");
             playerName = Console.ReadLine();
 
             //prevents the players from having a blank name
