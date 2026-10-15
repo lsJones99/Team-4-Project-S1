@@ -242,7 +242,85 @@ namespace TextBasedGame
         // Custom Character
         static void CustomStats()
         {
-            Console.WriteLine("Custom Stats Text");
+            int pool = 10, value = 0, valid;
+            Console.WriteLine("----- Strength -----");
+            Console.WriteLine("Strength affects how much you can carry and proficiency with melee weapons");
+            Console.WriteLine("\nHow many points would you like to add to Strength?");
+            Console.WriteLine($"You have {pool} points left to allocate");
+            valid = 0;
+            do
+            {
+                value = Convert.ToInt32(Console.ReadLine());
+                if ((value <= 6) && (value <= pool))
+                {
+                    pool = pool - value;
+                    playerStrength = value;
+                    valid = 1;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid value, please try again");
+                }
+            } while (valid == 0);
+            Console.Clear();
+            Console.WriteLine("----- Finesse -----");
+            Console.WriteLine("Finesse affects your proficiency with ranged weapons and ability to dodge and run away");
+            Console.WriteLine("\nHow many points would you like to add to Finesse?");
+            Console.WriteLine($"You have {pool} points left to allocate");
+            valid = 0;
+            do
+            {
+                value = Convert.ToInt32(Console.ReadLine());
+                if ((value <= 6) && (value <= pool))
+                {
+                    playerFinesse = value;
+                    pool = pool - value;
+                    valid = 1;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid value, please try again");
+                }
+            } while (valid == 0) ;
+            Console.Clear();
+            Console.WriteLine("----- Resilience -----");
+            Console.WriteLine("Resilience affects your total health and your ability to mitigate damage");
+            Console.WriteLine("\nHow many points would you like to add to Resilience?");
+            Console.WriteLine($"You have {pool} points left to allocate");
+            valid = 0;
+            do
+            {
+                value = Convert.ToInt32(Console.ReadLine());
+                if ((value <= 6) && (value <= pool))
+                {
+                    playerResilience = value;
+                    pool = pool - value;
+                    valid = 1;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid value, try again");
+                }
+            } while (valid == 0);
+            Console.Clear();
+            Console.WriteLine("----- Arcane -----");
+            Console.WriteLine("Arcane affects your total mana, ability to cast spells and their damage");
+            Console.WriteLine("\nHow many points would you like to add to Arcane?");
+            Console.WriteLine($"You have {pool} points left to allocate");
+            do
+            {
+                value = Convert.ToInt32(Console.ReadLine());
+                if ((value <= 6) && (value <= pool))
+                {
+                    playerArcane = value;
+                    pool = pool - value;
+                    valid = 1;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid value, please try again");
+                }
+            } while (value > 6);
         }
         // Menu commands
         static bool Menu()
