@@ -1149,7 +1149,8 @@ namespace TextBasedGame
                 characters[markerColumn + i] = markerText[i];
             }
 
-            mapLines[markerLine] = new string(characters); Console.WriteLine(string.Join("\n", mapLines));
+            mapLines[markerLine] = new string(characters); 
+            Console.WriteLine(string.Join("\n", mapLines));
             markerScreenX = markerColumn;
             markerScreenY = Console.CursorTop - (mapLines.Length - markerLine);
             if (!navigating)
