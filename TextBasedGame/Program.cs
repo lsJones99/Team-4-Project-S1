@@ -1171,7 +1171,7 @@ namespace TextBasedGame
 
                 if (visible)
                 {
-                    Console.Write(" ");
+                    Console.Write("  ");
                 }
                 else
                 {
