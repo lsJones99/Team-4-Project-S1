@@ -62,19 +62,53 @@ namespace TextBasedGame
         //Quest
         static bool activequest = false;
         static List<string> acceptedQuests = new List<string>();
+        static List<string> completedQuests = new List<string>();
         static string trackedQuest = "";
+        static Dictionary<string, QuestDefinition> questDefinitions =
+            new Dictionary<string, QuestDefinition>();
+        private static readonly string checkpointFolder = "quest_checkpoints";
 
+        private sealed class QuestDefinition
+        {
+            public string Title;
+            public string Description;
+            public bool IsMainQuest;
+            public string PrerequisiteId;
+            public int MapX;
+            public int MapY;
+
+            public QuestDefinition(
+                string title,
+                string description,
+                bool isMainQuest,
+                string prerequisiteId,
+                int mapX,
+                int mapY)
+            {
+                Title = title;
+                Description = description;
+                IsMainQuest = isMainQuest;
+                PrerequisiteId = prerequisiteId;
+                MapX = mapX;
+                MapY = mapY;
+            }
+        }
         //Enemies
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
         static int enemyDamage = 0;
 
+<<<<<<< HEAD
         //Combat Logs
         static List<string> combatLog = new List<string>();
 
         // Main void for running game then ending
+=======
+>>>>>>> d5635e467b2f34670f45f573d7e074e40f8248b0
 
         static void Main()
         {
+            //all quest definitions
+            RegisterQuests();
             // Loading a save if there is one
             Load();
 
@@ -116,39 +150,12 @@ namespace TextBasedGame
             switch (saveInput)
             {
                 case 's':
-                    string inventoryString = string.Join(",", inventory);
-
-                    System.Collections.Generic.List<string> linesToSave = new System.Collections.Generic.List<string>
-                    {
-                    $"playerName={playerName}",
-                    $"inventory={inventoryString}",
-                    $"inventoryCount={inventoryCount}",
-                    $"MAX_INVENTORY_SIZE={MAX_INVENTORY_SIZE}",
-                    $"playerWpn={playerWpn}",
-                    $"playerAmr={playerAmr}",
-                    $"playerHealth={playerHealth}",
-                    $"playerMaxHealth={playerMaxHealth}",
-                    $"playerMana={playerMana}",
-                    $"playerMaxMana={playerMaxMana}",
-                    $"playerStrength={playerStrength}",
-                    $"playerResilience={playerResilience}",
-                    $"playerFinesse={playerFinesse}",
-                    $"playerArcane={playerArcane}",
-                    $"playerMeleeDmg={playerMeleeDmg}",
-                    $"playerMeleeHit={playerMeleeHit}",
-                    $"playerRangeDmg={playerRangeDmg}",
-                    $"playerRangeHit={playerRangeHit}",
-                    $"playerSpellDmg={playerSpellDmg}",
-                    $"playerSpellMiscast={playerSpellMiscast}",
-                    $"markerScreenX={markerScreenX}",
-                    $"markerScreenY={markerScreenY}"
-                    };
-
-                    File.WriteAllLines(saveFile, linesToSave);
+                    WriteGameSave(saveFile);
 
                     Console.Clear();
                     Console.WriteLine("\n---------- SAVE FILE ----------");
                     Console.WriteLine("Progress successfully saved!");
+                    Console.WriteLine($"Save file: {Path.GetFullPath(saveFile)}");
                     PauseStory();
                     break;
 
@@ -172,6 +179,10 @@ namespace TextBasedGame
                         {
                             case 'y':
                                 File.Delete(saveFile);
+                                if (Directory.Exists(checkpointFolder))
+                                {
+                                    Directory.Delete(checkpointFolder, true);
+                                }
 
                                 Console.Clear();
                                 Console.WriteLine("\n---------- SAVE FILE ----------");
@@ -200,48 +211,231 @@ namespace TextBasedGame
         // Loading save
         static void Load()
         {
-            if (File.Exists(saveFile))
+            if (ReadGameSave(saveFile))
             {
-                var lines = File.ReadAllLines(saveFile);
-                foreach (var line in lines)
-                {
-                    var parts = line.Split('=', 2);
-                    if (parts.Length == 2)
-                    {
-                        string key = parts[0].Trim();
-                        string value = parts[1].Trim();
-
-                        if (key == "playerName") playerName = value;
-                        else if (key == "inventory")
-                        {
-                            inventory = string.IsNullOrEmpty(value) ? new string[0] :
-                                value.Split(',');
-                        }
-                        else if (key == "inventoryCount") int.TryParse(value, out inventoryCount);
-                        else if (key == "MAX_INVENTORY_SIZE") int.TryParse(value, out MAX_INVENTORY_SIZE);
-                        else if (key == "playerWpn") playerWpn = value;
-                        else if (key == "playerAmr") playerAmr = value;
-                        else if (key == "playerHealth") int.TryParse(value, out playerHealth);
-                        else if (key == "playerMaxHealth") int.TryParse(value, out playerMaxHealth);
-                        else if (key == "playerMana") int.TryParse(value, out playerMana);
-                        else if (key == "playerMaxMana") int.TryParse(value, out playerMaxMana);
-                        else if (key == "playerStrength") int.TryParse(value, out playerStrength);
-                        else if (key == "playerResilience") int.TryParse(value, out playerResilience);
-                        else if (key == "playerFinesse") int.TryParse(value, out playerFinesse);
-                        else if (key == "playerArcane") int.TryParse(value, out playerArcane);
-                        else if (key == "playerMeleeDmg") int.TryParse(value, out playerMeleeDmg);
-                        else if (key == "playerMeleeHit") int.TryParse(value, out playerMeleeHit);
-                        else if (key == "playerRangeDmg") int.TryParse(value, out playerRangeDmg);
-                        else if (key == "playerRangeHit") int.TryParse(value, out playerRangeHit);
-                        else if (key == "playerSpellDmg") int.TryParse(value, out playerSpellDmg);
-                        else if (key == "playerSpellMiscast") int.TryParse(value, out playerSpellMiscast);
-                        else if (key == "markerScreenX") int.TryParse(value, out markerScreenX);
-                        else if (key == "markerScreenY") int.TryParse(value, out markerScreenY);
-                    }
-                }
                 Console.WriteLine("--- Settings Loaded from File ---");
                 Thread.Sleep(3000);
             }
+        }
+        // Saves player information AND quest progress
+        static void WriteGameSave(string path)
+        {
+            List<string> linesToSave = new List<string>
+            {
+                $"playerName={playerName}",
+                $"inventory={string.Join(",", inventory)}",
+                $"inventoryCount={inventoryCount}",
+                $"MAX_INVENTORY_SIZE={MAX_INVENTORY_SIZE}",
+
+                $"playerWpn={playerWpn}",
+                $"playerAmr={playerAmr}",
+
+                $"playerHealth={playerHealth}",
+                $"playerMaxHealth={playerMaxHealth}",
+                $"playerMana={playerMana}",
+                $"playerMaxMana={playerMaxMana}",
+
+                $"playerLevel={playerLevel}",
+                $"playerCurrentXP={playerCurrentXP}",
+                $"playerNextXP={playerNextXP}",
+
+                $"playerX={playerX}",
+                $"playerY={playerY}",
+
+                $"playerDamage={playerDamage}",
+                $"playerStrength={playerStrength}",
+                $"playerResilience={playerResilience}",
+                $"playerFinesse={playerFinesse}",
+                $"playerArcane={playerArcane}",
+
+                $"playerMeleeDmg={playerMeleeDmg}",
+                $"playerMeleeHit={playerMeleeHit}",
+                $"playerRangeDmg={playerRangeDmg}",
+                $"playerRangeHit={playerRangeHit}",
+
+                $"playerRunBonus={playerRunBonus}",
+                $"playerDodge={playerDodge}",
+                $"playerCritChance={playerCritChance}",
+                $"playerPhysicalResist={playerPhysicalResist}",
+                $"playerBlockChance={playerBlockChance}",
+                $"playerBlockReduction={playerBlockReduction}",
+                $"playerMagicResist={playerMagicResist}",
+                $"playerSpellDmg={playerSpellDmg}",
+                $"playerSpellMiscast={playerSpellMiscast}",
+
+                $"markerScreenX={markerScreenX}",
+                $"markerScreenY={markerScreenY}",
+
+                $"acceptedQuests={string.Join(",", acceptedQuests)}",
+                $"completedQuests={string.Join(",", completedQuests)}",
+                $"trackedQuest={trackedQuest}"
+            };
+
+            File.WriteAllLines(path, linesToSave);
+        }
+        // Restores player information AND quest progress
+        static bool ReadGameSave(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+
+            acceptedQuests.Clear();
+            completedQuests.Clear();
+            trackedQuest = "";
+            activequest = false;
+
+            string[] lines = File.ReadAllLines(path);
+
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split('=', 2);
+
+                if (parts.Length != 2)
+                {
+                    continue;
+                }
+
+                string key = parts[0].Trim();
+                string value = parts[1].Trim();
+
+                if (key == "playerName") playerName = value;
+
+                else if (key == "inventory")
+                    inventory = string.IsNullOrEmpty(value)
+                        ? new string[0] : value.Split(',');
+
+                else if (key == "inventoryCount")
+                    int.TryParse(value, out inventoryCount);
+
+                else if (key == "MAX_INVENTORY_SIZE")
+                    int.TryParse(value, out MAX_INVENTORY_SIZE);
+
+                else if (key == "playerWpn") playerWpn = value;
+
+                else if (key == "playerAmr") playerAmr = value;
+
+                else if (key == "playerHealth")
+                    int.TryParse(value, out playerHealth);
+
+                else if (key == "playerMaxHealth")
+                    int.TryParse(value, out playerMaxHealth);
+
+                else if (key == "playerMana")
+                    int.TryParse(value, out playerMana);
+
+                else if (key == "playerMaxMana")
+                    int.TryParse(value, out playerMaxMana);
+
+                else if (key == "playerLevel")
+                    int.TryParse(value, out playerLevel);
+
+                else if (key == "playerCurrentXP")
+                    int.TryParse(value, out playerCurrentXP);
+
+                else if (key == "playerNextXP")
+                    int.TryParse(value, out playerNextXP);
+
+                else if (key == "playerX")
+                    int.TryParse(value, out playerX);
+
+                else if (key == "playerY")
+                    int.TryParse(value, out playerY);
+
+                else if (key == "playerDamage")
+                    int.TryParse(value, out playerDamage);
+
+                else if (key == "playerStrength")
+                    int.TryParse(value, out playerStrength);
+
+                else if (key == "playerResilience")
+                    int.TryParse(value, out playerResilience);
+
+                else if (key == "playerFinesse")
+                    int.TryParse(value, out playerFinesse);
+
+                else if (key == "playerArcane")
+                    int.TryParse(value, out playerArcane);
+
+                else if (key == "playerMeleeDmg")
+                    int.TryParse(value, out playerMeleeDmg);
+
+                else if (key == "playerMeleeHit")
+                    int.TryParse(value, out playerMeleeHit);
+
+                else if (key == "playerRangeDmg")
+                    int.TryParse(value, out playerRangeDmg);
+
+                else if (key == "playerRangeHit")
+                    int.TryParse(value, out playerRangeHit);
+
+                else if (key == "playerRunBonus")
+                    int.TryParse(value, out playerRunBonus);
+
+                else if (key == "playerDodge")
+                    int.TryParse(value, out playerDodge);
+
+                else if (key == "playerCritChance")
+                    int.TryParse(value, out playerCritChance);
+
+                else if (key == "playerPhysicalResist")
+                    int.TryParse(value, out playerPhysicalResist);
+
+                else if (key == "playerBlockChance")
+                    int.TryParse(value, out playerBlockChance);
+
+                else if (key == "playerBlockReduction")
+                    int.TryParse(value, out playerBlockReduction);
+
+                else if (key == "playerMagicResist")
+                    int.TryParse(value, out playerMagicResist);
+
+                else if (key == "playerSpellDmg")
+                    int.TryParse(value, out playerSpellDmg);
+
+                else if (key == "playerSpellMiscast")
+                    int.TryParse(value, out playerSpellMiscast);
+
+                else if (key == "markerScreenX")
+                    int.TryParse(value, out markerScreenX);
+
+                else if (key == "markerScreenY")
+                    int.TryParse(value, out markerScreenY);
+
+                else if (key == "acceptedQuests" && value.Length > 0)
+                    acceptedQuests.AddRange(value.Split(','));
+
+                else if (key == "completedQuests" && value.Length > 0)
+                    completedQuests.AddRange(value.Split(','));
+
+                else if (key == "trackedQuest")
+                    trackedQuest = value;
+            }
+
+            // Make sure the loaded inventory has enough slots
+            if (MAX_INVENTORY_SIZE < 1)
+                MAX_INVENTORY_SIZE = 1;
+
+            if (inventory.Length < MAX_INVENTORY_SIZE)
+                Array.Resize(ref inventory, MAX_INVENTORY_SIZE);
+
+            if (inventoryCount < 0)
+                inventoryCount = 0;
+
+            if (inventoryCount > inventory.Length)
+                inventoryCount = inventory.Length;
+
+            // Restore whether a valid quest is being tracked
+            activequest =
+                trackedQuest.Length > 0 &&
+                acceptedQuests.Contains(trackedQuest) &&
+                questDefinitions.ContainsKey(trackedQuest);
+
+            if (!activequest)
+                trackedQuest = "";
+
+            return true;
         }
 
         // General function for pausing
@@ -794,6 +988,18 @@ namespace TextBasedGame
                 {
                     playerHealth = 0;
                     Console.WriteLine($"{playerName} has been defeated.");
+
+                    if (activequest && trackedQuest.Length > 0)
+                    {
+                        if (FailQuest(trackedQuest))
+                        {
+                            Console.WriteLine("Quest failed!");
+                            Console.WriteLine("Returning to the last quest checkpoint.");
+                            Console.WriteLine("Press Enter to continue.");
+                            Console.ReadLine();
+                        }
+                    }
+
                     inCombat = false;
                 }
 
@@ -1178,9 +1384,16 @@ namespace TextBasedGame
             string markerText = "-> " + playerName;
 
             // Keep the marker inside its map cell
-            if (markerText.Length > 20)
+            int maxLength = 20;
+
+            if (activequest && questDefinitions.TryGetValue(trackedQuest, out QuestDefinition target) &&playerX == target.MapX &&playerY == target.MapY)
             {
-                markerText = markerText.Substring(0, 20);
+                maxLength = 16;
+            }
+
+            if (markerText.Length > maxLength)
+            {
+                markerText = markerText.Substring(0, maxLength);
             }
 
             for (int i = 0; i < markerText.Length; i++)
@@ -1189,6 +1402,22 @@ namespace TextBasedGame
             }
 
             mapLines[markerLine] = new string(characters);
+            if (activequest && questDefinitions.TryGetValue(trackedQuest, out QuestDefinition destination))
+            {
+                int questLine = 2 + (4 - destination.MapY) * 6;
+
+                int questBorder = mapLines[questLine].IndexOf('|');
+
+                int questColumn = questBorder + 2 + destination.MapX * 23 + 17;
+
+                char[] questCharacters = mapLines[questLine].ToCharArray();
+
+                questCharacters[questColumn] = '[';
+                questCharacters[questColumn + 1] = '!';
+                questCharacters[questColumn + 2] = ']';
+
+                mapLines[questLine] = new string(questCharacters);
+            }
             Console.WriteLine(string.Join("\n", mapLines));
             markerScreenX = markerColumn;
             markerScreenY = Console.CursorTop - (mapLines.Length - markerLine);
@@ -1232,28 +1461,120 @@ namespace TextBasedGame
 
             return char.ToLower(Console.ReadKey(true).KeyChar);
         }
-        public static void Quest()
+        // QUEST REGISTRATION
+
+        // The story/NPC team will add quest here.
+        static void RegisterQuests()
         {
-            if (Quest != null)
-            {
-                string quest = "";
-                Console.WriteLine($"{quest}");
-                Console.ReadLine();
-            }
+
         }
+
+        // Stores the definition of a quest in the game.
+        public static bool RegisterQuest(
+            string questId,
+            string title,
+            string description,
+            bool isMainQuest,
+            int mapX,
+            int mapY,
+            string prerequisiteId = "")
+        {
+            if (!ValidQuestId(questId) ||
+                string.IsNullOrWhiteSpace(title) ||
+                mapX < 0 || mapX > 4 ||
+                mapY < 0 || mapY > 4 ||
+                questId == prerequisiteId ||
+                questDefinitions.ContainsKey(questId))
+            {
+                return false;
+            }
+
+            questDefinitions.Add(
+                questId,
+                new QuestDefinition(
+                    title,
+                    description,
+                    isMainQuest,
+                    prerequisiteId,
+                    mapX,
+                    mapY
+                )
+            );
+
+            return true;
+        }
+
+        // Makes sure a quest ID is safe to use.
+        static bool ValidQuestId(string questId)
+        {
+            if (string.IsNullOrWhiteSpace(questId))
+                return false;
+
+            foreach (char c in questId)
+            {
+                if (!char.IsLetterOrDigit(c) &&
+                    c != '_' && c != '-')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // The location of a quest's retry checkpoint.
+        static string QuestCheckpointPath(string questId)
+        {
+            return Path.Combine(
+                checkpointFolder,
+                questId + ".txt"
+            );
+        }
+
+
+        // GIVE QUEST
+
         public static bool GiveQuest(string questId)
         {
-            if (acceptedQuests.Contains(questId))
+            QuestDefinition definition;
+
+            // The quest must exist.
+            if (!questDefinitions.TryGetValue(questId, out definition))
+                return false;
+
+            // Prevent accepting the same quest twice.
+            if (acceptedQuests.Contains(questId) ||
+                completedQuests.Contains(questId))
+            {
+                return false;
+            }
+
+            // Check whether the required previous quest is completed.
+            if (definition.PrerequisiteId.Length > 0 &&
+                !completedQuests.Contains(definition.PrerequisiteId))
             {
                 return false;
             }
 
             acceptedQuests.Add(questId);
+
+            // Autosave accepted quest.
+            WriteGameSave(saveFile);
+
+            // Create checkpoint for retrying this quest.
+            Directory.CreateDirectory(checkpointFolder);
+            WriteGameSave(QuestCheckpointPath(questId));
+
             return true;
         }
+
+
+        // TRACK QUEST
+
         public static bool TrackQuest(string questId)
         {
-            if (!acceptedQuests.Contains(questId))
+            if (!acceptedQuests.Contains(questId) ||
+                !questDefinitions.ContainsKey(questId))
             {
                 return false;
             }
@@ -1261,7 +1582,249 @@ namespace TextBasedGame
             trackedQuest = questId;
             activequest = true;
 
+            WriteGameSave(saveFile);
+
             return true;
+        }
+
+
+        // UNTRACK QUEST
+
+        public static bool UntrackQuest()
+        {
+            if (!activequest)
+                return false;
+
+            trackedQuest = "";
+            activequest = false;
+
+            WriteGameSave(saveFile);
+
+            return true;
+        }
+
+
+        // COMPLETE QUEST
+
+        public static bool CompleteQuest(string questId)
+        {
+            if (!acceptedQuests.Contains(questId))
+                return false;
+
+            acceptedQuests.Remove(questId);
+            completedQuests.Add(questId);
+
+            // Remove tracking if this quest was selected.
+            if (trackedQuest == questId)
+            {
+                trackedQuest = "";
+                activequest = false;
+            }
+
+            // Remove checkpoint for completed quest.
+            string checkpoint = QuestCheckpointPath(questId);
+
+            if (File.Exists(checkpoint))
+                File.Delete(checkpoint);
+
+            WriteGameSave(saveFile);
+
+            return true;
+        }
+
+
+        // FAIL QUEST
+
+        public static bool FailQuest(string questId)
+        {
+            if (!ValidQuestId(questId) ||
+                !acceptedQuests.Contains(questId))
+            {
+                return false;
+            }
+
+            string checkpoint = QuestCheckpointPath(questId);
+
+            if (!File.Exists(checkpoint))
+                return false;
+
+            // Restore the player's last quest checkpoint.
+            if (!ReadGameSave(checkpoint))
+                return false;
+
+            // Keep the failed quest selected for another try.
+            if (acceptedQuests.Contains(questId) &&
+                questDefinitions.ContainsKey(questId))
+            {
+                trackedQuest = questId;
+                activequest = true;
+            }
+
+            // Save the restored state, NOT the failed state.
+            WriteGameSave(saveFile);
+
+            return true;
+        }
+
+
+        // GET QUEST DESCRIPTION
+
+        public static string GetQuestDescription(string questId)
+        {
+            QuestDefinition definition;
+
+            if (questDefinitions.TryGetValue(questId, out definition))
+            {
+                return definition.Description;
+            }
+
+            return "Quest details are not registered yet.";
+        }
+
+
+        // DISPLAY MAIN OR SIDE QUESTS
+
+        static void PrintAvailableQuests(
+            bool mainQuest,
+            List<string> selectableQuests)
+        {
+            Console.WriteLine(
+                mainQuest ? "MAIN QUESTS" : "SIDE QUESTS"
+            );
+
+            bool found = false;
+
+            foreach (string id in acceptedQuests)
+            {
+                QuestDefinition definition;
+
+                if (questDefinitions.TryGetValue(id, out definition) &&
+                    definition.IsMainQuest == mainQuest)
+                {
+                    selectableQuests.Add(id);
+
+                    string tracking =
+                        id == trackedQuest ? " [TRACKING]" : "";
+
+                    Console.WriteLine(
+                        $"[{selectableQuests.Count}] {definition.Title}{tracking}"
+                    );
+
+                    found = true;
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("No quests discovered.");
+            }
+        }
+
+
+        // QUEST JOURNAL / QUEST BOARD
+
+        public static void Quest()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.WriteLine("========== QUEST JOURNAL ==========");
+                Console.WriteLine();
+
+                // This list connects menu numbers to quest IDs.
+                List<string> selectable = new List<string>();
+
+                PrintAvailableQuests(true, selectable);
+
+                Console.WriteLine("-----------------------------------");
+
+                PrintAvailableQuests(false, selectable);
+
+                Console.WriteLine("-----------------------------------");
+                Console.WriteLine("COMPLETED QUESTS (LOCKED)");
+
+                if (completedQuests.Count == 0)
+                {
+                    Console.WriteLine("No quests completed.");
+                }
+                else
+                {
+                    foreach (string id in completedQuests)
+                    {
+                        QuestDefinition definition;
+
+                        string title =
+                            questDefinitions.TryGetValue(id, out definition)
+                            ? definition.Title
+                            : id;
+
+                        Console.WriteLine($"[X] {title}");
+                    }
+                }
+
+                Console.WriteLine("-----------------------------------");
+
+                Console.WriteLine("[Number] track a quest");
+                Console.WriteLine("[U] Untrack current quest");
+                Console.WriteLine("[0] Return to exploration");
+
+                Console.Write("\nChoose: ");
+
+                string input = Console.ReadLine()?.Trim() ?? "";
+
+                if (input == "0")
+                {
+                    return;
+                }
+
+                if (input.Equals(
+                    "u", StringComparison.OrdinalIgnoreCase))
+                {
+                    UntrackQuest();
+                    continue;
+                }
+
+                int number;
+
+                if (!int.TryParse(input, out number) ||
+                    number < 1 ||
+                    number > selectable.Count)
+                {
+                    Console.WriteLine("Choose a quest number shown above.");
+                    Console.ReadLine();
+                    continue;
+                }
+
+                string selectedId = selectable[number - 1];
+
+                QuestDefinition selected = questDefinitions[selectedId];
+
+                Console.Clear();
+                Console.WriteLine($"========== {selected.Title} ==========");
+
+                Console.WriteLine(
+                    selected.IsMainQuest ? "Main Quest" : "Side Quest"
+                );
+
+                Console.WriteLine(GetQuestDescription(selectedId));
+
+                Console.WriteLine(
+                    $"Destination: map ({selected.MapX}, {selected.MapY})"
+                );
+
+                Console.WriteLine();
+                Console.WriteLine("[T] Track this quest on the map");
+                Console.WriteLine("[B] Back to journal");
+
+                string action = Console.ReadLine()?.Trim() ?? "";
+
+                if (action.Equals(
+                    "t", StringComparison.OrdinalIgnoreCase))
+                {
+                    TrackQuest(selectedId);
+                }
+            }
         }
     }
 }
