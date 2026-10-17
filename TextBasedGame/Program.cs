@@ -147,6 +147,7 @@ namespace TextBasedGame
                     Console.Clear();
                     Console.WriteLine("\n---------- SAVE FILE ----------");
                     Console.WriteLine("Progress successfully saved!");
+                    Console.WriteLine($"Save file: {Path.GetFullPath(saveFile)}");
                     PauseStory();
                     break;
 
@@ -947,6 +948,18 @@ namespace TextBasedGame
                 {
                     playerHealth = 0;
                     Console.WriteLine($"{playerName} has been defeated.");
+
+                    if (activequest && trackedQuest.Length > 0)
+                    {
+                        if (FailQuest(trackedQuest))
+                        {
+                            Console.WriteLine("Quest failed!");
+                            Console.WriteLine("Returning to the last quest checkpoint.");
+                            Console.WriteLine("Press Enter to continue.");
+                            Console.ReadLine();
+                        }
+                    }
+
                     inCombat = false;
                 }
 
@@ -1330,9 +1343,16 @@ namespace TextBasedGame
             string markerText = "-> " + playerName;
 
             // Keep the marker inside its map cell
-            if (markerText.Length > 20)
+            int maxLength = 20;
+
+            if (activequest && questDefinitions.TryGetValue(trackedQuest, out QuestDefinition target) &&playerX == target.MapX &&playerY == target.MapY)
             {
-                markerText = markerText.Substring(0, 20);
+                maxLength = 16;
+            }
+
+            if (markerText.Length > maxLength)
+            {
+                markerText = markerText.Substring(0, maxLength);
             }
 
             for (int i = 0; i < markerText.Length; i++)
@@ -1341,6 +1361,22 @@ namespace TextBasedGame
             }
 
             mapLines[markerLine] = new string(characters);
+            if (activequest && questDefinitions.TryGetValue(trackedQuest, out QuestDefinition destination))
+            {
+                int questLine = 2 + (4 - destination.MapY) * 6;
+
+                int questBorder = mapLines[questLine].IndexOf('|');
+
+                int questColumn = questBorder + 2 + destination.MapX * 23 + 17;
+
+                char[] questCharacters = mapLines[questLine].ToCharArray();
+
+                questCharacters[questColumn] = '[';
+                questCharacters[questColumn + 1] = '!';
+                questCharacters[questColumn + 2] = ']';
+
+                mapLines[questLine] = new string(questCharacters);
+            }
             Console.WriteLine(string.Join("\n", mapLines));
             markerScreenX = markerColumn;
             markerScreenY = Console.CursorTop - (mapLines.Length - markerLine);
@@ -1688,7 +1724,7 @@ namespace TextBasedGame
 
                 Console.WriteLine("-----------------------------------");
 
-                Console.WriteLine("[Number] Read / track a quest");
+                Console.WriteLine("[Number] track a quest");
                 Console.WriteLine("[U] Untrack current quest");
                 Console.WriteLine("[0] Return to exploration");
 
