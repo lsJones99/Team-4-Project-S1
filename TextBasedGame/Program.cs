@@ -479,6 +479,7 @@ namespace TextBasedGame
             Console.ReadLine();
 
             CenterText("Hero, tell me your name");
+            playerName = Console.ReadLine() ??"";
 
             //prevents the players from having a blank name
             if (string.IsNullOrWhiteSpace(playerName))
