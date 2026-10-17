@@ -60,6 +60,8 @@ namespace TextBasedGame
 
         //Quest
         static bool activequest = false;
+        static List<string> acceptedQuests = new List<string>();
+        static string trackedQuest = "";
 
         //Enemies
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
@@ -474,7 +476,7 @@ namespace TextBasedGame
                 {
                     Console.WriteLine("Invalid value, please try again");
                 }
-            } while (valid == 0) ;
+            } while (valid == 0);
             Console.Clear();
             Console.WriteLine("----- Resilience -----");
             Console.WriteLine("Resilience affects your total health and your ability to mitigate damage");
@@ -726,7 +728,7 @@ namespace TextBasedGame
                             continue;
                     }
 
-                    
+
                 }
                 //command after running away
                 if (!inCombat)
@@ -767,7 +769,7 @@ namespace TextBasedGame
                 }
 
             }
-            
+
             return true;
         }
 
@@ -784,7 +786,7 @@ namespace TextBasedGame
         {
             //Variables
             bool isNavigating = true;
-            while(isNavigating && playerHealth > 0)
+            while (isNavigating && playerHealth > 0)
             {
                 Console.Clear();
                 Map(true);
@@ -845,7 +847,7 @@ namespace TextBasedGame
                     default:
                         Console.WriteLine("Enter a valid navigation command.");
                         PauseStory();
-                        continue; 
+                        continue;
                 }
 
                 // Border map check
@@ -864,8 +866,8 @@ namespace TextBasedGame
                 {
                     Console.WriteLine($"{playerName} moves {direction}.");
                     CheckForEncounter();
-                }               
-            }       
+                }
+            }
         }
 
         //Check for enemy encounter
@@ -1005,7 +1007,7 @@ namespace TextBasedGame
                 Console.WriteLine("\n---------- INVENTORY ----------");
 
                 // What happens when using a healing potion
-                if (inventory[useChoice-1] == "Healing Potion")
+                if (inventory[useChoice - 1] == "Healing Potion")
                 {
                     playerHealth = playerHealth + 30;
                     slotEmpty = true;
@@ -1018,12 +1020,12 @@ namespace TextBasedGame
                     PauseStory();
                 }
                 // What happens when using a rusty sword
-                else if (inventory[useChoice-1] == "Rusty Sword")
+                else if (inventory[useChoice - 1] == "Rusty Sword")
                 {
                     // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
                     if (playerWpn != "")
                     {
-                        inventory[useChoice-1] = playerWpn;
+                        inventory[useChoice - 1] = playerWpn;
                     }
                     else
                     {
@@ -1033,7 +1035,7 @@ namespace TextBasedGame
                     Console.WriteLine("You equipped the Rusty Sword.");
                     PauseStory();
                 }
-                else 
+                else
                 {
                     Console.WriteLine("That input is unrecognised.");
                     PauseStory();
@@ -1081,7 +1083,7 @@ namespace TextBasedGame
         // Map
         public static void Map(bool navigating = false)
         {
-            Console.Clear ();
+            Console.Clear();
             if (!navigating)
             {
                 Console.WriteLine(@"
@@ -1149,7 +1151,7 @@ namespace TextBasedGame
                 characters[markerColumn + i] = markerText[i];
             }
 
-            mapLines[markerLine] = new string(characters); 
+            mapLines[markerLine] = new string(characters);
             Console.WriteLine(string.Join("\n", mapLines));
             markerScreenX = markerColumn;
             markerScreenY = Console.CursorTop - (mapLines.Length - markerLine);
@@ -1193,12 +1195,36 @@ namespace TextBasedGame
 
             return char.ToLower(Console.ReadKey(true).KeyChar);
         }
-        public static void Quest(bool activequest = true)
+        public static void Quest()
         {
-            
-            string quest = "";
-            Console.WriteLine($"{quest}");
-            Console.ReadLine();
+            if (Quest != null)
+            {
+                string quest = "";
+                Console.WriteLine($"{quest}");
+                Console.ReadLine();
+            }
+        }
+        public static bool GiveQuest(string questId)
+        {
+            if (acceptedQuests.Contains(questId))
+            {
+                return false;
+            }
+
+            acceptedQuests.Add(questId);
+            return true;
+        }
+        public static bool TrackQuest(string questId)
+        {
+            if (!acceptedQuests.Contains(questId))
+            {
+                return false;
+            }
+
+            trackedQuest = questId;
+            activequest = true;
+
+            return true;
         }
     }
 }
