@@ -7,6 +7,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using System.Collections.Generic;
 
 namespace TextBasedGame
 {
@@ -96,6 +97,10 @@ namespace TextBasedGame
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
         static int enemyDamage = 0;
 
+        //Combat Logs
+        static List<string> combatLog = new List<string>();
+
+        // Main void for running game then ending
 
         static void Main()
         {
@@ -778,8 +783,37 @@ namespace TextBasedGame
 
 
         //Combat commands
+        static void AddCombatLog(string message)
+        {
+            combatLog.Add(message);
+
+            if(combatLog.Count > 8)
+            {
+                combatLog.RemoveAt(0);
+            }
+        }
+
+        static void DisplayCombatLog()
+        {
+            int originalColumn = Console.CursorLeft;
+            int originalRow = Console.CursorTop;
+            int startColumn = 55, currentRow = 0;
+
+            Console.SetCursorPosition(startColumn, currentRow);
+            Console.WriteLine("---------- COMBAT LOG ----------");
+            currentRow++;
+            foreach (string s in combatLog)
+            {
+                Console.SetCursorPosition(startColumn, currentRow);
+                Console.WriteLine(s);
+                currentRow++;
+            }
+            Console.SetCursorPosition(originalColumn, originalRow);
+        }
+
         static bool CombatMenu(string enemyName)
         {
+            combatLog.Clear();
             int enemyHealth = 50;
             bool inCombat = true;
 
@@ -794,13 +828,13 @@ namespace TextBasedGame
             {
 
                 Console.Clear();
-
-                Console.WriteLine("\n---------- COMBAT ----------");
+                DisplayCombatLog();
+                Console.WriteLine("---------- COMBAT ----------");
                 Console.WriteLine($"{playerName}:");
                 Console.WriteLine($"{playerHealth}/{playerMaxHealth} HP");
                 Console.WriteLine($"{playerMana}/{playerMaxMana} MP");
                 Console.WriteLine($"\n{enemyName}: \n{enemyHealth}/50 HP");
-
+                
                 Console.WriteLine("\n[A] Attack");
                 Console.WriteLine("[M] Magic");
                 Console.WriteLine("[I] Use item");
@@ -824,7 +858,9 @@ namespace TextBasedGame
                         case 'a':
                             playerDamage = rand.Next(8, 16);
                             enemyHealth -= playerDamage;
+                            Console.WriteLine("You chose attack!");
                             Console.WriteLine($"You attack the {enemyName} for {playerDamage} damage.");
+                            AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
                             break;
 
                         case 'm':
@@ -942,7 +978,8 @@ namespace TextBasedGame
                 //enemy attacks
                 enemyDamage = rand.Next(5, 11);
                 playerHealth -= enemyDamage;
-                Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
+                Console.WriteLine("The enemy attacks!");
+                AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
 
                 //check for player hp
                 if (playerHealth <= 0)
@@ -964,6 +1001,7 @@ namespace TextBasedGame
                     inCombat = false;
                 }
 
+                
                 //Combat pause
                 if (inCombat && playerHealth > 0 && enemyHealth > 0)
                 {
