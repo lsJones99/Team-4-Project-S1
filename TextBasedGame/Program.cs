@@ -432,7 +432,7 @@ namespace TextBasedGame
         // General function for pausing
         static void PauseStory()
         {
-            Console.WriteLine("Press enter to continue.");
+            CenterText("Press enter to continue.");
             Console.ReadLine();
             Console.Clear();
         }
@@ -462,23 +462,22 @@ namespace TextBasedGame
             CenterText("       MEDIEVAL FANTASY");
             CenterText("==============================");
 
-            CenterText("\nYou are a student from Otago Polytechnic, walking home after a long day of classes.");
-            PauseStory();
+            CenterText("You are a student from Otago Polytechnic, walking home after a long day of classes.");
+            Console.ReadLine();
 
             CenterText("Without warning, a blinding light surrounds you.");
-            PauseStory();
+            Console.ReadLine();
 
             CenterText("When you open your eyes, you find yourself lying in an unfamiliar forest.");
-            PauseStory();
+            Console.ReadLine();
 
             CenterText("Towering trees surround you, and a cold wind moves through their branches.");
-            PauseStory();
+            Console.ReadLine();
 
             CenterText("A mysterious voice echoes inside your mind...");
-            PauseStory();
+            Console.ReadLine();
 
-            CenterText("\"Hero, tell me your name.\" ");
-            playerName = Console.ReadLine();
+            CenterText("Hero, tell me your name");
 
             //prevents the players from having a blank name
             if (string.IsNullOrWhiteSpace(playerName))
@@ -486,31 +485,32 @@ namespace TextBasedGame
                 playerName = "Anon";
             }
 
-            Console.WriteLine($"\"{playerName}... A fitting name for the one chosen to save our world.\"");
-            PauseStory();
+            CenterText($"{playerName}... A fitting name for the one chosen to save our world.");
+            Console.ReadLine();
 
-            Console.WriteLine("You demand answers, but the mysterious voice ignores your questions.");
-            PauseStory();
+            CenterText("You demand answers, but the mysterious voice ignores your questions.");
+            Console.ReadLine();
 
-            Console.WriteLine("\"Our kingdom is being ravaged by creatures of darkness.\"");
-            PauseStory();
+            CenterText("\"Our kingdom is being ravaged by creatures of darkness.\"");
+            Console.ReadLine();
 
-            Console.WriteLine("\"Travel north and find the village of Greymoor. Your journey begins there.\"");
-            PauseStory();
+            CenterText("\"Travel north and find the village of Greymoor. Your journey begins there.\"");
+            Console.ReadLine();
 
-            Console.WriteLine("Before you can ask anything else, the voice disappears.");
-            PauseStory();
+            CenterText("Before you can ask anything else, the voice disappears.");
+            Console.ReadLine();
 
-            Console.WriteLine("You are alone. You have no idea where you are or how you arrived here.");
-            PauseStory();
+            CenterText("You are alone. You have no idea where you are or how you arrived here.");
+            Console.ReadLine();
 
-            Console.WriteLine("Suddenly, you hear something moving in the nearby bushes...");
-            PauseStory();
+            CenterText("Suddenly, you hear something moving in the nearby bushes...");
+            Console.ReadLine();
 
-            Console.WriteLine("You take a deep breath and prepare to move.");
-            Console.WriteLine("Your journey begins now.");
+            CenterText("You take a deep breath and prepare to move.");
+            CenterText("Your journey begins now.");
+            Console.ReadLine();
 
-            PauseStory();
+
         }
         // Character Selection
         public static void CreateCharacter()
