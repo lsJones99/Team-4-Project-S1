@@ -871,17 +871,16 @@ namespace TextBasedGame
                             Console.WriteLine("[M] - Magic Missile - 3 MP");
                             Console.WriteLine("[0] - Return to previous menu");
                             int valid = 0;
-                            string userselect = "\0";
-                            char spellselect = '\0';
-                            userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
+                            string userselect;
                             do
                             {
+                                userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
                                 if (userselect.Length == 0)
                                 {
                                     Console.WriteLine("Invalid selection, please try again");
                                 }
                             } while (userselect.Length == 0);
-                            spellselect = userselect[0];
+                            char spellselect = userselect[0];
                             switch (spellselect)
                             {
                                 case 'm':
