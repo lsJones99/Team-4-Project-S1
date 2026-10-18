@@ -628,91 +628,49 @@ namespace TextBasedGame
             playerMagicResist = playerMagicResist + (playerArcane / 3);
         }
         // Custom Character
+        // Asks for one stat and returns the validated value
+        static int AskStat(string name, string description, ref int pool)
+        {
+            Console.WriteLine($"----- {name} -----");
+            Console.WriteLine(description);
+            Console.WriteLine($"\nHow many points would you like to add to {name}?");
+            Console.WriteLine($"You have {pool} points left to allocate");
+
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out int value)
+                    && value >= 0 && value <= 6 && value <= pool)
+                {
+                    pool -= value;
+                    return value;
+                }
+                Console.WriteLine("Invalid value, please try again");
+            }
+        }
+
+        // Custom Character
         static void CustomStats()
         {
-            int pool = 10, value = 0, valid;
+            int pool = 10;
+
             Console.Clear();
             Console.WriteLine("------ Custom ------");
-            Console.WriteLine("Build your own stat distribution to suit your playstyle! with a more detailed description of stat functions.");
-            Console.WriteLine("\n----- Strength -----");
-            Console.WriteLine("Strength affects how much you can carry and proficiency with melee weapons");
-            Console.WriteLine("\nHow many points would you like to add to Strength?");
-            Console.WriteLine($"You have {pool} points left to allocate");
-            valid = 0;
-            do
-            {
-                value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool) && (value >= 0))
-                {
-                    pool = pool - value;
-                    playerStrength = value;
-                    valid = 1;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid value, please try again");
-                }
-            } while (valid == 0);
+            Console.WriteLine("Build your own stat distribution to suit your playstyle! (max 6 points per stat)\n");
+
+            playerStrength = AskStat("Strength",
+                "Strength affects how much you can carry and proficiency with melee weapons", ref pool);
             Console.Clear();
-            Console.WriteLine("----- Finesse -----");
-            Console.WriteLine("Finesse affects your proficiency with ranged weapons and ability to dodge and run away");
-            Console.WriteLine("\nHow many points would you like to add to Finesse?");
-            Console.WriteLine($"You have {pool} points left to allocate");
-            valid = 0;
-            do
-            {
-                value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool) && (value >= 0))
-                {
-                    playerFinesse = value;
-                    pool = pool - value;
-                    valid = 1;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid value, please try again");
-                }
-            } while (valid == 0);
+
+            playerFinesse = AskStat("Finesse",
+                "Finesse affects your proficiency with ranged weapons and ability to dodge and run away", ref pool);
             Console.Clear();
-            Console.WriteLine("----- Resilience -----");
-            Console.WriteLine("Resilience affects your total health and your ability to mitigate damage");
-            Console.WriteLine("\nHow many points would you like to add to Resilience?");
-            Console.WriteLine($"You have {pool} points left to allocate");
-            valid = 0;
-            do
-            {
-                value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool) && (value >= 0))
-                {
-                    playerResilience = value;
-                    pool = pool - value;
-                    valid = 1;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid value, try again");
-                }
-            } while (valid == 0);
+
+            playerResilience = AskStat("Resilience",
+                "Resilience affects your total health and your ability to mitigate damage", ref pool);
             Console.Clear();
-            Console.WriteLine("----- Arcane -----");
-            Console.WriteLine("Arcane affects your total mana, ability to cast spells and their damage");
-            Console.WriteLine("\nHow many points would you like to add to Arcane?");
-            Console.WriteLine($"You have {pool} points left to allocate");
-            valid = 0;
-            do
-            {
-                value = Convert.ToInt32(Console.ReadLine());
-                if ((value <= 6) && (value <= pool) && (value >= 0))
-                {
-                    playerArcane = value;
-                    pool = pool - value;
-                    valid = 1;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid value, please try again");
-                }
-            } while (valid == 0);
+
+            playerArcane = AskStat("Arcane",
+                "Arcane affects your total mana, ability to cast spells and their damage", ref pool);
             Console.Clear();
         }
         // Menu commands
