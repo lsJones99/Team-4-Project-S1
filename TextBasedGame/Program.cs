@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace TextBasedGame
 {
@@ -100,8 +101,7 @@ namespace TextBasedGame
         //Combat Logs
         static List<string> combatLog = new List<string>();
 
-
-
+        // Main void for running game then ending
         static void Main()
         {
             //all quest definitions
@@ -484,6 +484,7 @@ namespace TextBasedGame
             Console.ReadLine();
 
             CenterText("Hero, tell me your name");
+            playerName = Console.ReadLine() ??"";
 
             //prevents the players from having a blank name
             if (string.IsNullOrWhiteSpace(playerName))
@@ -1113,6 +1114,10 @@ namespace TextBasedGame
         //Check for enemy encounter
         static void CheckForEncounter()
         {
+            if ((playerX == 2 && playerY == 3) || (playerX == 0 && playerY == 4))
+            {
+                return;
+            }
             int encounterChance = rand.Next(1, 101);
 
             if (encounterChance <= 30)
@@ -1129,26 +1134,219 @@ namespace TextBasedGame
                 Console.WriteLine("The path is clear.");
             }
         }
+        //NPC
+        //Merchant
 
+        static void Merchant()
+        {
+            Console.Clear();
+            Console.WriteLine("========== MERCHANT ==========");
+
+            // Both quests finished
+            if (completedQuests.Contains("side_merchant_02"))
+            {
+                Console.WriteLine("Merchant: Thank you for all your help!");
+                return;
+            }
+
+            // Second quest in progress
+            if (acceptedQuests.Contains("side_merchant_02"))
+            {
+                Console.WriteLine("Merchant: Please deliver my package to the Witch's Hut.");
+                return;
+            }
+
+            // First quest completed: offer second quest
+            if (completedQuests.Contains("side_merchant_01"))
+            {
+                Console.WriteLine("Merchant: Thank you for finding my sword!");
+                Console.WriteLine("Merchant: I have another job for you.");
+                Console.WriteLine("[1] Accept delivery quest");
+                Console.WriteLine("[2] Decline");
+
+                char choice = Console.ReadKey().KeyChar;
+
+                if (choice == '1')
+                {
+                    bool given = GiveQuest("side_merchant_02");
+
+                    if (given)
+                    {
+                        Console.WriteLine("New quest: The Merchant's Delivery!");
+                    }
+                }
+
+                return;
+            }
+
+            // First quest in progress
+            if (acceptedQuests.Contains("side_merchant_01"))
+            {
+                Console.WriteLine("Merchant: Have you found my sword?");
+                Console.WriteLine("[1] Give Rusty Sword");
+                Console.WriteLine("[2] Leave");
+
+                char choice = Console.ReadKey().KeyChar;
+
+                if (choice == '1')
+                {
+                    if (Array.Exists(inventory, item => item == "Rusty Sword"))
+                    {
+                        CompleteQuest("side_merchant_01");
+
+                        Console.WriteLine("Quest completed: The Missing Sword!");
+                        Console.WriteLine("Merchant: Come back. I have another job!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You don't have a Rusty Sword.");
+                    }
+                }
+
+                return;
+            }
+
+            // Neither quest accepted: offer first quest
+            Console.WriteLine("Merchant: I lost my sword. Can you help?");
+            Console.WriteLine("[1] Accept quest");
+            Console.WriteLine("[2] Decline");
+
+            char answer = Console.ReadKey().KeyChar;
+
+            if (answer == '1')
+            {
+                bool given = GiveQuest("side_merchant_01");
+
+                if (given)
+                {
+                    Console.WriteLine("New quest accepted: The Missing Sword!");
+                }
+            }
+        }
         // Investigation command
         static void Investigate()
         {
-            int result = rand.Next(1, 4);
-
-            switch (result)
+            switch ((playerX, playerY))
             {
-                case 1:
-                    Console.WriteLine("\nYou find a Healing Potion.");
-                    AddItem("Healing Potion");
+                // MARKET (2,3)
+                case (2, 3):
+                    {
+                        Console.WriteLine("========== MARKET ==========");
+                        Console.WriteLine("[1] Talk to Merchant");
+                        Console.WriteLine("[2] Search for loot");
+                        Console.WriteLine("[3] Leave");
+
+                        char choice = Console.ReadKey(true).KeyChar;
+
+                        switch (choice)
+                        {
+                            case '1':
+                                Merchant();
+                                break;
+
+                            case '2':
+                                Console.WriteLine("You search around the market...");
+
+                                int lootChance = rand.Next(1, 4);
+
+                                switch (lootChance)
+                                {
+                                    case 1:
+                                        Console.WriteLine("You found a Healing Potion!");
+                                        AddItem("Healing Potion");
+                                        break;
+
+                                    case 2:
+                                        Console.WriteLine("You found a Rusty Sword!");
+                                        AddItem("Rusty Sword");
+                                        break;
+
+                                    case 3:
+                                        Console.WriteLine("You found nothing.");
+                                        break;
+                                }
+                                break;
+
+                            case '3':
+                                Console.WriteLine("You leave the market.");
+                                break;
+
+                            default:
+                                Console.WriteLine("Invalid option.");
+                                break;
+                        }
+                        break;
+                    }
+
+                // DARK FOREST (2,2)
+                case (2, 2):
+                    Console.WriteLine("You search the Dark Forest...");
+
+                    int result = rand.Next(1, 4);
+
+                    switch (result)
+                    {
+                        case 1:
+                            Console.WriteLine("You found a Healing Potion!");
+                            AddItem("Healing Potion");
+                            break;
+
+                        case 2:
+                            Console.WriteLine("You found a Rusty Sword!");
+                            AddItem("Rusty Sword");
+                            break;
+
+                        case 3:
+                            Console.WriteLine("You found nothing.");
+                            break;
+                    }
                     break;
 
-                case 2:
-                    Console.WriteLine("\nYou find a Rusty Sword.");
-                    AddItem("Rusty Sword");
+
+                // WITCH'S HUT (0,4)
+                case (0, 4):
+                    {
+                        Console.WriteLine("You approach the Witch's Hut.");
+
+                        if (acceptedQuests.Contains("side_merchant_02"))
+                        {
+                            Console.WriteLine("The witch accepts the merchant's delivery.");
+
+                            if (CompleteQuest("side_merchant_02"))
+                            {
+                                Console.WriteLine("Quest completed: The Merchant's Delivery!");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("An old witch watches you from the doorway.");
+                        }
+                        break;
+                        //Later add witch dialogue
+                    }
+
+                    
+
+
+                // DARK CAVE (1,4)
+                case (1, 4):
+                    Console.WriteLine("You investigate the dark cave.");
+                    Console.WriteLine("Strange noises echo through the tunnels.");
                     break;
 
-                case 3:
-                    Console.WriteLine("\nYou search the area but find nothing.");
+
+                // ROYAL ARMY (0,3)
+                case (0, 3):
+                    Console.WriteLine("You approach the Royal Army's camp.");
+                    Console.WriteLine("Soldiers patrol the area.");
+
+                    // Later: TalkToCommander();
+                    break;
+
+
+                // ALL OTHER LOCATIONS
+                default:
+                    Console.WriteLine("There is nothing special to investigate here yet.");
                     break;
             }
         }
@@ -1461,9 +1659,25 @@ namespace TextBasedGame
         // QUEST REGISTRATION
 
         // The story/NPC team will add quest here.
-        static void RegisterQuests()
+        public static void RegisterQuests()
         {
-
+            
+                RegisterQuest(
+                    "side_merchant_01",
+                    "The Missing Sword",
+                    "Find a Rusty Sword and return to the merchant.",
+                    false,
+                    2, 3
+                );
+            
+                RegisterQuest(
+                  "side_merchant_02",
+                  "The Merchant's Delivery",
+                  "Deliver the merchant's package to the Witch's Hut.",
+                  true,
+                  0, 4,
+                  "side_merchant_01"
+                );
         }
 
         // Stores the definition of a quest in the game.
