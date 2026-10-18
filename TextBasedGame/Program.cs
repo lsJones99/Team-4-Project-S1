@@ -98,7 +98,7 @@ namespace TextBasedGame
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
         static int enemyDamage = 0;
 
-        //Combat Logs
+        //Combat Information
         static List<string> combatLog = new List<string>();
 
         // Main void for running game then ending
@@ -787,7 +787,7 @@ namespace TextBasedGame
         {
             combatLog.Add(message);
 
-            if(combatLog.Count > 8)
+            if(combatLog.Count > 21)
             {
                 combatLog.RemoveAt(0);
             }
@@ -816,6 +816,7 @@ namespace TextBasedGame
             combatLog.Clear();
             int enemyHealth = 50;
             bool inCombat = true;
+            bool playerTurnCompleted = false;
 
             Console.Clear();
 
@@ -826,7 +827,7 @@ namespace TextBasedGame
 
             while (inCombat && playerHealth > 0 && enemyHealth > 0)
             {
-
+                playerTurnCompleted = false;
                 Console.Clear();
                 DisplayCombatLog();
                 Console.WriteLine("---------- COMBAT ----------");
@@ -859,8 +860,9 @@ namespace TextBasedGame
                             playerDamage = rand.Next(8, 16);
                             enemyHealth -= playerDamage;
                             Console.WriteLine("You chose attack!");
-                            Console.WriteLine($"You attack the {enemyName} for {playerDamage} damage.");
+                            Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
                             AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
+                            playerTurnCompleted = true;
                             break;
 
                         case 'm':
@@ -891,31 +893,39 @@ namespace TextBasedGame
                                             playerDamage = rand.Next(8, 25) + playerSpellDmg;
                                             enemyHealth -= playerDamage;
                                             Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
+                                            AddCombatLog($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
                                             valid = 1;
+                                            playerTurnCompleted = true;
                                         }
                                         else
                                         {
                                             playerDamage = rand.Next(1, 11);
                                             playerHealth -= playerDamage;
                                             Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
+                                            AddCombatLog($"The spell miscasts! you explode for {playerDamage}");
                                             valid = 1;
+                                            playerTurnCompleted = true;
                                         }
                                         playerMana -= 3;
                                         break;
+                                        
                                     }
                                     else
                                     {
                                         Console.WriteLine("You do not have enough Mana to cast magic missile");
+                                        playerTurnCompleted = false;
                                         break;
                                     }
                                 case '0':
                                     {
                                         Console.WriteLine("Leaving magic menu");
+                                        playerTurnCompleted = false;
                                         break;
                                     }
                                 default:
                                     {
                                         Console.WriteLine("Invalid option, please choose again");
+                                        playerTurnCompleted = false;
                                         break;
                                     }
                             }
@@ -943,10 +953,12 @@ namespace TextBasedGame
                             {
                                 Console.WriteLine($"You have successfully escaped from {enemyName}!");
                                 inCombat = false;
+                                playerTurnCompleted = false;
                             }
                             else
                             {
                                 Console.WriteLine("You failed to escape!");
+                                playerTurnCompleted = true;
                             }
                             break;
 
@@ -971,15 +983,22 @@ namespace TextBasedGame
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
-                    PauseStory();
+                    Console.WriteLine("\nPress enter to continue exploration.");
+                    Console.ReadLine();
                     break;
                 }
 
                 //enemy attacks
-                enemyDamage = rand.Next(5, 11);
-                playerHealth -= enemyDamage;
-                Console.WriteLine("The enemy attacks!");
-                AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
+                if(playerTurnCompleted == true)
+                {
+                    enemyDamage = rand.Next(5, 11);
+                    playerHealth -= enemyDamage;
+                    Console.WriteLine();
+                    Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
+                    AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
+                    AddCombatLog("\n");
+                }
+
 
                 //check for player hp
                 if (playerHealth <= 0)
