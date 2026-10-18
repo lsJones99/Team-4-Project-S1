@@ -97,13 +97,10 @@ namespace TextBasedGame
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
         static int enemyDamage = 0;
 
-<<<<<<< HEAD
         //Combat Logs
         static List<string> combatLog = new List<string>();
 
-        // Main void for running game then ending
-=======
->>>>>>> d5635e467b2f34670f45f573d7e074e40f8248b0
+
 
         static void Main()
         {
