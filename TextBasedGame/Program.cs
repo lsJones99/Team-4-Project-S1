@@ -747,6 +747,7 @@ namespace TextBasedGame
         //Viewing character stats
         static void ViewCharacter()
         {
+            string user = "";
             bool valid = false;
             while (valid == false)
             {
@@ -757,11 +758,16 @@ namespace TextBasedGame
                 Console.WriteLine($"[R] - Resilience: {playerResilience}");
                 Console.WriteLine($"[A] - Arcane: {playerArcane}");
                 Console.WriteLine("\nFor more detailed information on a stat, enter the assosiated character.\nOtherwise enter X to exit.");
-                string user = Console.ReadLine()?.Trim().ToLower() ?? "";
-                if (user.Length == 0)
+
+                do
                 {
-                    Console.WriteLine("Command not entered, please enter a command");
-                }
+                    user = Console.ReadLine()?.Trim().ToLower() ?? "";
+                    if (user.Length == 0)
+                    {
+                        Console.WriteLine("\nCommand not entered, please enter a command");
+                    }
+                } while (user.Length == 0);
+
                 char input = user[0];
                 Console.Clear();
                 switch (input)
@@ -809,6 +815,7 @@ namespace TextBasedGame
                         Console.WriteLine("Flat added bonus to all spell damage");
                         Console.WriteLine($"\nMagic Resistance: {playerMagicResist}");
                         Console.WriteLine("Flat reduction in damage taken from any magic damage");
+                        Console.ReadLine();
                         break;
                     case 'x':
                         Console.WriteLine("Exiting character stats");
