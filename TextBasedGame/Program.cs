@@ -746,8 +746,7 @@ namespace TextBasedGame
             playerCurrentXP = playerCurrentXP + XP;
             if (playerCurrentXP >= playerNextXP)
             {
-                Console.WriteLine("You have leveled up!");
-                Console.WriteLine("Press ENTER to continue");
+                Console.WriteLine("You have leveled up! Press enter to allocate your stats!");
                 Console.ReadLine();
                 playerLevel = LevelUp();
                 return playerLevel;
@@ -1018,10 +1017,12 @@ namespace TextBasedGame
 
                         case 'r':
                             escapeChance = rand.Next(1, 101);
-
+                            Console.WriteLine("You picked run away!");
                             if (escapeChance <= 50)
                             {
-                                Console.WriteLine($"You have successfully escaped from {enemyName}!");
+                                Console.WriteLine("You have escaped!");
+                                AddCombatLog($"You have successfully escaped from {enemyName}!");
+                                AddCombatLog("\n");
                                 inCombat = false;
                                 playerTurnCompleted = false;
                                 playerEscape = true;
@@ -1029,6 +1030,8 @@ namespace TextBasedGame
                             else
                             {
                                 Console.WriteLine("You failed to escape!");
+                                AddCombatLog($"You failed to escape!");
+                                AddCombatLog("\n");
                                 playerTurnCompleted = true;
                                 playerEscape = false;
                             }
@@ -1057,7 +1060,7 @@ namespace TextBasedGame
                 if (playerHealth <= 0)
                 {
                     playerHealth = 0;
-                    Console.WriteLine($"{playerName} has been defeated.");
+                    AddCombatLog($"{playerName} has been defeated.");
 
                     if (activequest && trackedQuest.Length > 0)
                     {
@@ -1084,7 +1087,7 @@ namespace TextBasedGame
                         Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
                         Console.ReadLine();
                         AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
-
+                        AddCombatLog("\n");
                         //check for player hp
                         if (playerHealth <= 0)
                         {
