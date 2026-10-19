@@ -742,9 +742,9 @@ namespace TextBasedGame
         // Gaining XP
         static int GainXP(int XP)
         {
-            Console.WriteLine($"You have gained {XP} XP");
+            Console.WriteLine($"\nYou have gained {XP} XP");
             playerCurrentXP = playerCurrentXP + XP;
-            if (playerCurrentXP <= playerNextXP)
+            if (playerCurrentXP >= playerNextXP)
             {
                 Console.WriteLine("You have leveled up!");
                 Console.WriteLine("Press ENTER to continue");
