@@ -1052,7 +1052,9 @@ namespace TextBasedGame
                     playerLevel = GainXP(50);
                     Console.WriteLine("\nPress enter to continue exploration.");
                     Console.ReadLine();
-                    break;
+                    AddCombatLog("You have won!");
+                    inCombat = false;
+                    playerTurnCompleted = false;
                 }
 
                 //check for player hp
@@ -1071,7 +1073,7 @@ namespace TextBasedGame
                             Console.ReadLine();
                         }
                     }
-
+                    playerTurnCompleted = false;
                     inCombat = false;
                 }
 
@@ -1087,6 +1089,7 @@ namespace TextBasedGame
                         Console.ReadLine();
                         AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
                         AddCombatLog("\n");
+
                         //check for player hp
                         if (playerHealth <= 0)
                         {
@@ -1119,9 +1122,7 @@ namespace TextBasedGame
                 }
 
 
-
-
-                //Combat pause
+                //Combat pause & turn ended
                 if (inCombat && playerHealth > 0 && enemyHealth > 0)
                 {
                     Console.WriteLine("\nPress Enter for the next turn.");
