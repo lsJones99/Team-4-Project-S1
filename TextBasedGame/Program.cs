@@ -919,6 +919,56 @@ namespace TextBasedGame
             Console.SetCursorPosition(originalColumn, originalRow);
         }
 
+        //Make combat commands into separate methods to save lines of code
+        static void EnemyEncounter(string enemyName)
+        {
+            Console.WriteLine("\n========== ENCOUNTER ==========");
+            Console.WriteLine($"A {enemyName} approaches!");
+            Console.WriteLine("\nPress Enter to begin combat.");
+        }
+
+        static void CombatInformation(string enemyName, int enemyHealth)
+        {
+            Console.WriteLine("---------- COMBAT ----------");
+            Console.WriteLine($"{playerName}:");
+            Console.WriteLine($"{playerHealth}/{playerMaxHealth} HP");
+            Console.WriteLine($"{playerMana}/{playerMaxMana} MP");
+            Console.WriteLine($"\n{enemyName}: \n{enemyHealth}/50 HP");
+        }
+
+        static void CombatCommands()
+        {
+            Console.WriteLine("\n[A] Attack");
+            Console.WriteLine("[M] Magic");
+            Console.WriteLine("[I] Use item");
+            Console.WriteLine("[R] Run away");
+        }
+
+        static bool AttackCommand(int playerDamage, string enemyName, int enemyHealth, bool playerTurnCompleted)
+        {
+            Console.WriteLine("You chose attack!");
+            Console.ReadLine();
+
+            if (playerCritChance == 100)
+            {
+                enemyHealth -= playerDamage * 2;
+                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
+                Console.ReadLine();
+                AddCombatLog($"You attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
+                return true;
+            }
+
+            else
+            {
+                enemyHealth -= playerDamage;
+                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
+                Console.ReadLine();
+                AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
+                return true;
+            }
+
+        }
+
         static bool CombatMenu(string enemyName)
         {
             combatLog.Clear();
@@ -927,10 +977,7 @@ namespace TextBasedGame
             bool playerTurnCompleted = false, playerEscape = false;
 
             Console.Clear();
-
-            Console.WriteLine("\n========== ENCOUNTER ==========");
-            Console.WriteLine($"A {enemyName} approaches!");
-            Console.WriteLine("\nPress Enter to begin combat.");
+            EnemyEncounter(enemyName);
             Console.ReadLine();
 
             while (inCombat && playerHealth > 0 && enemyHealth > 0)
@@ -943,16 +990,8 @@ namespace TextBasedGame
 
                 Console.Clear();
                 DisplayCombatLog();
-                Console.WriteLine("---------- COMBAT ----------");
-                Console.WriteLine($"{playerName}:");
-                Console.WriteLine($"{playerHealth}/{playerMaxHealth} HP");
-                Console.WriteLine($"{playerMana}/{playerMaxMana} MP");
-                Console.WriteLine($"\n{enemyName}: \n{enemyHealth}/50 HP");
-                
-                Console.WriteLine("\n[A] Attack");
-                Console.WriteLine("[M] Magic");
-                Console.WriteLine("[I] Use item");
-                Console.WriteLine("[R] Run away");
+                CombatInformation(enemyName, enemyHealth);
+                CombatCommands();
 
                 Console.Write("\nChoose an action: ");
                 string combatInput = Console.ReadLine()?.Trim().ToLower() ?? "";
@@ -971,27 +1010,8 @@ namespace TextBasedGame
                     {
                         case 'a':
                             playerDamage = rand.Next(8, 16);
-                            
-                            Console.WriteLine("You chose attack!");
-                            Console.ReadLine();
+                            playerTurnCompleted = AttackCommand(playerDamage, enemyName, enemyHealth, playerTurnCompleted);
 
-                            //crit chance
-                            if (playerCritChance == 100)
-                            {
-                                enemyHealth -= playerDamage * 2;
-                                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
-                                Console.ReadLine();
-                                AddCombatLog($"You attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
-                                playerTurnCompleted = true;
-                            }
-                            else
-                            {
-                                enemyHealth -= playerDamage;
-                                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
-                                Console.ReadLine();
-                                AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
-                                playerTurnCompleted = true;
-                            }
                             //add mana after attacking
                             if (playerMana < playerMaxMana)
                             {
@@ -1093,7 +1113,6 @@ namespace TextBasedGame
 
 
                         case 'i':
-                            //item use to be implemented later on
                             ViewInventory();
                             continue;
 
