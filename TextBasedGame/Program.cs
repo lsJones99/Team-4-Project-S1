@@ -1228,8 +1228,6 @@ namespace TextBasedGame
                 playerX = nextX;
                 playerY = nextY;
                 Map(true);
-                Console.WriteLine($"{playerName} moves {direction}.");
-
                 if (validMovement == true)
                 {
                     Console.WriteLine($"{playerName} moves {direction}.");
