@@ -681,15 +681,18 @@ namespace TextBasedGame
             Console.WriteLine("\n---------- EXPLORATION ----------");
             Console.WriteLine("[R] Start Navigating");
             Console.WriteLine("[I] Investigate");
+            Console.WriteLine("[C] Character info");
             Console.WriteLine("[V] View inventory");
             Console.WriteLine("[E] Exit");
             Console.WriteLine("[M] Map");
             Console.WriteLine("[S] Save");
             Console.WriteLine("[Q] Quest");
             Console.WriteLine($"Name: {playerName}");
-            Console.WriteLine($"Health: {playerHealth}/{playerMaxHealth}");
+            Console.WriteLine($"Level: {playerLevel}");
+            Console.WriteLine($"XP: {playerCurrentXP}/{playerNextXP}");
+            Console.WriteLine($"\nHealth: {playerHealth}/{playerMaxHealth}");
             Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
-
+            Console.WriteLine($"XP: {playerCurrentXP}/{playerNextXP}");
             Console.Write("\nEnter command: ");
             string userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
 
@@ -730,6 +733,9 @@ namespace TextBasedGame
                 case 's':
                     Save();
                     break;
+                case 'c':
+                    ViewCharacter();
+                    break;
 
                 default:
                     Console.WriteLine("Unrecognised command.");
@@ -738,6 +744,49 @@ namespace TextBasedGame
             }
 
             return playerHealth > 0;
+        }
+        //Viewing character stats
+        static void ViewCharacter()
+        {
+            bool valid = false;
+            while (valid == false)
+            {
+                Console.WriteLine($"----- {playerName} -----");
+                Console.WriteLine($"[S] - Strength: {playerStrength}");
+                Console.WriteLine($"[F] - Finesse: {playerFinesse}");
+                Console.WriteLine($"[R] - Resilience: {playerResilience}");
+                Console.WriteLine($"[A] - Arcane: {playerArcane}");
+                Console.WriteLine("\nFor more detailed information on a stat, enter the assosiated character.\nOtherwise enter X to exit.");
+                string user = Console.ReadLine()?.Trim().ToLower() ?? "";
+                if (user.Length == 0)
+                {
+                    Console.WriteLine("Command not entered, please enter a command");
+                }
+                char input = user[0];
+                switch (input)
+                {
+                    case 's':
+                        Console.WriteLine($"Strength: {playerStrength}");
+                        Console.WriteLine("\nA bonus to damage on melee attacks");
+                        Console.WriteLine($"Melee Damage: {playerMeleeDmg}");
+                        Console.WriteLine("\nA bonus to hit chance against enemies with melee weapons");
+                        Console.WriteLine($"Melee hit chance: {playerMeleeHit}");
+                        Console.WriteLine("\nBonus added to default inventory capacity of 5");
+                        Console.WriteLine($"Inventory bonus: {playerStrength}");
+                        Console.WriteLine("Press ENTER to return");
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    case 'x':
+                        Console.WriteLine("Exiting character stats");
+                        valid = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command, please input a valid command");
+                        break;
+                    }
+            }
+            Console.ReadLine();
         }
         // Gaining XP
         static int GainXP(int XP)
