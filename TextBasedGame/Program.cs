@@ -793,6 +793,7 @@ namespace TextBasedGame
                     if (check.Length == 0)
                     {
                         Console.WriteLine("No input detected, please input value");
+                        continue;
                     }
                     char temp = check[0];
                     switch (temp)
