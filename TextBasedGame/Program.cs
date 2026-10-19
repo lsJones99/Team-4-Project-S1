@@ -1201,7 +1201,7 @@ namespace TextBasedGame
                 string encounteredEnemy = Enemy(enemies);
 
                 Console.WriteLine($"\nA {encounteredEnemy} suddenly appears!");
-
+                AddCombatLog($"\nA {encounteredEnemy} suddenly appears!");
                 //Combat system function
                 CombatMenu(encounteredEnemy);
             }
