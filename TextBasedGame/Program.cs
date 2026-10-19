@@ -1223,7 +1223,7 @@ namespace TextBasedGame
                 {
                     Console.WriteLine("You cannot move beyond the map!");
                     PauseStory();
-                    return;
+                    continue;
                 }
                 playerX = nextX;
                 playerY = nextY;
