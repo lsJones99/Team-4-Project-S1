@@ -873,7 +873,7 @@ namespace TextBasedGame
             combatLog.Clear();
             int enemyHealth = 50;
             bool inCombat = true;
-            bool playerTurnCompleted = false;
+            bool playerTurnCompleted = false, playerEscape = false;
 
             Console.Clear();
 
@@ -917,7 +917,9 @@ namespace TextBasedGame
                             playerDamage = rand.Next(8, 16);
                             enemyHealth -= playerDamage;
                             Console.WriteLine("You chose attack!");
+                            Console.ReadLine();
                             Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
+                            Console.ReadLine();
                             AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
                             playerTurnCompleted = true;
                             break;
@@ -949,6 +951,7 @@ namespace TextBasedGame
                                             playerDamage = rand.Next(8, 25) + playerSpellDmg;
                                             enemyHealth -= playerDamage;
                                             Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
+                                            Console.ReadLine();
                                             AddCombatLog($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
                                             valid = 1;
                                             playerTurnCompleted = true;
@@ -958,9 +961,19 @@ namespace TextBasedGame
                                             playerDamage = rand.Next(1, 11);
                                             playerHealth -= playerDamage;
                                             Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
+                                            Console.ReadLine();
                                             AddCombatLog($"The spell miscasts! you explode for {playerDamage}");
+                                            if(playerHealth <= 0)
+                                            { 
+                                                playerTurnCompleted = false;
+                                            }
+
+                                            else if (playerHealth > 0)
+                                            {
+                                                playerTurnCompleted = true;
+                                            }
                                             valid = 1;
-                                            playerTurnCompleted = true;
+                                            
                                         }
                                         playerMana -= 3;
                                         break;
@@ -1010,11 +1023,13 @@ namespace TextBasedGame
                                 Console.WriteLine($"You have successfully escaped from {enemyName}!");
                                 inCombat = false;
                                 playerTurnCompleted = false;
+                                playerEscape = true;
                             }
                             else
                             {
                                 Console.WriteLine("You failed to escape!");
                                 playerTurnCompleted = true;
+                                playerEscape = false;
                             }
                             break;
 
@@ -1025,14 +1040,6 @@ namespace TextBasedGame
 
 
                 }
-                //command after running away
-                if (!inCombat)
-                {
-                    Console.WriteLine("\nPress Enter to return to exploration.");
-                    Console.ReadLine();
-                    continue;
-                }
-
 
                 //check if enemy hp is 0 or less
                 if (enemyHealth <= 0)
@@ -1044,18 +1051,6 @@ namespace TextBasedGame
                     Console.ReadLine();
                     break;
                 }
-
-                //enemy attacks
-                if(playerTurnCompleted == true)
-                {
-                    enemyDamage = rand.Next(5, 11);
-                    playerHealth -= enemyDamage;
-                    Console.WriteLine();
-                    Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
-                    AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
-                    AddCombatLog("\n");
-                }
-
 
                 //check for player hp
                 if (playerHealth <= 0)
@@ -1077,7 +1072,52 @@ namespace TextBasedGame
                     inCombat = false;
                 }
 
-                
+                else
+                {
+                    //enemy attacks
+                    if (playerTurnCompleted == true)
+                    {
+                        enemyDamage = rand.Next(5, 11);
+                        playerHealth -= enemyDamage;
+                        Console.WriteLine();
+                        Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
+                        Console.ReadLine();
+                        AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
+
+                        //check for player hp
+                        if (playerHealth <= 0)
+                        {
+                            playerHealth = 0;
+                            Console.WriteLine($"{playerName} has been defeated.");
+
+                            if (activequest && trackedQuest.Length > 0)
+                            {
+                                if (FailQuest(trackedQuest))
+                                {
+                                    Console.WriteLine("Quest failed!");
+                                    Console.WriteLine("Returning to the last quest checkpoint.");
+                                    Console.WriteLine("Press Enter to continue.");
+                                    Console.ReadLine();
+                                }
+                            }
+
+                            inCombat = false;
+                        }
+                    }
+                }
+
+
+                //command after running away
+                if (!inCombat && playerEscape)
+                {
+                    Console.WriteLine("\nPress Enter to return to exploration.");
+                    Console.ReadLine();
+                    continue;
+                }
+
+
+
+
                 //Combat pause
                 if (inCombat && playerHealth > 0 && enemyHealth > 0)
                 {
