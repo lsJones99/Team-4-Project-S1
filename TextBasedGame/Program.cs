@@ -1,14 +1,16 @@
 
-﻿using System.ComponentModel.Design;
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Collections.Generic;
+﻿using System.ComponentModel.Design;
+using System.IO;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using System.Collections.Generic;
 using System.Xml.Serialization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TextBasedGame
 {
@@ -16,6 +18,14 @@ namespace TextBasedGame
     {
         private static readonly string saveFile = "savedata.txt";
 
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        // 3 is the Windows constant for Maximized
+        private const int SW_MAXIMIZE = 3;
         //Player information
         static int MAX_INVENTORY_SIZE = 5;
         static string playerName = "";
@@ -111,6 +121,13 @@ namespace TextBasedGame
 
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
+
+            IntPtr handle = GetConsoleWindow();
+            ShowWindow(handle, SW_MAXIMIZE);
+
+            Console.WriteLine();
+            CenterText("This game is best played maximised.");
+            PauseStory();
 
             if (File.Exists(saveFile) == false)
             {
@@ -465,7 +482,7 @@ namespace TextBasedGame
         {
             Console.Clear();
             CenterText("==============================");
-            CenterText("       MEDIEVAL FANTASY");
+            CenterText("|      MEDIEVAL FANTASY      |");
             CenterText("==============================");
 
             CenterText("You are a student from Otago Polytechnic, walking home after a long day of classes.");
@@ -483,7 +500,8 @@ namespace TextBasedGame
             CenterText("A mysterious voice echoes inside your mind...");
             Console.ReadLine();
 
-            CenterText("Hero, tell me your name");
+            CenterText("\"Hero, tell me your name.\"");
+            CenterText("(Enter your name)");
             playerName = Console.ReadLine() ??"";
 
             //prevents the players from having a blank name
@@ -492,7 +510,7 @@ namespace TextBasedGame
                 playerName = "Anon";
             }
 
-            CenterText($"{playerName}... A fitting name for the one chosen to save our world.");
+            CenterText($"\"{playerName}... A fitting name for the one chosen to save our world.\"");
             Console.ReadLine();
 
             CenterText("You demand answers, but the mysterious voice ignores your questions.");
@@ -543,7 +561,7 @@ namespace TextBasedGame
                 switch (user)
                 {
                     case 'w':
-                        Console.WriteLine("------ Warrior ------");
+                        Console.WriteLine("\n------ Warrior ------");
                         Console.WriteLine("Prefers close quarters physical melee weapons, able to take a few hits and deal consistant damage, wearing the heaviest of equipment.\nJust maybe avoid anything magically inclined for your own safety");
                         playerStrength = 5;
                         playerFinesse = 1;
@@ -552,7 +570,7 @@ namespace TextBasedGame
                         valid = true;
                         break;
                     case 'r':
-                        Console.WriteLine("------ Rogue ------");
+                        Console.WriteLine("\n------ Rogue ------");
                         Console.WriteLine("A physical ranged combatant able to dodge most blows while dealing more frequent critical damage and more likely to escape a bad engagement.\nA little bit of arcane skill to bolster their natural skill but be wary of fights dragging on too long.");
                         playerStrength = 2;
                         playerFinesse = 5;
@@ -561,7 +579,7 @@ namespace TextBasedGame
                         valid = true;
                         break;
                     case 'm':
-                        Console.WriteLine("------ Mage ------");
+                        Console.WriteLine("\n------ Mage ------");
                         Console.WriteLine("A master of the arcane arts, able to cast a much wider variety of spells with more frequency than other, with loss likely hood of self immolation to boot.\nHowever, your ability to use non-magical equipment is limited and are far more frail than most.");
                         playerStrength = 1;
                         playerFinesse = 2;
