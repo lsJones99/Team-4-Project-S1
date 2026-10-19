@@ -1257,6 +1257,7 @@ namespace TextBasedGame
             else
             {
                 Console.WriteLine("The path is clear.");
+                Thread.Sleep(700);
             }
         }
         //NPC
