@@ -944,7 +944,7 @@ namespace TextBasedGame
             Console.WriteLine("[R] Run away");
         }
 
-        static bool AttackCommand(int playerDamage, string enemyName, int enemyHealth, bool playerTurnCompleted)
+        static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, ref bool playerTurnCompleted)
         {
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
@@ -1010,7 +1010,7 @@ namespace TextBasedGame
                     {
                         case 'a':
                             playerDamage = rand.Next(8, 16);
-                            playerTurnCompleted = AttackCommand(playerDamage, enemyName, enemyHealth, playerTurnCompleted);
+                            playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, ref playerTurnCompleted);
 
                             //add mana after attacking
                             if (playerMana < playerMaxMana)
