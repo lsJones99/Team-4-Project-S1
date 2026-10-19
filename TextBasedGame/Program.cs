@@ -839,6 +839,8 @@ namespace TextBasedGame
             }
             return playerLevel;
         }
+
+
         //Combat commands
         static void AddCombatLog(string message)
         {
@@ -931,12 +933,13 @@ namespace TextBasedGame
 
                         case 'm':
                             //implement magic as the hero progresses
-                            
+                            Console.WriteLine("\nYou chose magic!");
+
+                            Console.WriteLine("[M] - Magic Missile - 3 MP");
+                            Console.WriteLine("[0] - Return to previous menu");
                             do
                             {
-                                Console.WriteLine("Choose a spell to cast");
-                                Console.WriteLine("[M] - Magic Missile - 3 MP");
-                                Console.WriteLine("[0] - Return to previous menu");
+                                Console.Write("\nChoose a spell to cast: ");
                                 userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
                                 if (userselect != "m" && userselect != "0")
                                 {
@@ -1016,9 +1019,7 @@ namespace TextBasedGame
 
                         case 'i':
                             //item use to be implemented later on
-                            Console.WriteLine("Item use is not available during combat yet.");
-                            Console.WriteLine("\nPress Enter to continue.");
-                            Console.ReadLine();
+                            ViewInventory();
                             continue;
 
                         case 'r':
@@ -1140,6 +1141,8 @@ namespace TextBasedGame
 
             return true;
         }
+
+        //END OF COMBAT COMMANDS
 
         //Enemy generator
         static string Enemy(string[] enemyArray)
@@ -1504,7 +1507,8 @@ namespace TextBasedGame
             if (inventoryCount == 0)
             {
                 Console.WriteLine("Your inventory is empty.");
-                PauseStory();
+                Console.WriteLine("Press enter to continue");
+                Console.ReadLine();
                 return;
             }
 
@@ -1564,7 +1568,8 @@ namespace TextBasedGame
                 if (!int.TryParse(Console.ReadLine(), out int useChoice) || useChoice < 1 || useChoice > inventoryCount)
                 {
                     Console.WriteLine("\nInvalid input.");
-                    PauseStory();
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                     return;
                 }
 
@@ -1582,7 +1587,8 @@ namespace TextBasedGame
                         playerHealth = playerMaxHealth;
                     }
                     Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
-                    PauseStory();
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                 }
                 // What happens when using a rusty sword
                 else if (inventory[useChoice - 1] == "Rusty Sword")
@@ -1598,12 +1604,14 @@ namespace TextBasedGame
                     }
                     playerWpn = "Rusty Sword";
                     Console.WriteLine("You equipped the Rusty Sword.");
-                    PauseStory();
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                 }
                 else
                 {
                     Console.WriteLine("That input is unrecognised.");
-                    PauseStory();
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                 }
 
                 if (slotEmpty == true)
@@ -1631,7 +1639,8 @@ namespace TextBasedGame
                 if (!int.TryParse(Console.ReadLine(), out int throwChoice) || throwChoice < 1 || throwChoice > inventoryCount)
                 {
                     Console.WriteLine("\nInvalid input.");
-                    PauseStory();
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                     return;
                 }
                 string removedItem = inventory[throwChoice - 1];
@@ -1642,7 +1651,8 @@ namespace TextBasedGame
                 inventory[inventoryCount - 1] = null;
                 inventoryCount--;
                 Console.WriteLine($"\nYou threw away the {removedItem}.");
-                PauseStory();
+                Console.WriteLine("Press enter to continue");
+                Console.ReadLine();
             }
         }
         // Map
