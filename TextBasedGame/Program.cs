@@ -37,7 +37,7 @@ namespace TextBasedGame
         static int playerRangeDmg = 0;
         static int playerRunBonus = 0;
         static int playerDodge = 0;
-        static int playerCritChance = 0;
+        static int playerCritChance = 100;
         static int playerResilience = 0;
         static int playerPhysicalResist = 0;
         static int playerBlockChance = 0;
@@ -922,36 +922,62 @@ namespace TextBasedGame
                     {
                         case 'a':
                             playerDamage = rand.Next(8, 16);
-                            enemyHealth -= playerDamage;
+                            
                             Console.WriteLine("You chose attack!");
                             Console.ReadLine();
-                            Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
-                            Console.ReadLine();
-                            AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
-                            playerTurnCompleted = true;
-                            break;
+
+                            //crit chance
+                            if (playerCritChance == 100)
+                            {
+                                enemyHealth -= playerDamage * 2;
+                                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
+                                Console.ReadLine();
+                                AddCombatLog($"You attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
+                                playerTurnCompleted = true;
+                            }
+                            else
+                            {
+                                enemyHealth -= playerDamage;
+                                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
+                                Console.ReadLine();
+                                AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
+                                playerTurnCompleted = true;
+                            }
+                            //add mana after attacking
+                            if (playerMana < playerMaxMana)
+                            {
+                                playerMana += playerDamage / 10;
+                            }
+                            else
+                            {
+                                playerMana = playerMaxMana;
+                            }
+                                break;
 
                         case 'm':
                             //implement magic as the hero progresses
                             Console.WriteLine("\nYou chose magic!");
-
+                            Console.WriteLine();
                             Console.WriteLine("[M] - Magic Missile - 3 MP");
                             Console.WriteLine("[0] - Return to previous menu");
-                            do
-                            {
-                                Console.Write("\nChoose a spell to cast: ");
-                                userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
-                                if (userselect != "m" && userselect != "0")
+                            
+
+                                do
                                 {
-                                    Console.WriteLine("Invalid selection, please try again");
-                                }
-                            } while (userselect != "m" && userselect != "0");
-                            char spellselect = userselect[0];
+                                    Console.Write("\nChoose a spell to cast: ");
+                                    userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
+                                    if (userselect != "m" && userselect != "0")
+                                    {
+                                        Console.WriteLine("Invalid selection, please try again");
+                                    }
+                                } while (userselect != "m" && userselect != "0");
+                                char spellselect = userselect[0];
                                 switch (spellselect)
                                 {
                                     case 'm':
                                         if (playerMana >= 3)
                                         {
+                                            playerMana -= 3;
                                             int casting = rand.Next(1, 101) - (playerSpellMiscast);
                                             if (casting <= 75)
                                             {
@@ -970,8 +996,8 @@ namespace TextBasedGame
                                                 Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
                                                 Console.ReadLine();
                                                 AddCombatLog($"The spell miscasts! you explode for {playerDamage}");
-                                                if(playerHealth <= 0)
-                                                { 
+                                                if (playerHealth <= 0)
+                                                {
                                                     playerTurnCompleted = false;
                                                 }
 
@@ -980,11 +1006,11 @@ namespace TextBasedGame
                                                     playerTurnCompleted = true;
                                                 }
                                                 valid = 1;
-                                            
+
                                             }
-                                            playerMana -= 3;
+
                                             break;
-                                        
+
                                         }
                                         else
                                         {
@@ -999,13 +1025,13 @@ namespace TextBasedGame
                                             break;
                                         }
                                     default:
-                                        
+
                                         Console.WriteLine("Invalid option, please choose again");
                                         Console.ReadLine();
                                         playerTurnCompleted = false;
                                         break;
-                                    
-                            }
+
+                                }
                                 if (valid == 1)
                                 {
                                     break;
@@ -1015,7 +1041,7 @@ namespace TextBasedGame
                                     Console.ReadLine();
                                     continue;
                                 }
-                            
+
 
                         case 'i':
                             //item use to be implemented later on
