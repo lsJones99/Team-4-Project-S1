@@ -692,7 +692,6 @@ namespace TextBasedGame
             Console.WriteLine($"XP: {playerCurrentXP}/{playerNextXP}");
             Console.WriteLine($"\nHealth: {playerHealth}/{playerMaxHealth}");
             Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
-            Console.WriteLine($"XP: {playerCurrentXP}/{playerNextXP}");
             Console.Write("\nEnter command: ");
             string userInput = Console.ReadLine()?.Trim().ToLower() ?? "";
 
@@ -751,6 +750,7 @@ namespace TextBasedGame
             bool valid = false;
             while (valid == false)
             {
+                Console.Clear();
                 Console.WriteLine($"----- {playerName} -----");
                 Console.WriteLine($"[S] - Strength: {playerStrength}");
                 Console.WriteLine($"[F] - Finesse: {playerFinesse}");
@@ -763,19 +763,52 @@ namespace TextBasedGame
                     Console.WriteLine("Command not entered, please enter a command");
                 }
                 char input = user[0];
+                Console.Clear();
                 switch (input)
                 {
                     case 's':
                         Console.WriteLine($"Strength: {playerStrength}");
                         Console.WriteLine("\nA bonus to damage on melee attacks");
-                        Console.WriteLine($"Melee Damage: {playerMeleeDmg}");
+                        Console.WriteLine($"Melee Damage bonus: {playerMeleeDmg}");
                         Console.WriteLine("\nA bonus to hit chance against enemies with melee weapons");
                         Console.WriteLine($"Melee hit chance: {playerMeleeHit}");
                         Console.WriteLine("\nBonus added to default inventory capacity of 5");
                         Console.WriteLine($"Inventory bonus: {playerStrength}");
                         Console.WriteLine("Press ENTER to return");
                         Console.ReadLine();
-                        Console.Clear();
+                        break;
+                    case 'f':
+                        Console.WriteLine($"Finesse: {playerFinesse}");
+                        Console.WriteLine($"\nCrit Chance: {playerCritChance}");
+                        Console.WriteLine("A flat added bonus to critical hit chance");
+                        Console.WriteLine($"\nDodge chance: {playerDodge}");
+                        Console.WriteLine("A percent based chance to dodge all damage of a physical attack");
+                        Console.WriteLine($"\nRun away bonus: {playerRunBonus}");
+                        Console.WriteLine("Adds a flat bonus to your chances of running from combat");
+                        Console.WriteLine($"\nRange Damage bonus: {playerRangeDmg}");
+                        Console.WriteLine("Adds a flat damage bonus to your ranged weapons");
+                        Console.WriteLine($"\nRange hit chance bonus: {playerRangeHit}");
+                        Console.WriteLine("Adds a bonus to hit chance against enemies with ranged weapons");
+                        Console.ReadLine();
+                        break;
+                    case 'r':
+                        Console.WriteLine($"Resilience: {playerResilience}");
+                        Console.WriteLine($"\nBlock chance: {playerBlockChance}");
+                        Console.WriteLine("Chance to block an attack to reduce incoming physical damage");
+                        Console.WriteLine($"\nBlock damage reduction: {playerBlockReduction}");
+                        Console.WriteLine("Amount of damage blocked when successfully blocking attacks");
+                        Console.WriteLine($"\nPhysical resistance: {playerPhysicalResist}");
+                        Console.WriteLine("Amount of damage reduced when taking any physical damage");
+                        Console.ReadLine();
+                        break;
+                    case 'a':
+                        Console.WriteLine($"Arcane: {playerArcane}");
+                        Console.WriteLine($"\nMiscast chance: {playerSpellMiscast}");
+                        Console.WriteLine("Reduces the chance that a spell miscasts, dealing self damage");
+                        Console.WriteLine($"\nSpell Damage Bonus: {playerSpellDmg}");
+                        Console.WriteLine("Flat added bonus to all spell damage");
+                        Console.WriteLine($"\nMagic Resistance: {playerMagicResist}");
+                        Console.WriteLine("Flat reduction in damage taken from any magic damage");
                         break;
                     case 'x':
                         Console.WriteLine("Exiting character stats");
@@ -786,7 +819,6 @@ namespace TextBasedGame
                         break;
                     }
             }
-            Console.ReadLine();
         }
         // Gaining XP
         static int GainXP(int XP)
