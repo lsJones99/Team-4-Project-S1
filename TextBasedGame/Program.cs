@@ -614,12 +614,12 @@ namespace TextBasedGame
             playerMaxMana = playerMaxMana + (3 * playerArcane);
             playerMana = playerMana + (3 * playerArcane);
             playerMeleeHit = playerMeleeHit + playerStrength;
-            playerMeleeDmg = playerMeleeDmg + (playerStrength / 2);
+            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
             playerRangeHit = playerRangeHit + playerFinesse;
-            playerRangeDmg = playerRangeDmg + (playerFinesse / 2);
+            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
             playerCritChance = playerCritChance + (playerFinesse * 4);
             playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
-            playerSpellDmg = playerSpellDmg + (playerArcane / 2);
+            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
             playerDodge = playerDodge + (playerFinesse * 3);
             playerRunBonus = playerRunBonus + (2 * playerFinesse);
             playerBlockChance = playerBlockChance + (4 * playerResilience);
@@ -799,41 +799,35 @@ namespace TextBasedGame
                     switch (temp)
                     {
                         case 'y':
-                            {
-                                int gainStr = tempStrength - playerStrength;
-                                int gainFin = tempFinesse - playerFinesse;
-                                int gainRes = tempResilience - playerResilience;
-                                int gainArc = tempArcane - playerArcane;
-                                playerLevel++;
-                                playerCurrentXP -= playerNextXP;
-                                playerNextXP = playerLevel * 50;
-                                playerStrength = tempStrength;
-                                playerFinesse = tempFinesse;
-                                playerResilience = tempResilience;
-                                playerArcane = tempArcane;
-                                MAX_INVENTORY_SIZE += gainStr;
-                                Array.Resize(ref inventory, MAX_INVENTORY_SIZE);
-                                playerMaxHealth += 10 * gainRes;
-                                playerHealth += 10 * gainRes;
-                                playerMaxMana += 3 * gainArc;
-                                playerMana += 3 * gainArc;
-                                playerMeleeHit += gainStr;
-                                playerMeleeDmg += gainStr / 2;
-                                playerRangeHit += gainFin;
-                                playerRangeDmg += gainFin / 2;
-                                playerCritChance += gainFin * 4;
-                                playerSpellMiscast -= 5 * gainArc;
-                                playerSpellDmg += gainArc / 2;
-                                playerDodge += gainFin * 3;
-                                playerRunBonus += 2 * gainFin;
-                                playerBlockChance += 4 * gainRes;
-                                playerBlockReduction += gainRes / 2;
-                                playerPhysicalResist += gainRes / 3;
-                                playerMagicResist += gainArc / 3;
-                                test = true;
-                                valid = true;
-                                break;
-                            }
+                            playerLevel++;
+                            playerCurrentXP = playerCurrentXP - playerNextXP;
+                            playerNextXP = playerLevel * 50;
+                            playerStrength = tempStrength;
+                            playerFinesse = tempFinesse;
+                            playerResilience = tempResilience;
+                            playerArcane = tempArcane;
+                            MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
+                            inventory = new string[MAX_INVENTORY_SIZE];
+                            playerMaxHealth = playerMaxHealth + (10 * playerResilience);
+                            playerHealth = playerHealth + (10 * playerResilience);
+                            playerMaxMana = playerMaxMana + (3 * playerArcane);
+                            playerMana = playerMana + (3 * playerArcane);
+                            playerMeleeHit = playerMeleeHit + playerStrength;
+                            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
+                            playerRangeHit = playerRangeHit + playerFinesse;
+                            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
+                            playerCritChance = playerCritChance + (playerFinesse * 4);
+                            playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
+                            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
+                            playerDodge = playerDodge + (playerFinesse * 3);
+                            playerRunBonus = playerRunBonus + (2 * playerFinesse);
+                            playerBlockChance = playerBlockChance + (4 * playerResilience);
+                            playerBlockReduction = playerBlockReduction + (playerResilience / 2);
+                            playerPhysicalResist = playerPhysicalResist + (playerResilience / 3);
+                            playerMagicResist = playerMagicResist + (playerArcane / 3);
+                            test = true;
+                            valid = true;
+                            break;
                         case 'n':
                             test = true;
                             break;
@@ -891,6 +885,11 @@ namespace TextBasedGame
             while (inCombat && playerHealth > 0 && enemyHealth > 0)
             {
                 playerTurnCompleted = false;
+
+                //magic local variables
+                int valid = 0;
+                string userselect;
+
                 Console.Clear();
                 DisplayCombatLog();
                 Console.WriteLine("---------- COMBAT ----------");
@@ -932,87 +931,88 @@ namespace TextBasedGame
 
                         case 'm':
                             //implement magic as the hero progresses
-                            Console.WriteLine("Choose a spell to cast");
-                            Console.WriteLine("[M] - Magic Missile - 3 MP");
-                            Console.WriteLine("[0] - Return to previous menu");
-                            int valid = 0;
-                            string userselect;
+                            
                             do
                             {
+                                Console.WriteLine("Choose a spell to cast");
+                                Console.WriteLine("[M] - Magic Missile - 3 MP");
+                                Console.WriteLine("[0] - Return to previous menu");
                                 userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
-                                if (userselect.Length == 0)
+                                if (userselect != "m" && userselect != "0")
                                 {
                                     Console.WriteLine("Invalid selection, please try again");
                                 }
-                            } while (userselect.Length == 0);
+                            } while (userselect != "m" && userselect != "0");
                             char spellselect = userselect[0];
-                            switch (spellselect)
-                            {
-                                case 'm':
-                                    if (playerMana >= 3)
-                                    {
-                                        int casting = rand.Next(1, 101) - (playerSpellMiscast);
-                                        if (casting <= 75)
+                                switch (spellselect)
+                                {
+                                    case 'm':
+                                        if (playerMana >= 3)
                                         {
-                                            playerDamage = rand.Next(8, 25) + playerSpellDmg;
-                                            enemyHealth -= playerDamage;
-                                            Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
-                                            Console.ReadLine();
-                                            AddCombatLog($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
-                                            valid = 1;
-                                            playerTurnCompleted = true;
+                                            int casting = rand.Next(1, 101) - (playerSpellMiscast);
+                                            if (casting <= 75)
+                                            {
+                                                playerDamage = rand.Next(8, 25) + playerSpellDmg;
+                                                enemyHealth -= playerDamage;
+                                                Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
+                                                Console.ReadLine();
+                                                AddCombatLog($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
+                                                valid = 1;
+                                                playerTurnCompleted = true;
+                                            }
+                                            else
+                                            {
+                                                playerDamage = rand.Next(1, 11);
+                                                playerHealth -= playerDamage;
+                                                Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
+                                                Console.ReadLine();
+                                                AddCombatLog($"The spell miscasts! you explode for {playerDamage}");
+                                                if(playerHealth <= 0)
+                                                { 
+                                                    playerTurnCompleted = false;
+                                                }
+
+                                                else if (playerHealth > 0)
+                                                {
+                                                    playerTurnCompleted = true;
+                                                }
+                                                valid = 1;
+                                            
+                                            }
+                                            playerMana -= 3;
+                                            break;
+                                        
                                         }
                                         else
                                         {
-                                            playerDamage = rand.Next(1, 11);
-                                            playerHealth -= playerDamage;
-                                            Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
-                                            Console.ReadLine();
-                                            AddCombatLog($"The spell miscasts! you explode for {playerDamage}");
-                                            if(playerHealth <= 0)
-                                            { 
-                                                playerTurnCompleted = false;
-                                            }
-
-                                            else if (playerHealth > 0)
-                                            {
-                                                playerTurnCompleted = true;
-                                            }
-                                            valid = 1;
-                                            
+                                            Console.WriteLine("You do not have enough Mana to cast magic missile");
+                                            playerTurnCompleted = false;
+                                            break;
                                         }
-                                        playerMana -= 3;
-                                        break;
+                                    case '0':
+                                        {
+                                            Console.WriteLine("Leaving magic menu");
+                                            playerTurnCompleted = false;
+                                            break;
+                                        }
+                                    default:
                                         
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("You do not have enough Mana to cast magic missile");
-                                        playerTurnCompleted = false;
-                                        break;
-                                    }
-                                case '0':
-                                    {
-                                        Console.WriteLine("Leaving magic menu");
-                                        playerTurnCompleted = false;
-                                        break;
-                                    }
-                                default:
-                                    {
                                         Console.WriteLine("Invalid option, please choose again");
+                                        Console.ReadLine();
                                         playerTurnCompleted = false;
                                         break;
-                                    }
+                                    
                             }
-                            if (valid == 1)
-                            {
-                                break;
-                            }
-                            else
-                            {
-                                Console.ReadLine();
-                                continue;
-                            }
+                                if (valid == 1)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.ReadLine();
+                                    continue;
+                                }
+                            
 
                         case 'i':
                             //item use to be implemented later on
@@ -1223,11 +1223,13 @@ namespace TextBasedGame
                 {
                     Console.WriteLine("You cannot move beyond the map!");
                     PauseStory();
-                    continue;
+                    return;
                 }
                 playerX = nextX;
                 playerY = nextY;
                 Map(true);
+                Console.WriteLine($"{playerName} moves {direction}.");
+
                 if (validMovement == true)
                 {
                     Console.WriteLine($"{playerName} moves {direction}.");
@@ -1257,7 +1259,6 @@ namespace TextBasedGame
             else
             {
                 Console.WriteLine("The path is clear.");
-                Thread.Sleep(700);
             }
         }
         //NPC
