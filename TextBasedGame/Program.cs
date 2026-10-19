@@ -799,35 +799,41 @@ namespace TextBasedGame
                     switch (temp)
                     {
                         case 'y':
-                            playerLevel++;
-                            playerCurrentXP = playerCurrentXP - playerNextXP;
-                            playerNextXP = playerLevel * 50;
-                            playerStrength = tempStrength;
-                            playerFinesse = tempFinesse;
-                            playerResilience = tempResilience;
-                            playerArcane = tempArcane;
-                            MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
-                            inventory = new string[MAX_INVENTORY_SIZE];
-                            playerMaxHealth = playerMaxHealth + (10 * playerResilience);
-                            playerHealth = playerHealth + (10 * playerResilience);
-                            playerMaxMana = playerMaxMana + (3 * playerArcane);
-                            playerMana = playerMana + (3 * playerArcane);
-                            playerMeleeHit = playerMeleeHit + playerStrength;
-                            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
-                            playerRangeHit = playerRangeHit + playerFinesse;
-                            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
-                            playerCritChance = playerCritChance + (playerFinesse * 4);
-                            playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
-                            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
-                            playerDodge = playerDodge + (playerFinesse * 3);
-                            playerRunBonus = playerRunBonus + (2 * playerFinesse);
-                            playerBlockChance = playerBlockChance + (4 * playerResilience);
-                            playerBlockReduction = playerBlockReduction + (playerResilience / 2);
-                            playerPhysicalResist = playerPhysicalResist + (playerResilience / 3);
-                            playerMagicResist = playerMagicResist + (playerArcane / 3);
-                            test = true;
-                            valid = true;
-                            break;
+                            {
+                                int gainStr = tempStrength - playerStrength;
+                                int gainFin = tempFinesse - playerFinesse;
+                                int gainRes = tempResilience - playerResilience;
+                                int gainArc = tempArcane - playerArcane;
+                                playerLevel++;
+                                playerCurrentXP -= playerNextXP;
+                                playerNextXP = playerLevel * 50;
+                                playerStrength = tempStrength;
+                                playerFinesse = tempFinesse;
+                                playerResilience = tempResilience;
+                                playerArcane = tempArcane;
+                                MAX_INVENTORY_SIZE += gainStr;
+                                Array.Resize(ref inventory, MAX_INVENTORY_SIZE);
+                                playerMaxHealth += 10 * gainRes;
+                                playerHealth += 10 * gainRes;
+                                playerMaxMana += 3 * gainArc;
+                                playerMana += 3 * gainArc;
+                                playerMeleeHit += gainStr;
+                                playerMeleeDmg += gainStr / 2;
+                                playerRangeHit += gainFin;
+                                playerRangeDmg += gainFin / 2;
+                                playerCritChance += gainFin * 4;
+                                playerSpellMiscast -= 5 * gainArc;
+                                playerSpellDmg += gainArc / 2;
+                                playerDodge += gainFin * 3;
+                                playerRunBonus += 2 * gainFin;
+                                playerBlockChance += 4 * gainRes;
+                                playerBlockReduction += gainRes / 2;
+                                playerPhysicalResist += gainRes / 3;
+                                playerMagicResist += gainArc / 3;
+                                test = true;
+                                valid = true;
+                                break;
+                            }
                         case 'n':
                             test = true;
                             break;
