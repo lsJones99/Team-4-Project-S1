@@ -672,6 +672,7 @@ namespace TextBasedGame
             playerArcane = AskStat("Arcane",
                 "Arcane affects your total mana, ability to cast spells and their damage", ref pool);
             Console.Clear();
+
         }
         // Menu commands
         static bool Menu()
@@ -738,8 +739,106 @@ namespace TextBasedGame
 
             return playerHealth > 0;
         }
+        // Gaining XP
+        static int GainXP(int XP)
+        {
+            Console.WriteLine($"You have gained {XP} XP");
+            playerCurrentXP = playerCurrentXP + XP;
+            if (playerCurrentXP <= playerNextXP)
+            {
+                Console.WriteLine("You have leveled up!");
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                playerLevel = LevelUp();
+                return playerLevel;
+            }
+            else
+            {
+                return playerLevel;
+            }
+        }
+        // Level Up
+        static int LevelUp()
+        {
+            bool valid = false, test;
+            while (valid == false)
+            {
+                test = false;
+                int pool = 5, tempStrength, tempFinesse, tempResilience, tempArcane;
+                Console.Clear();
+                Console.WriteLine("---- Level Up! ----\n\n");
+                tempStrength = playerStrength + AskStat("Strength",
+                    "Strength affects how much you can carry and proficiency with melee weapons", ref pool);
+                Console.Clear();
 
+                tempFinesse = playerFinesse + AskStat("Finesse",
+                    "Finesse affects your proficiency with ranged weapons and ability to dodge and run away", ref pool);
+                Console.Clear();
 
+                tempResilience = playerResilience + AskStat("Resilience",
+                    "Resilience affects your total health and your ability to mitigate damage", ref pool);
+                Console.Clear();
+
+                tempArcane = playerArcane + AskStat("Arcane",
+                    "Arcane affects your total mana, ability to cast spells and their damage", ref pool);
+                Console.Clear();
+                Console.WriteLine("\n---------- STAT ALLOCATION ----------\n");
+                Console.WriteLine($"Strength   : {tempStrength}\n");
+                Console.WriteLine($"Finesse    : {tempFinesse}\n");
+                Console.WriteLine($"Resilience : {tempResilience}\n");
+                Console.WriteLine($"Arcane     : {tempArcane}\n");
+                Console.Write("Are you happy with these improvements? (Y/N): ");
+                while (test == false)
+                {
+                    string check = Console.ReadLine()?.Trim().ToLower() ?? "";
+                    if (check.Length == 0)
+                    {
+                        Console.WriteLine("No input detected, please input value");
+                    }
+                    char temp = check[0];
+                    switch (temp)
+                    {
+                        case 'y':
+                            playerLevel++;
+                            playerCurrentXP = playerCurrentXP - playerNextXP;
+                            playerNextXP = playerLevel * 50;
+                            playerStrength = tempStrength;
+                            playerFinesse = tempFinesse;
+                            playerResilience = tempResilience;
+                            playerArcane = tempArcane;
+                            MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
+                            inventory = new string[MAX_INVENTORY_SIZE];
+                            playerMaxHealth = playerMaxHealth + (10 * playerResilience);
+                            playerHealth = playerHealth + (10 * playerResilience);
+                            playerMaxMana = playerMaxMana + (3 * playerArcane);
+                            playerMana = playerMana + (3 * playerArcane);
+                            playerMeleeHit = playerMeleeHit + playerStrength;
+                            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
+                            playerRangeHit = playerRangeHit + playerFinesse;
+                            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
+                            playerCritChance = playerCritChance + (playerFinesse * 4);
+                            playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
+                            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
+                            playerDodge = playerDodge + (playerFinesse * 3);
+                            playerRunBonus = playerRunBonus + (2 * playerFinesse);
+                            playerBlockChance = playerBlockChance + (4 * playerResilience);
+                            playerBlockReduction = playerBlockReduction + (playerResilience / 2);
+                            playerPhysicalResist = playerPhysicalResist + (playerResilience / 3);
+                            playerMagicResist = playerMagicResist + (playerArcane / 3);
+                            test = true;
+                            valid = true;
+                            break;
+                        case 'n':
+                            test = true;
+                            break;
+                        default:
+                            Console.WriteLine("Invalid Input, Please input either y or n");
+                            break;
+                    }
+                }
+            }
+            return playerLevel;
+        }
         //Combat commands
         static void AddCombatLog(string message)
         {
@@ -940,6 +1039,7 @@ namespace TextBasedGame
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
+                    playerLevel = GainXP(50);
                     Console.WriteLine("\nPress enter to continue exploration.");
                     Console.ReadLine();
                     break;
@@ -1169,7 +1269,7 @@ namespace TextBasedGame
                     if (Array.Exists(inventory, item => item == "Rusty Sword"))
                     {
                         CompleteQuest("side_merchant_01");
-
+                        playerLevel = GainXP(20);
                         Console.WriteLine("Quest completed: The Missing Sword!");
                         Console.WriteLine("Merchant: Come back. I have another job!");
                     }
