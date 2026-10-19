@@ -614,12 +614,12 @@ namespace TextBasedGame
             playerMaxMana = playerMaxMana + (3 * playerArcane);
             playerMana = playerMana + (3 * playerArcane);
             playerMeleeHit = playerMeleeHit + playerStrength;
-            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
+            playerMeleeDmg = playerMeleeDmg + (playerStrength / 2);
             playerRangeHit = playerRangeHit + playerFinesse;
-            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
+            playerRangeDmg = playerRangeDmg + (playerFinesse / 2);
             playerCritChance = playerCritChance + (playerFinesse * 4);
             playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
-            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
+            playerSpellDmg = playerSpellDmg + (playerArcane / 2);
             playerDodge = playerDodge + (playerFinesse * 3);
             playerRunBonus = playerRunBonus + (2 * playerFinesse);
             playerBlockChance = playerBlockChance + (4 * playerResilience);
