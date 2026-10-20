@@ -16,18 +16,21 @@ namespace TextBasedGame
 {
     internal class Program
     {
+        // savedata
         private static readonly string saveFile = "savedata.txt";
 
+        // importing command to find console window
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetConsoleWindow();
 
+        // importing command to change console window properties
         [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static extern bool ShowWindow(IntPtr wHandle, int nCmdShow);
 
         // 3 is the Windows constant for Maximized
         private const int SW_MAXIMIZE = 3;
         //Player information
-        static int MAX_INVENTORY_SIZE = 5;
+        static int inventoryMaxSize = 5;
         static string playerName = "";
         static int playerHealth = 100;
         static int playerMaxHealth = 100;
@@ -36,7 +39,9 @@ namespace TextBasedGame
         static int playerLevel = 1;
         static int playerCurrentXP = 0;
         static int playerNextXP = 0;
-        static string[] inventory = new string[MAX_INVENTORY_SIZE];
+
+        static int playerGold = 0;
+        static string[] inventory = new string[inventoryMaxSize];
         static int inventoryCount = 0;
         static int playerDamage = 0;
         static int playerStrength = 0;
@@ -114,7 +119,7 @@ namespace TextBasedGame
         // Main void for running game then ending
         static void Main()
         {
-            //all quest definitions
+            // all quest definitions
             RegisterQuests();
             // Loading a save if there is one
             Load();
@@ -122,11 +127,11 @@ namespace TextBasedGame
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
 
+            // getting console window ID then maximising window (for text centering purposes)
             IntPtr handle = GetConsoleWindow();
             ShowWindow(handle, SW_MAXIMIZE);
 
-            Console.WriteLine();
-            CenterText("This game is best played maximised.");
+            Console.WriteLine("\nThis game is best played maximised.");
             PauseStory();
 
             if (File.Exists(saveFile) == false)
@@ -239,7 +244,7 @@ namespace TextBasedGame
                 $"playerName={playerName}",
                 $"inventory={string.Join(",", inventory)}",
                 $"inventoryCount={inventoryCount}",
-                $"MAX_INVENTORY_SIZE={MAX_INVENTORY_SIZE}",
+                $"inventoryMaxSize={inventoryMaxSize}",
 
                 $"playerWpn={playerWpn}",
                 $"playerAmr={playerAmr}",
@@ -252,6 +257,8 @@ namespace TextBasedGame
                 $"playerLevel={playerLevel}",
                 $"playerCurrentXP={playerCurrentXP}",
                 $"playerNextXP={playerNextXP}",
+
+                $"playerGold={playerGold}",
 
                 $"playerX={playerX}",
                 $"playerY={playerY}",
@@ -323,8 +330,8 @@ namespace TextBasedGame
                 else if (key == "inventoryCount")
                     int.TryParse(value, out inventoryCount);
 
-                else if (key == "MAX_INVENTORY_SIZE")
-                    int.TryParse(value, out MAX_INVENTORY_SIZE);
+                else if (key == "inventoryMaxSize")
+                    int.TryParse(value, out inventoryMaxSize);
 
                 else if (key == "playerWpn") playerWpn = value;
 
@@ -350,6 +357,9 @@ namespace TextBasedGame
 
                 else if (key == "playerNextXP")
                     int.TryParse(value, out playerNextXP);
+
+                else if (key == "playerGold")
+                    int.TryParse(value, out playerGold);
 
                 else if (key == "playerX")
                     int.TryParse(value, out playerX);
@@ -428,11 +438,11 @@ namespace TextBasedGame
             }
 
             // Make sure the loaded inventory has enough slots
-            if (MAX_INVENTORY_SIZE < 1)
-                MAX_INVENTORY_SIZE = 1;
+            if (inventoryMaxSize < 1)
+                inventoryMaxSize = 1;
 
-            if (inventory.Length < MAX_INVENTORY_SIZE)
-                Array.Resize(ref inventory, MAX_INVENTORY_SIZE);
+            if (inventory.Length < inventoryMaxSize)
+                Array.Resize(ref inventory, inventoryMaxSize);
 
             if (inventoryCount < 0)
                 inventoryCount = 0;
@@ -455,7 +465,7 @@ namespace TextBasedGame
         // General function for pausing
         static void PauseStory()
         {
-            CenterText("Press enter to continue.");
+            Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
             Console.Clear();
         }
@@ -625,8 +635,8 @@ namespace TextBasedGame
             playerLevel = 1;
             playerCurrentXP = 0;
             playerNextXP = playerLevel * 50;
-            MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
-            inventory = new string[MAX_INVENTORY_SIZE];
+            inventoryMaxSize = inventoryMaxSize + playerStrength;
+            inventory = new string[inventoryMaxSize];
             playerMaxHealth = playerMaxHealth + (10 * playerResilience);
             playerHealth = playerHealth + (10 * playerResilience);
             playerMaxMana = playerMaxMana + (3 * playerArcane);
@@ -705,9 +715,10 @@ namespace TextBasedGame
             Console.WriteLine("[M] Map");
             Console.WriteLine("[S] Save");
             Console.WriteLine("[Q] Quest");
-            Console.WriteLine($"Name: {playerName}");
+            Console.WriteLine($"\nName: {playerName}");
             Console.WriteLine($"Level: {playerLevel}");
             Console.WriteLine($"XP: {playerCurrentXP}/{playerNextXP}");
+            Console.WriteLine($"Gold: {playerGold}G");
             Console.WriteLine($"\nHealth: {playerHealth}/{playerMaxHealth}");
             Console.WriteLine($"Mana: {playerMana}/{playerMaxMana}");
             Console.Write("\nEnter command: ");
@@ -848,7 +859,7 @@ namespace TextBasedGame
         // Gaining XP
         static int GainXP(int XP)
         {
-            Console.WriteLine($"\nYou have gained {XP} XP");
+            Console.WriteLine($"\nYou have gained {XP} XP!");
             playerCurrentXP = playerCurrentXP + XP;
             if (playerCurrentXP >= playerNextXP)
             {
@@ -912,8 +923,8 @@ namespace TextBasedGame
                             playerFinesse = tempFinesse;
                             playerResilience = tempResilience;
                             playerArcane = tempArcane;
-                            MAX_INVENTORY_SIZE = MAX_INVENTORY_SIZE + playerStrength;
-                            inventory = new string[MAX_INVENTORY_SIZE];
+                            inventoryMaxSize = inventoryMaxSize + playerStrength;
+                            inventory = new string[inventoryMaxSize];
                             playerMaxHealth = playerMaxHealth + (10 * playerResilience);
                             playerHealth = playerHealth + (10 * playerResilience);
                             playerMaxMana = playerMaxMana + (3 * playerArcane);
@@ -1208,7 +1219,13 @@ namespace TextBasedGame
                 {
                     enemyHealth = 0;
                     Console.WriteLine($"You have defeated the {enemyName}!");
+
+                    int temp = rand.Next(2, 6);
+                    playerGold += temp;
+                    Console.WriteLine($"\nYou gained {temp} gold!");
+
                     playerLevel = GainXP(50);
+                    
                     Console.WriteLine("\nPress enter to continue exploration.");
                     Console.ReadLine();
                     AddCombatLog("You have won!");
@@ -1504,6 +1521,52 @@ namespace TextBasedGame
                 }
             }
         }
+
+        // Market menu
+        static void Market()
+        {
+            int healthPotionPrice = 6;
+
+            Console.Clear();
+            Console.WriteLine("\n========== MARKETS ==========");
+            Console.WriteLine($"1. Health Potion: {healthPotionPrice}G");
+
+            Console.WriteLine("\n[NUM] Purchase Item");
+            Console.WriteLine("[ANY OTHER INPUT] Leave");
+
+            Console.WriteLine($"\nGold: {playerGold}G");
+
+            if (inventoryCount == inventoryMaxSize)
+            {
+                Console.WriteLine("\nYour inventory is full! You cannot buy anything.");
+                PauseStory();
+            }
+            else
+            {
+
+                char marketChoice = Console.ReadKey(true).KeyChar;
+            
+                switch (marketChoice)
+                {
+                    case '1':
+                        if (playerGold >= healthPotionPrice)
+                        {
+                            playerGold -= healthPotionPrice;
+                            Console.WriteLine($"\nYou bought the Health Potion! You now have {playerGold} gold.");
+                            AddItem("Health Potion");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nYou do not have enough gold to buy this.");
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
         // Investigation command
         static void Investigate()
         {
@@ -1512,10 +1575,12 @@ namespace TextBasedGame
                 // MARKET (2,3)
                 case (2, 3):
                     {
-                        Console.WriteLine("========== MARKET ==========");
+                        Console.Clear();
+                        Console.WriteLine("\n========== MARKET ==========");
                         Console.WriteLine("[1] Talk to Merchant");
                         Console.WriteLine("[2] Search for loot");
-                        Console.WriteLine("[3] Leave");
+                        Console.WriteLine("[3] Check the markets");
+                        Console.WriteLine("[0] Leave");
 
                         char choice = Console.ReadKey(true).KeyChar;
 
@@ -1549,6 +1614,10 @@ namespace TextBasedGame
                                 break;
 
                             case '3':
+                                Market();
+                                break;
+
+                            case '0':
                                 Console.WriteLine("You leave the market.");
                                 break;
 
@@ -1635,7 +1704,7 @@ namespace TextBasedGame
         // Adding items to the inventory
         static void AddItem(string item)
         {
-            if (inventoryCount < MAX_INVENTORY_SIZE)
+            if (inventoryCount < inventoryMaxSize)
             {
                 inventory[inventoryCount] = item;
                 inventoryCount++;
@@ -1668,7 +1737,7 @@ namespace TextBasedGame
                 Console.WriteLine($"{i + 1}. {inventory[i]}");
             }
 
-            Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
+            Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
 
             Console.WriteLine($"\nEquipped weapon: {playerWpn}");
             Console.WriteLine($"Equipped armor: {playerAmr}");
@@ -1712,7 +1781,7 @@ namespace TextBasedGame
                     Console.WriteLine($"{i + 1}. {inventory[i]}");
                 }
 
-                Console.WriteLine($"Inventory slots: {inventoryCount}/{MAX_INVENTORY_SIZE}");
+                Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
 
                 Console.WriteLine("\nWhich slot do you wish to use?");
 
