@@ -1159,13 +1159,75 @@ namespace TextBasedGame
 
             }
         }
+
+        //check for enemy hp
+        static bool CheckEnemyHealth(ref int enemyHealth, string enemyName)
+        {
+            if (enemyHealth <= 0)
+            {
+                enemyHealth = 0;
+                Console.WriteLine($"You have defeated the {enemyName}!");
+
+                int temp = rand.Next(2, 6);
+                playerGold += temp;
+                Console.WriteLine($"\nYou gained {temp} gold!");
+
+                playerLevel = GainXP(50);
+
+                Console.WriteLine("\nPress enter to continue exploration.");
+                Console.ReadLine();
+                AddCombatLog("You have won!");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //check for player hp
+        static bool CheckPlayerHealth(ref int playerHealth)
+        {
+            if (playerHealth <= 0)
+            {
+                playerHealth = 0;
+                AddCombatLog($"{playerName} has been defeated.");
+
+                if (activequest && trackedQuest.Length > 0)
+                {
+                    if (FailQuest(trackedQuest))
+                    {
+                        Console.WriteLine("Quest failed!");
+                        Console.WriteLine("Returning to the last quest checkpoint.");
+                        Console.WriteLine("Press Enter to continue.");
+                        Console.ReadLine();
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //enemy attack
+        static void EnemyTurn(string enemyName)
+        {
+            enemyDamage = rand.Next(5, 11);
+            playerHealth -= enemyDamage;
+            Console.WriteLine();
+            Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
+            Console.ReadLine();
+            AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
+            AddCombatLog("\n");
+        }
         static bool CombatMenu(string enemyName)
         {
             combatLog.Clear();
             int enemyHealth = 50;
             bool inCombat = true;
-            bool playerTurnCompleted = false, playerEscape = false, runAway;
-
+            bool playerTurnCompleted = false, playerEscape = false, runAway, enemyHPCheck, playerHPCheck;
             Console.Clear();
             EnemyEncounter(enemyName);
             Console.ReadLine();
@@ -1239,78 +1301,39 @@ namespace TextBasedGame
                 }
 
                 //check if enemy hp is 0 or less
-                if (enemyHealth <= 0)
+                enemyHPCheck = CheckEnemyHealth(ref enemyHealth, enemyName);
+                if(enemyHPCheck == true)
                 {
-                    enemyHealth = 0;
-                    Console.WriteLine($"You have defeated the {enemyName}!");
-
-                    int temp = rand.Next(2, 6);
-                    playerGold += temp;
-                    Console.WriteLine($"\nYou gained {temp} gold!");
-
-                    playerLevel = GainXP(50);
-                    
-                    Console.WriteLine("\nPress enter to continue exploration.");
-                    Console.ReadLine();
-                    AddCombatLog("You have won!");
                     inCombat = false;
                     playerTurnCompleted = false;
                 }
 
                 //check for player hp
-                if (playerHealth <= 0)
+                playerHPCheck = CheckPlayerHealth(ref playerHealth);
+                if(playerHPCheck == true)
                 {
-                    playerHealth = 0;
-                    AddCombatLog($"{playerName} has been defeated.");
-
-                    if (activequest && trackedQuest.Length > 0)
-                    {
-                        if (FailQuest(trackedQuest))
-                        {
-                            Console.WriteLine("Quest failed!");
-                            Console.WriteLine("Returning to the last quest checkpoint.");
-                            Console.WriteLine("Press Enter to continue.");
-                            Console.ReadLine();
-                        }
-                    }
                     playerTurnCompleted = false;
                     inCombat = false;
                 }
 
-                else
+
+                //enemy attacks after a player turn and enemy hp > 0
+                if (playerTurnCompleted == true && enemyHPCheck == false)
                 {
-                    //enemy attacks
-                    if (playerTurnCompleted == true)
+                    if (inCombat == true && playerTurnCompleted == true && enemyHealth > 0)
                     {
-                        enemyDamage = rand.Next(5, 11);
-                        playerHealth -= enemyDamage;
-                        Console.WriteLine();
-                        Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
-                        Console.ReadLine();
-                        AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
-                        AddCombatLog("\n");
+                        EnemyTurn(enemyName);
+                    }
 
-                        //check for player hp
-                        if (playerHealth <= 0)
-                        {
-                            playerHealth = 0;
-                            Console.WriteLine($"{playerName} has been defeated.");
-
-                            if (activequest && trackedQuest.Length > 0)
-                            {
-                                if (FailQuest(trackedQuest))
-                                {
-                                    Console.WriteLine("Quest failed!");
-                                    Console.WriteLine("Returning to the last quest checkpoint.");
-                                    Console.WriteLine("Press Enter to continue.");
-                                    Console.ReadLine();
-                                }
-                            }
-
-                            inCombat = false;
-                        }
+                    //check for player hp
+                    playerHPCheck = CheckPlayerHealth(ref playerHealth);
+                    if (playerHPCheck == true)
+                    {
+                        playerTurnCompleted = false;
+                        inCombat = false;
                     }
                 }
+                
 
 
                 //command after running away
