@@ -987,6 +987,8 @@ namespace TextBasedGame
             Console.SetCursorPosition(originalColumn, originalRow);
         }
 
+
+
         //Make combat commands into separate methods to save lines of code
         static void EnemyEncounter(string enemyName)
         {
@@ -1004,6 +1006,8 @@ namespace TextBasedGame
             Console.WriteLine($"\n{enemyName}: \n{enemyHealth}/50 HP");
         }
 
+
+        //general combat input
         static void CombatCommands()
         {
             Console.WriteLine("\n[A] Attack");
@@ -1012,6 +1016,7 @@ namespace TextBasedGame
             Console.WriteLine("[R] Run away");
         }
 
+        //attack
         static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, ref bool playerTurnCompleted)
         {
             Console.WriteLine("You chose attack!");
@@ -1023,7 +1028,7 @@ namespace TextBasedGame
                 Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
                 Console.ReadLine();
                 AddCombatLog($"You attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
-                return true;
+                
             }
 
             else
@@ -1032,17 +1037,134 @@ namespace TextBasedGame
                 Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
                 Console.ReadLine();
                 AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
-                return true;
+                
             }
 
+            //add mana after attacking
+            if (playerMana < playerMaxMana)
+            {
+                playerMana += playerDamage / 10;
+            }
+            else
+            {
+                playerMana = playerMaxMana;
+            }
+            return true;
         }
 
+
+        //magic
+        static void DisplayAvailableMagic()
+        {
+            Console.WriteLine("\nYou chose magic!");
+            Console.WriteLine();
+            Console.WriteLine("[M] - Magic Missile - 3 MP");
+            Console.WriteLine("[0] - Return to previous menu");
+        }
+
+        static string MagicInput()
+        {
+            string magicInput;
+            Console.Write("\nChoose a spell to cast: ");
+            do
+            {
+
+                magicInput = Console.ReadLine()?.Trim().ToLower() ?? "";
+                if (magicInput != "m" && magicInput != "0")
+                {
+                    Console.WriteLine("Invalid selection, please try again");
+                }
+            } while (magicInput != "m" && magicInput != "0");
+            return magicInput;
+        }
+
+
+        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth)
+        {
+            switch (spellSelect)
+            {
+                case 'm':
+                    if (playerMana < 3)
+                    {
+                        Console.WriteLine("You do not have enough Mana to cast Magic Missile.");
+                        return false;
+                    }
+
+                    playerMana -= 3;
+
+                    int casting = rand.Next(1, 101) - playerSpellMiscast;
+
+                    if (casting <= 75)
+                    {
+                        playerDamage = rand.Next(8, 25) + playerSpellDmg;
+                        enemyHealth -= playerDamage;
+
+                        string message =
+                            $"You cast Magic Missile, blasting {enemyName} for {playerDamage} damage.";
+
+                        Console.WriteLine(message);
+                        AddCombatLog(message);
+                    }
+                    else
+                    {
+                        playerDamage = rand.Next(1, 11);
+                        playerHealth -= playerDamage;
+
+                        string message =
+                            $"The spell miscasts! You take {playerDamage} damage.";
+
+                        Console.WriteLine(message);
+                        AddCombatLog(message);
+
+                        if (playerHealth <= 0)
+                        {
+                            playerHealth = 0;
+                        }
+                    }
+
+                    Console.ReadLine();
+                    return true;
+
+                case '0':
+                    Console.WriteLine("Returning to the combat menu.");
+                    return false;
+
+                default:
+                    Console.WriteLine("Invalid spell selection.");
+                    return false;
+            }
+        }
+
+
+        //RUN FROM COMBAT COMMAND
+        static bool RunCommand(string enemyName)
+        {
+
+            escapeChance = rand.Next(1, 101);
+            Console.WriteLine("You tried to run away!");
+            if (escapeChance <= 50)
+            {
+                Console.WriteLine("You have escaped!");
+                AddCombatLog($"You have successfully escaped from {enemyName}!");
+                AddCombatLog("\n");
+                return true;
+                
+            }
+            else
+            {
+                Console.WriteLine("You failed to escape!");
+                AddCombatLog($"You failed to escape!");
+                AddCombatLog("\n");
+                return false;
+
+            }
+        }
         static bool CombatMenu(string enemyName)
         {
             combatLog.Clear();
             int enemyHealth = 50;
             bool inCombat = true;
-            bool playerTurnCompleted = false, playerEscape = false;
+            bool playerTurnCompleted = false, playerEscape = false, runAway;
 
             Console.Clear();
             EnemyEncounter(enemyName);
@@ -1079,105 +1201,14 @@ namespace TextBasedGame
                         case 'a':
                             playerDamage = rand.Next(8, 16);
                             playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, ref playerTurnCompleted);
-
-                            //add mana after attacking
-                            if (playerMana < playerMaxMana)
-                            {
-                                playerMana += playerDamage / 10;
-                            }
-                            else
-                            {
-                                playerMana = playerMaxMana;
-                            }
-                                break;
+                            break;
 
                         case 'm':
-                            //implement magic as the hero progresses
-                            Console.WriteLine("\nYou chose magic!");
-                            Console.WriteLine();
-                            Console.WriteLine("[M] - Magic Missile - 3 MP");
-                            Console.WriteLine("[0] - Return to previous menu");
-                            
-
-                                do
-                                {
-                                    Console.Write("\nChoose a spell to cast: ");
-                                    userselect = Console.ReadLine()?.Trim().ToLower() ?? "";
-                                    if (userselect != "m" && userselect != "0")
-                                    {
-                                        Console.WriteLine("Invalid selection, please try again");
-                                    }
-                                } while (userselect != "m" && userselect != "0");
-                                char spellselect = userselect[0];
-                                switch (spellselect)
-                                {
-                                    case 'm':
-                                        if (playerMana >= 3)
-                                        {
-                                            playerMana -= 3;
-                                            int casting = rand.Next(1, 101) - (playerSpellMiscast);
-                                            if (casting <= 75)
-                                            {
-                                                playerDamage = rand.Next(8, 25) + playerSpellDmg;
-                                                enemyHealth -= playerDamage;
-                                                Console.WriteLine($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
-                                                Console.ReadLine();
-                                                AddCombatLog($"You cast magic missile, blasting {enemyName} for {playerDamage} damage.");
-                                                valid = 1;
-                                                playerTurnCompleted = true;
-                                            }
-                                            else
-                                            {
-                                                playerDamage = rand.Next(1, 11);
-                                                playerHealth -= playerDamage;
-                                                Console.WriteLine($"The spell miscasts! you explode for {playerDamage}");
-                                                Console.ReadLine();
-                                                AddCombatLog($"The spell miscasts! you explode for {playerDamage}");
-                                                if (playerHealth <= 0)
-                                                {
-                                                    playerTurnCompleted = false;
-                                                }
-
-                                                else if (playerHealth > 0)
-                                                {
-                                                    playerTurnCompleted = true;
-                                                }
-                                                valid = 1;
-
-                                            }
-
-                                            break;
-
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("You do not have enough Mana to cast magic missile");
-                                            playerTurnCompleted = false;
-                                            break;
-                                        }
-                                    case '0':
-                                        {
-                                            Console.WriteLine("Leaving magic menu");
-                                            playerTurnCompleted = false;
-                                            break;
-                                        }
-                                    default:
-
-                                        Console.WriteLine("Invalid option, please choose again");
-                                        Console.ReadLine();
-                                        playerTurnCompleted = false;
-                                        break;
-
-                                }
-                                if (valid == 1)
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    Console.ReadLine();
-                                    continue;
-                                }
+                            DisplayAvailableMagic();
+                            userselect = MagicInput();
+                            char spellselect = userselect[0];
+                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth);
+                            break;
 
 
                         case 'i':
@@ -1185,22 +1216,15 @@ namespace TextBasedGame
                             continue;
 
                         case 'r':
-                            escapeChance = rand.Next(1, 101);
-                            Console.WriteLine("You picked run away!");
-                            if (escapeChance <= 50)
+                            runAway = RunCommand(enemyName);
+                            if(runAway == true)
                             {
-                                Console.WriteLine("You have escaped!");
-                                AddCombatLog($"You have successfully escaped from {enemyName}!");
-                                AddCombatLog("\n");
                                 inCombat = false;
                                 playerTurnCompleted = false;
                                 playerEscape = true;
                             }
                             else
                             {
-                                Console.WriteLine("You failed to escape!");
-                                AddCombatLog($"You failed to escape!");
-                                AddCombatLog("\n");
                                 playerTurnCompleted = true;
                                 playerEscape = false;
                             }
