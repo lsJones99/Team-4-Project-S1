@@ -1309,16 +1309,41 @@ namespace TextBasedGame
             }
         }
 
+        //Defensive Stats
+        static bool CombatDodge()
+        {
+            int playerDodgeChance = Math.Min(playerDodge, 100);
+            int dodgeRoll = rand.Next(1,101);
+            if(dodgeRoll <= playerDodgeChance)
+            { 
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         //enemy attack
         static void EnemyTurn(string enemyName)
         {
-            enemyDamage = rand.Next(5, 11);
-            playerHealth -= enemyDamage;
-            Console.WriteLine();
-            Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
-            Console.ReadLine();
-            AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
-            AddCombatLog("\n");
+            bool dodgeAttack = CombatDodge();
+            if(dodgeAttack == true)
+            {
+                Console.WriteLine("You have dodged!");
+                AddCombatLog("You have dodged!");
+                AddCombatLog("\n");
+            }
+            else
+            {
+                enemyDamage = rand.Next(5, 11);
+                playerHealth -= enemyDamage;
+                Console.WriteLine();
+                Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
+                Console.ReadLine();
+                AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
+                AddCombatLog("\n");
+            }
+            
         }
         static bool CombatMenu(string enemyName)
         {
