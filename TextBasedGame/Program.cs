@@ -52,7 +52,7 @@ namespace TextBasedGame
         static int playerRangeDmg = 0;
         static int playerRunBonus = 0;
         static int playerDodge = 0;
-        static int playerCritChance = 100;
+        static int playerCritChance = 0;
         static int playerResilience = 0;
         static int playerPhysicalResist = 0;
         static int playerBlockChance = 0;
@@ -1030,36 +1030,72 @@ namespace TextBasedGame
         //attack
         static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, ref bool playerTurnCompleted)
         {
+            //variables for hit chance
+            int baseHitChance = 75, finalHitChance;
+
+            //variables for crit chance
+            int baseCritChance = 5, finalCritChance;
+
+            //variable for actual damage
+            int finalAttackDamage;
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
-
-            if (playerCritChance == 100)
+            finalHitChance = baseHitChance + playerMeleeHit;
+            if(finalHitChance > 100)
             {
-                enemyHealth -= playerDamage * 2;
-                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
-                Console.ReadLine();
-                AddCombatLog($"You attack the {enemyName} for {playerDamage * 2} CRITICAL HIT.");
-                
+                finalHitChance = 100;
+            }
+
+            int hitRoll = rand.Next(1, 101);
+            
+            finalCritChance = baseCritChance + playerCritChance;
+            if(hitRoll <= finalHitChance)
+            {
+                if(finalCritChance > 100)
+                {
+                    finalCritChance = 100;
+                }
+                int critRoll = rand.Next(1, 101);
+
+                if (critRoll <= finalCritChance)
+                {
+                    enemyHealth -= (playerDamage + playerMeleeDmg) * 2;
+                    finalAttackDamage = (playerDamage + playerMeleeDmg) * 2;
+                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
+                    Console.ReadLine();
+                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
+
+                }
+
+                else
+                {
+                    enemyHealth -= playerDamage + playerMeleeDmg;
+                    finalAttackDamage = playerDamage + playerMeleeDmg;
+                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} damage.");
+                    Console.ReadLine();
+                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} damage.");
+
+                }
+
+                //add mana after attacking
+                if (playerMana < playerMaxMana)
+                {
+                    playerMana += playerDamage / 10;
+                }
+                else
+                {
+                    playerMana = playerMaxMana;
+                }
             }
 
             else
             {
-                enemyHealth -= playerDamage;
-                Console.WriteLine($"\nYou attack the {enemyName} for {playerDamage} damage.");
-                Console.ReadLine();
-                AddCombatLog($"You attack the {enemyName} for {playerDamage} damage.");
-                
+                Console.WriteLine("Your attack misses!");
+                AddCombatLog("Your attack misses!");
             }
+            
 
-            //add mana after attacking
-            if (playerMana < playerMaxMana)
-            {
-                playerMana += playerDamage / 10;
-            }
-            else
-            {
-                playerMana = playerMaxMana;
-            }
+            
             return true;
         }
 
