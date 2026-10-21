@@ -637,17 +637,17 @@ namespace TextBasedGame
             playerNextXP = playerLevel * 50;
             inventoryMaxSize = inventoryMaxSize + playerStrength;
             inventory = new string[inventoryMaxSize];
-            playerMaxHealth = playerMaxHealth + (10 * playerResilience);
-            playerHealth = playerHealth + (10 * playerResilience);
+            playerMaxHealth = playerMaxHealth + (10 * playerResilience) + (5 * playerLevel);
+            playerHealth = playerHealth + (10 * playerResilience) + (5 * playerLevel);
             playerMaxMana = playerMaxMana + (3 * playerArcane);
             playerMana = playerMana + (3 * playerArcane);
             playerMeleeHit = playerMeleeHit + playerStrength;
-            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
+            playerMeleeDmg = playerMeleeDmg + (playerStrength / 2);
             playerRangeHit = playerRangeHit + playerFinesse;
-            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
+            playerRangeDmg = playerRangeDmg + (playerFinesse / 2);
             playerCritChance = playerCritChance + (playerFinesse * 4);
             playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
-            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
+            playerSpellDmg = playerSpellDmg + (playerArcane / 2);
             playerDodge = playerDodge + (playerFinesse * 3);
             playerRunBonus = playerRunBonus + (2 * playerFinesse);
             playerBlockChance = playerBlockChance + (4 * playerResilience);
@@ -928,23 +928,31 @@ namespace TextBasedGame
                             playerArcane = tempArcane;
                             inventoryMaxSize = inventoryMaxSize + playerStrength;
                             inventory = new string[inventoryMaxSize];
-                            playerMaxHealth = playerMaxHealth + (10 * playerResilience);
-                            playerHealth = playerHealth + (10 * playerResilience);
-                            playerMaxMana = playerMaxMana + (3 * playerArcane);
+                            playerMaxHealth = 100 + (10 * playerResilience) + (5 * playerLevel);
+                            playerHealth = playerHealth + (10 * playerResilience) + (5 * playerLevel);
+                            if (playerHealth > playerMaxHealth)
+                            {
+                                playerHealth = playerMaxHealth;
+                            }
+                            playerMaxMana = 5 + (3 * playerArcane);
                             playerMana = playerMana + (3 * playerArcane);
-                            playerMeleeHit = playerMeleeHit + playerStrength;
-                            playerMeleeDmg = playerMeleeDmg + (playerStrength % 2);
-                            playerRangeHit = playerRangeHit + playerFinesse;
-                            playerRangeDmg = playerRangeDmg + (playerFinesse % 2);
-                            playerCritChance = playerCritChance + (playerFinesse * 4);
-                            playerSpellMiscast = playerSpellMiscast - (5 * playerArcane);
-                            playerSpellDmg = playerSpellDmg + (playerArcane % 2);
-                            playerDodge = playerDodge + (playerFinesse * 3);
-                            playerRunBonus = playerRunBonus + (2 * playerFinesse);
-                            playerBlockChance = playerBlockChance + (4 * playerResilience);
-                            playerBlockReduction = playerBlockReduction + (playerResilience / 2);
-                            playerPhysicalResist = playerPhysicalResist + (playerResilience / 3);
-                            playerMagicResist = playerMagicResist + (playerArcane / 3);
+                            if (playerMana > playerMaxMana)
+                            {
+                                playerMana = playerMaxMana;
+                            }
+                            playerMeleeHit = 0 + playerStrength;
+                            playerMeleeDmg = 0 + (playerStrength / 2);
+                            playerRangeHit = 0 + playerFinesse;
+                            playerRangeDmg = 0 + (playerFinesse / 2);
+                            playerCritChance = 5 + (playerFinesse * 4);
+                            playerSpellMiscast = 0 - (5 * playerArcane);
+                            playerSpellDmg = 0 + (playerArcane / 2);
+                            playerDodge = 0 + (playerFinesse * 3);
+                            playerRunBonus = 0 + (2 * playerFinesse);
+                            playerBlockChance = 0 + (4 * playerResilience);
+                            playerBlockReduction = 0 + (playerResilience / 2);
+                            playerPhysicalResist = 0 + (playerResilience / 3);
+                            playerMagicResist = 0 + (playerArcane / 3);
                             test = true;
                             valid = true;
                             break;
