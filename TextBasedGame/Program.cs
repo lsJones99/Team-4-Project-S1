@@ -1237,10 +1237,11 @@ namespace TextBasedGame
         //RUN FROM COMBAT COMMAND
         static bool RunCommand(string enemyName)
         {
-
-            escapeChance = rand.Next(1, 101);
+            int baseEscapeChance = 50;
+            int finalEscapeChance = Math.Clamp(baseEscapeChance + playerRunBonus, 0, 100);
+            int escapeRoll = rand.Next(1, 101);
             Console.WriteLine("You tried to run away!");
-            if (escapeChance <= 50)
+            if (escapeRoll <= finalEscapeChance)
             {
                 Console.WriteLine("You have escaped!");
                 AddCombatLog($"You have successfully escaped from {enemyName}!");
