@@ -1310,6 +1310,7 @@ namespace TextBasedGame
         }
 
         //Defensive Stats
+        //dodge
         static bool CombatDodge()
         {
             int playerDodgeChance = Math.Min(playerDodge, 100);
@@ -1323,10 +1324,31 @@ namespace TextBasedGame
                 return false;
             }
         }
+
+        static bool CombatBlock()
+        {
+            int playerBlock = Math.Min(playerBlockChance, 100);
+            int blockRoll = rand.Next(1, 101);
+            if(blockRoll <= playerBlock)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         //enemy attack
         static void EnemyTurn(string enemyName)
         {
             bool dodgeAttack = CombatDodge();
+            bool blockAttack;
+
+            //variable if attack was blocked
+            int reducedDamage;
+
+            //physical resist
+            int finalDamage;
             if(dodgeAttack == true)
             {
                 Console.WriteLine("You have dodged!");
@@ -1335,12 +1357,33 @@ namespace TextBasedGame
             }
             else
             {
+                blockAttack = CombatBlock();
                 enemyDamage = rand.Next(5, 11);
-                playerHealth -= enemyDamage;
-                Console.WriteLine();
-                Console.WriteLine($"The {enemyName} attacks you for {enemyDamage} damage!");
-                Console.ReadLine();
-                AddCombatLog($"The {enemyName} attacks you for {enemyDamage} damage!");
+                if (blockAttack == true)
+                {
+                    reducedDamage = enemyDamage - playerBlockReduction;
+                    if(reducedDamage < 0)
+                    {
+                        enemyDamage = 0;
+                    }
+                    else
+                    {
+                        enemyDamage = reducedDamage;
+                    }
+                    Console.WriteLine($"The {enemyName} attacks but you have blocked it!");
+                    AddCombatLog($"The {enemyName} attacks but you have blocked it!");
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"The {enemyName} attacks!");
+                    Console.ReadLine();
+                    AddCombatLog($"The {enemyName} attacks");
+                }
+                finalDamage = int.Max(0, enemyDamage - playerPhysicalResist);
+                playerHealth -= finalDamage;
+                Console.WriteLine($"You received {finalDamage} damage!");
+                AddCombatLog($"You received {finalDamage} damage!");
                 AddCombatLog("\n");
             }
             
