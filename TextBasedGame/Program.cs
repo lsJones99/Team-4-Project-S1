@@ -1057,11 +1057,16 @@ namespace TextBasedGame
 
 
         //magic
-        static void DisplayAvailableMagic()
+        static void DisplayAvailableMagic(bool staffFireball)
         {
             Console.WriteLine("\nYou chose magic!");
             Console.WriteLine();
             Console.WriteLine("[M] - Magic Missile - 3 MP");
+            // Temporary bool to test unlocking magic 
+            if (staffFireball == true)
+            {
+                Console.WriteLine("[F] - Fireball - 6 MP");
+            }
             Console.WriteLine("[0] - Return to previous menu");
         }
 
@@ -1073,16 +1078,16 @@ namespace TextBasedGame
             {
 
                 magicInput = Console.ReadLine()?.Trim().ToLower() ?? "";
-                if (magicInput != "m" && magicInput != "0")
+                if (magicInput != "m" && magicInput != "0" && magicInput != "f")
                 {
                     Console.WriteLine("Invalid selection, please try again");
                 }
-            } while (magicInput != "m" && magicInput != "0");
+            } while (magicInput != "m" && magicInput != "0" && magicInput != "f");
             return magicInput;
         }
 
 
-        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth)
+        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth, bool staffFireball)
         {
             switch (spellSelect)
             {
@@ -1095,7 +1100,7 @@ namespace TextBasedGame
 
                     playerMana -= 3;
 
-                    int casting = rand.Next(1, 101) - playerSpellMiscast;
+                    int casting = rand.Next(1, 101) + playerSpellMiscast;
 
                     if (casting <= 75)
                     {
@@ -1127,15 +1132,61 @@ namespace TextBasedGame
 
                     Console.ReadLine();
                     return true;
+                case 'f':
+                    
+                    while (staffFireball == true)
+                    {
+                        if (playerMana < 6)
+                        {
+                            Console.WriteLine("You do not have enough Mana to cast Fireball.");
+                            return false;
+                        }
 
-                case '0':
-                    Console.WriteLine("Returning to the combat menu.");
-                    return false;
+                        playerMana -= 6;
 
-                default:
+                        casting = rand.Next(1, 101) + playerSpellMiscast;
+                        
+                        if (casting <= 55)
+                        {
+                            playerDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
+                            enemyHealth -= playerDamage;
+
+                            string message =
+                                $"You cast Fireball, scorching {enemyName} for {playerDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+                        }
+                        else
+                        {
+                            playerDamage = rand.Next(2, 15);
+                            playerHealth -= playerDamage;
+
+                            string message =
+                                $"The spell miscasts! You take {playerDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+
+                            if (playerHealth <= 0)
+                            {
+                                playerHealth = 0;
+                            }
+                        }
+
+                        Console.ReadLine();
+                        return true;
+                    }
                     Console.WriteLine("Invalid spell selection.");
                     return false;
-            }
+                case '0':
+                        Console.WriteLine("Returning to the combat menu.");
+                        return false;
+
+                default:
+                        Console.WriteLine("Invalid spell selection.");
+                        return false;
+                    }
         }
 
 
@@ -1269,10 +1320,12 @@ namespace TextBasedGame
                             break;
 
                         case 'm':
-                            DisplayAvailableMagic();
+                            // Temporary bool to test magic unlocking
+                            bool staffFireball = true;
+                            DisplayAvailableMagic(staffFireball);
                             userselect = MagicInput();
                             char spellselect = userselect[0];
-                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth);
+                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth, staffFireball);
                             break;
 
 
