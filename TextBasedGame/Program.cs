@@ -109,16 +109,40 @@ namespace TextBasedGame
                 MapY = mapY;
             }
         }
+
+
         //Enemies
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
         static int enemyDamage = 0;
+        public struct Enemies
+        {
+            public string enemyName;
+            public int enemyMaxHealth;
+            public int enemyMinAttack;
+            public int enemyMaxAttack;
+            public int enemyPhysicalResistance;
+            public int enemyMagicResistance;
+            public int enemyDodgeChance;
+            public int enemyExperienceReward;
+            public int enemyGoldRewardRange;
+        }
 
+        static void LoadEnemies(Enemies[] enemy)
+        {
+            StreamReader sr = new StreamReader(@"enemyList.txt");
+            int enemyCount = 0;
+            string lineReader = sr.ReadLine();
+            Console.WriteLine(lineReader);
+        }
         //Combat Information
         static List<string> combatLog = new List<string>();
 
         // Main void for running game then ending
         static void Main()
         {
+            //load available enemies
+            Enemies[] enemy = new Enemies[3];
+            LoadEnemies(enemy);
             // all quest definitions
             RegisterQuests();
             // Loading a save if there is one
