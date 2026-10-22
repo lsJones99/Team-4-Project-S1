@@ -984,8 +984,17 @@ namespace TextBasedGame
                             playerFinesse = tempFinesse;
                             playerResilience = tempResilience;
                             playerArcane = tempArcane;
-                            inventoryMaxSize = inventoryMaxSize + playerStrength;
+                            string[] tempInv = new string[inventoryMaxSize];
+                            for (int i = 0; i < inventoryMaxSize; i++)
+                            {
+                                tempInv[i] = inventory[i];
+                            }
+                            inventoryMaxSize = 5 + playerStrength;
                             inventory = new string[inventoryMaxSize];
+                            for (int i = 0; i < tempInv.Length-1;  i++)
+                            {
+                                inventory[i] = tempInv[i];
+                            }
                             playerMaxHealth = 100 + (10 * playerResilience) + (5 * playerLevel);
                             playerHealth = playerHealth + (10 * playerResilience) + (5 * playerLevel);
                             if (playerHealth > playerMaxHealth)
