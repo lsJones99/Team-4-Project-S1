@@ -1809,11 +1809,13 @@ namespace TextBasedGame
         // Market menu
         static void MerchantShop()
         {
-            int healthPotionPrice = 6;
+            int healingPotionPrice = 4;
+            int rustyArmourPrice = 8;
 
             Console.Clear();
             Console.WriteLine("\n========== MERCHANTS SHOP ==========");
-            Console.WriteLine($"1. Healing Potion: {healthPotionPrice}G");
+            Console.WriteLine($"1. Healing Potion: {healingPotionPrice}G");
+            Console.WriteLine($"2. Rusty Armour: {rustyArmourPrice}G");
 
             Console.WriteLine("\n[NUM] Purchase Item");
             Console.WriteLine("[ANY OTHER INPUT] Leave");
@@ -1833,11 +1835,24 @@ namespace TextBasedGame
                 switch (marketChoice)
                 {
                     case '1':
-                        if (playerGold >= healthPotionPrice)
+                        if (playerGold >= healingPotionPrice)
                         {
-                            playerGold -= healthPotionPrice;
+                            playerGold -= healingPotionPrice;
                             Console.WriteLine($"\nYou bought the Healing Potion! You now have {playerGold} gold.");
                             AddItem("Healing Potion");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nYou do not have enough gold to buy this.");
+                        }
+                        break;
+
+                    case '2':
+                        if (playerGold >= rustyArmourPrice)
+                        {
+                            playerGold -= rustyArmourPrice;
+                            Console.WriteLine($"\nYou bought the Rusty Armour! You now have {playerGold} gold.");
+                            AddItem("Rusty Armour");
                         }
                         else
                         {
@@ -2028,7 +2043,7 @@ namespace TextBasedGame
             Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
 
             Console.WriteLine($"\nEquipped weapon: {playerWpn}");
-            Console.WriteLine($"Equipped armor: {playerAmr}");
+            Console.WriteLine($"Equipped Armour: {playerAmr}");
 
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
@@ -2084,42 +2099,55 @@ namespace TextBasedGame
                 Console.Clear();
                 Console.WriteLine("\n---------- INVENTORY ----------");
 
-                // What happens when using a healing potion
-                if (inventory[useChoice - 1] == "Healing Potion")
+                switch (inventory[useChoice - 1])
                 {
-                    playerHealth = playerHealth + 30;
-                    slotEmpty = true;
-                    Console.WriteLine("The healing potion was used! +30 HP");
-                    if (playerHealth > playerMaxHealth)
-                    {
-                        playerHealth = playerMaxHealth;
-                    }
-                    Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
-                }
-                // What happens when using a rusty sword
-                else if (inventory[useChoice - 1] == "Rusty Sword")
-                {
-                    // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
-                    if (playerWpn != "")
-                    {
-                        inventory[useChoice - 1] = playerWpn;
-                    }
-                    else
-                    {
+                    // What happens when equipping weapons. add [or "item name"] to case for new weapons
+                    case "Rusty Sword":
+                        // Checks if equipped wpn is empty, clears old inv slot if true, replaces slot not
+                        if (playerWpn != "")
+                        {
+                            inventory[useChoice - 1] = playerWpn;
+                        }
+                        else
+                        {
+                            slotEmpty = true;
+                        }
+                        playerWpn = inventory[useChoice - 1];
+                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                        PauseStory();
+                        break;
+
+                    // What happens when equipping armours. add [or "item name"] to case for new armours
+                    case "Rusty Armour":
+                        // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
+                        if (playerWpn != "")
+                        {
+                            inventory[useChoice - 1] = playerAmr;
+                        }
+                        else
+                        {
+                            slotEmpty = true;
+                        }
+                        playerWpn = inventory[useChoice - 1];
+                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                        PauseStory();
+                        break;
+
+                    // What happens when using a healing potion
+                    case "Healing Potion":
+                        playerHealth = playerHealth + 30;
                         slotEmpty = true;
-                    }
-                    playerWpn = "Rusty Sword";
-                    Console.WriteLine("You equipped the Rusty Sword.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
-                }
-                else
-                {
-                    Console.WriteLine("That input is unrecognised.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
+                        Console.WriteLine("The healing potion was used! +30 HP");
+                        if (playerHealth > playerMaxHealth)
+                        {
+                            playerHealth = playerMaxHealth;
+                        }
+                        Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
+                        PauseStory();
+                        break;
+
+                    default:
+                        break;
                 }
 
                 if (slotEmpty == true)
@@ -2131,6 +2159,12 @@ namespace TextBasedGame
                     }
                     inventory[inventoryCount - 1] = null;
                     inventoryCount--;
+                }
+                else
+                {
+                    Console.WriteLine("That input is unrecognised.");
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                 }
             }
 
