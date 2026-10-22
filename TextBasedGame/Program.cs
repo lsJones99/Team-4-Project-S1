@@ -2313,6 +2313,14 @@ namespace TextBasedGame
                   0, 4,
                   "side_merchant_01"
                 );
+                RegisterQuest(
+                   "Final_Boss",
+                   "Severing the nexus",
+                   "Defeat the One who made you",
+                   true,
+                   1,3,
+                   "Keys_all"
+                );
         }
 
         // Stores the definition of a quest in the game.
@@ -2671,6 +2679,12 @@ namespace TextBasedGame
                     TrackQuest(selectedId);
                 }
             }
+        }
+        public static void FinalBoss()
+        {
+            Console.WriteLine("A sudden darkness envelops you\nYou see that you are falling through the void");
+            Console.WriteLine("");
+            
         }
     }
 }
