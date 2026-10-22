@@ -112,11 +112,10 @@ namespace TextBasedGame
             public int bossGoldRewardRange;
         }
 
-        //Enemies
-        static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
         static int enemyDamage = 0;
         public struct Enemies
         {
+            public int enemyID;
             public string enemyName;
             public int enemyMaxHealth;
             public int enemyMinAttack;
@@ -127,48 +126,52 @@ namespace TextBasedGame
             public int enemyExperienceReward;
             public int enemyGoldRewardRange;
         }
+
+        //load available enemies
+        static Enemies[] enemies = new Enemies[3];
+        static int enemyCount = 0;
         //Basic enemy loader
-        static void LoadEnemies(Enemies[] enemy)
+        static int LoadEnemies(Enemies[] enemy)
         {
             using StreamReader sr = new StreamReader("../../../enemyList.txt");
 
-            int enemyCount = 0;
+            int loadedCount = 0;
             string? lineReader;
 
-            string[] enemySpecifics;
             while ((lineReader = sr.ReadLine()) != null)
             {
                 if (string.IsNullOrWhiteSpace(lineReader))
                     continue;
 
-                enemySpecifics = lineReader.Split(',');
+                string[] enemySpecifics = lineReader.Split(',');
 
                 for (int i = 0; i < enemySpecifics.Length; i++)
-                {
                     enemySpecifics[i] = enemySpecifics[i].Trim();
-                }
 
-                if (enemySpecifics.Length != 9)
+                if (enemySpecifics.Length != 10)
                     continue;
 
-                if (enemyCount >= enemy.Length)
+                if (loadedCount >= enemy.Length)
                     break;
 
-                enemy[enemyCount] = new Enemies
+                enemy[loadedCount] = new Enemies
                 {
-                    enemyName = enemySpecifics[0],
-                    enemyMaxHealth = int.Parse(enemySpecifics[1]),
-                    enemyMinAttack = int.Parse(enemySpecifics[2]),
-                    enemyMaxAttack = int.Parse(enemySpecifics[3]),
-                    enemyPhysicalResistance = int.Parse(enemySpecifics[4]),
-                    enemyMagicResistance = int.Parse(enemySpecifics[5]),
-                    enemyDodgeChance = int.Parse(enemySpecifics[6]),
-                    enemyExperienceReward = int.Parse(enemySpecifics[7]),
-                    enemyGoldRewardRange = int.Parse(enemySpecifics[8])
+                    enemyID = int.Parse(enemySpecifics[0]),
+                    enemyName = enemySpecifics[1],
+                    enemyMaxHealth = int.Parse(enemySpecifics[2]),
+                    enemyMinAttack = int.Parse(enemySpecifics[3]),
+                    enemyMaxAttack = int.Parse(enemySpecifics[4]),
+                    enemyPhysicalResistance = int.Parse(enemySpecifics[5]),
+                    enemyMagicResistance = int.Parse(enemySpecifics[6]),
+                    enemyDodgeChance = int.Parse(enemySpecifics[7]),
+                    enemyExperienceReward = int.Parse(enemySpecifics[8]),
+                    enemyGoldRewardRange = int.Parse(enemySpecifics[9])
                 };
 
-                enemyCount++;
+                loadedCount++;
             }
+
+            return loadedCount;
         }
         //Quest boss loader
         static void LoadBosses()
@@ -181,9 +184,8 @@ namespace TextBasedGame
         // Main void for running game then ending
         static void Main()
         {
-            //load available enemies
-            Enemies[] enemy = new Enemies[3];
-            LoadEnemies(enemy);
+
+            enemyCount = LoadEnemies(enemies);
             // all quest definitions
             RegisterQuests();
             // Loading a save if there is one
@@ -1091,13 +1093,13 @@ namespace TextBasedGame
             Console.WriteLine("\nPress Enter to begin combat.");
         }
 
-        static void CombatInformation(string enemyName, int enemyHealth)
+        static void CombatInformation(Enemies enemy, int currentHealth)
         {
             Console.WriteLine("---------- COMBAT ----------");
             Console.WriteLine($"{playerName}:");
             Console.WriteLine($"{playerHealth}/{playerMaxHealth} HP");
             Console.WriteLine($"{playerMana}/{playerMaxMana} MP");
-            Console.WriteLine($"\n{enemyName}: \n{enemyHealth}/50 HP");
+            Console.WriteLine($"\n{enemy.enemyName}: \n{currentHealth}/{enemy.enemyMaxHealth} HP");
         }
 
 
@@ -1111,7 +1113,7 @@ namespace TextBasedGame
         }
 
         //attack
-        static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, ref bool playerTurnCompleted)
+        static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, ref bool playerTurnCompleted, Enemies enemy)
         {
             //variables for hit chance
             int baseHitChance = 75, finalHitChance;
@@ -1123,12 +1125,12 @@ namespace TextBasedGame
             int finalAttackDamage;
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
-            finalHitChance = baseHitChance + playerMeleeHit;
+            finalHitChance = Math.Min(100, baseHitChance + playerMeleeHit);
             if(finalHitChance > 100)
             {
                 finalHitChance = 100;
             }
-
+            
             int hitRoll = rand.Next(1, 101);
             
             finalCritChance = baseCritChance + playerCritChance;
@@ -1139,25 +1141,29 @@ namespace TextBasedGame
                     finalCritChance = 100;
                 }
                 int critRoll = rand.Next(1, 101);
-
-                if (critRoll <= finalCritChance)
+                bool isCritical = critRoll <= finalCritChance;
+                if (isCritical)
                 {
-                    enemyHealth -= (playerDamage + playerMeleeDmg) * 2;
                     finalAttackDamage = (playerDamage + playerMeleeDmg) * 2;
-                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
-                    Console.ReadLine();
-                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
-
                 }
 
                 else
                 {
-                    enemyHealth -= playerDamage + playerMeleeDmg;
                     finalAttackDamage = playerDamage + playerMeleeDmg;
-                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} damage.");
-                    Console.ReadLine();
-                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} damage.");
+                }
 
+                finalAttackDamage = Math.Max(0, finalAttackDamage - enemy.enemyPhysicalResistance);
+                enemyHealth -= finalAttackDamage;
+
+                if (isCritical)
+                {
+                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
+                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
+                }
+                else
+                {
+                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} damage.");
+                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} damage.");
                 }
 
                 //add mana after attacking
@@ -1425,7 +1431,7 @@ namespace TextBasedGame
             }
         }
         //enemy attack
-        static void EnemyTurn(string enemyName)
+        static void EnemyTurn(Enemies enemy)
         {
             bool dodgeAttack = CombatDodge();
             bool blockAttack;
@@ -1444,7 +1450,7 @@ namespace TextBasedGame
             else
             {
                 blockAttack = CombatBlock();
-                enemyDamage = rand.Next(5, 11);
+                enemyDamage = rand.Next(enemy.enemyMinAttack, enemy.enemyMaxAttack + 1);
                 if (blockAttack == true)
                 {
                     reducedDamage = enemyDamage - playerBlockReduction;
@@ -1456,15 +1462,15 @@ namespace TextBasedGame
                     {
                         enemyDamage = reducedDamage;
                     }
-                    Console.WriteLine($"The {enemyName} attacks but you have blocked it!");
-                    AddCombatLog($"The {enemyName} attacks but you have blocked it!");
+                    Console.WriteLine($"The {enemy.enemyName} attacks but you have blocked it!");
+                    AddCombatLog($"The {enemy.enemyName} attacks but you have blocked it!");
                 }
                 else
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"The {enemyName} attacks!");
+                    Console.WriteLine($"The {enemy.enemyName} attacks!");
                     Console.ReadLine();
-                    AddCombatLog($"The {enemyName} attacks");
+                    AddCombatLog($"The {enemy.enemyName} attacks");
                 }
                 finalDamage = int.Max(0, enemyDamage - playerPhysicalResist);
                 playerHealth -= finalDamage;
@@ -1474,10 +1480,11 @@ namespace TextBasedGame
             }
             
         }
-        static bool CombatMenu(string enemyName)
+        static bool CombatMenu(Enemies enemy)
         {
             combatLog.Clear();
-            int enemyHealth = 50;
+            string enemyName = enemy.enemyName;
+            int enemyHealth = enemy.enemyMaxHealth;
             bool inCombat = true;
             bool playerTurnCompleted = false, playerEscape = false, runAway, enemyHPCheck, playerHPCheck;
             Console.Clear();
@@ -1494,7 +1501,7 @@ namespace TextBasedGame
 
                 Console.Clear();
                 DisplayCombatLog();
-                CombatInformation(enemyName, enemyHealth);
+                CombatInformation(enemy, enemyHealth);
                 CombatCommands();
 
                 Console.Write("\nChoose an action: ");
@@ -1514,7 +1521,7 @@ namespace TextBasedGame
                     {
                         case 'a':
                             playerDamage = rand.Next(8, 16);
-                            playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, ref playerTurnCompleted);
+                            playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, ref playerTurnCompleted, enemy);
                             break;
 
                         case 'm':
@@ -1574,7 +1581,7 @@ namespace TextBasedGame
                 {
                     if (inCombat == true && playerTurnCompleted == true && enemyHealth > 0)
                     {
-                        EnemyTurn(enemyName);
+                        EnemyTurn(enemy);
                     }
 
                     //check for player hp
@@ -1719,10 +1726,18 @@ namespace TextBasedGame
 
             if (encounterChance <= 30)
             {
-                string encounteredEnemy = Enemy(enemies);
+                if(enemyCount == 0)
+                {
+                    Console.WriteLine("No enemies were loaded");
+                    Console.ReadLine();
+                    return;
+                }
 
-                Console.WriteLine($"\nA {encounteredEnemy} suddenly appears!");
-                AddCombatLog($"\nA {encounteredEnemy} suddenly appears!");
+                int index = rand.Next(0, enemyCount);
+                Enemies encounteredEnemy = enemies[index];
+
+                Console.WriteLine($"\nA {encounteredEnemy.enemyName} suddenly appears!");
+                AddCombatLog($"\nA {encounteredEnemy.enemyName} suddenly appears!");
                 //Combat system function
                 CombatMenu(encounteredEnemy);
             }
