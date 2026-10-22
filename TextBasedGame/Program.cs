@@ -2306,7 +2306,7 @@ namespace TextBasedGame
                   "side_merchant_02",
                   "The Merchant's Delivery",
                   "Deliver the merchant's package to the Witch's Hut.",
-                  true,
+                  false,
                   0, 4,
                   "side_merchant_01"
                 );
