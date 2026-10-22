@@ -984,8 +984,17 @@ namespace TextBasedGame
                             playerFinesse = tempFinesse;
                             playerResilience = tempResilience;
                             playerArcane = tempArcane;
-                            inventoryMaxSize = inventoryMaxSize + playerStrength;
+                            string[] tempInv = new string[inventoryMaxSize];
+                            for (int i = 0; i < inventoryMaxSize; i++)
+                            {
+                                tempInv[i] = inventory[i];
+                            }
+                            inventoryMaxSize = 5 + playerStrength;
                             inventory = new string[inventoryMaxSize];
+                            for (int i = 0; i < tempInv.Length-1;  i++)
+                            {
+                                inventory[i] = tempInv[i];
+                            }
                             playerMaxHealth = 100 + (10 * playerResilience) + (5 * playerLevel);
                             playerHealth = playerHealth + (10 * playerResilience) + (5 * playerLevel);
                             if (playerHealth > playerMaxHealth)
@@ -2347,6 +2356,14 @@ namespace TextBasedGame
                   0, 4,
                   "side_merchant_01"
                 );
+                RegisterQuest(
+                   "Final_Boss",
+                   "Severing the nexus",
+                   "Defeat the One who made you",
+                   true,
+                   1,3,
+                   "Keys_all"
+                );
         }
 
         // Stores the definition of a quest in the game.
@@ -2705,6 +2722,12 @@ namespace TextBasedGame
                     TrackQuest(selectedId);
                 }
             }
+        }
+        public static void FinalBoss()
+        {
+            Console.WriteLine("A sudden darkness envelops you\nYou see that you are falling through the void");
+            Console.WriteLine("");
+            
         }
     }
 }
