@@ -129,10 +129,45 @@ namespace TextBasedGame
 
         static void LoadEnemies(Enemies[] enemy)
         {
-            StreamReader sr = new StreamReader(@"enemyList.txt");
+            using StreamReader sr = new StreamReader("../../../enemyList.txt");
+
             int enemyCount = 0;
-            string lineReader = sr.ReadLine();
-            Console.WriteLine(lineReader);
+            string? lineReader;
+
+            string[] enemySpecifics;
+            while ((lineReader = sr.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(lineReader))
+                    continue;
+
+                enemySpecifics = lineReader.Split(',');
+
+                for (int i = 0; i < enemySpecifics.Length; i++)
+                {
+                    enemySpecifics[i] = enemySpecifics[i].Trim();
+                }
+
+                if (enemySpecifics.Length != 9)
+                    continue;
+
+                if (enemyCount >= enemy.Length)
+                    break;
+
+                enemy[enemyCount] = new Enemies
+                {
+                    enemyName = enemySpecifics[0],
+                    enemyMaxHealth = int.Parse(enemySpecifics[1]),
+                    enemyMinAttack = int.Parse(enemySpecifics[2]),
+                    enemyMaxAttack = int.Parse(enemySpecifics[3]),
+                    enemyPhysicalResistance = int.Parse(enemySpecifics[4]),
+                    enemyMagicResistance = int.Parse(enemySpecifics[5]),
+                    enemyDodgeChance = int.Parse(enemySpecifics[6]),
+                    enemyExperienceReward = int.Parse(enemySpecifics[7]),
+                    enemyGoldRewardRange = int.Parse(enemySpecifics[8])
+                };
+
+                enemyCount++;
+            }
         }
         //Combat Information
         static List<string> combatLog = new List<string>();
