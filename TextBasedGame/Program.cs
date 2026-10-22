@@ -1722,11 +1722,32 @@ namespace TextBasedGame
         {
             Console.Clear();
             Console.WriteLine("========== MERCHANT ==========");
-
-            // Both quests finished
+            //All merchant quests finished
+            if (completedQuests.Contains("main_quest_01"))
+            {
+                Console.WriteLine($"Merchant: Thank you {playerName}, those monsters trouble my caravans no more");
+                return;
+            }
+            // Both side quests finished
             if (completedQuests.Contains("side_merchant_02"))
             {
-                Console.WriteLine("Merchant: Thank you for all your help!");
+                Console.WriteLine($"Merchant: {playerName}! I have an urgent job for you!");
+                Console.WriteLine("Merchant: A pair of powerful undead are attacking the roads. Will you help?");
+                Console.WriteLine("[1] Accept quest");
+                Console.WriteLine("[2] Decline");
+
+                char choice = Console.ReadKey().KeyChar;
+
+                if (choice == '1')
+                {
+                    bool given = GiveQuest("main_quest_01");
+
+                    if (given)
+                    {
+                        Console.WriteLine("New quest: The Dark Twins");
+                    }
+                }
+
                 return;
             }
 
@@ -1961,7 +1982,14 @@ namespace TextBasedGame
                         break;
                         //Later add witch dialogue
                     }
+                case (4, 4):
+                    Console.WriteLine("You approach a twisted bramble");
+                    if (acceptedQuests.Contains("main_quest_01"))
+                    {
+                        Console.WriteLine("From the brambles, a pair of shambling undead rush you!");
 
+                    }
+                    break;
                     
 
 
@@ -2322,6 +2350,16 @@ namespace TextBasedGame
                   0, 4,
                   "side_merchant_01"
                 );
+
+                RegisterQuest(
+                    "main_quest_01",
+                    "The Dark Twins",
+                    "Slay the undead twins located in the north east",
+                    true,
+                    4, 4,
+                    "side_merchant_02"
+                );
+
         }
 
         // Stores the definition of a quest in the game.
