@@ -19,16 +19,6 @@ namespace TextBasedGame
         // savedata
         private static readonly string saveFile = "savedata.txt";
 
-        // importing command to find console window
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
-
-        // importing command to change console window properties
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr wHandle, int nCmdShow);
-
-        // 3 is the Windows constant for Maximized
-        private const int SW_MAXIMIZE = 3;
         //Player information
         static int inventoryMaxSize = 5;
         static string playerName = "";
@@ -185,10 +175,6 @@ namespace TextBasedGame
 
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
-
-            // getting console window ID then maximising window (for text centering purposes)
-            IntPtr handle = GetConsoleWindow();
-            ShowWindow(handle, SW_MAXIMIZE);
 
             Console.WriteLine("\nThis game is best played maximised.");
             PauseStory();
@@ -605,6 +591,19 @@ namespace TextBasedGame
             Console.ReadLine();
 
 
+        }
+        //Inventory Check for item
+        static bool InvCheck(string itemNeeded)
+        {
+            bool result = false;
+            foreach (string item in inventory)
+            {
+                if (item == itemNeeded)
+                {
+                    result = true;
+                }
+            }
+            return result;
         }
         // Character Selection
         public static void CreateCharacter()
@@ -1160,12 +1159,14 @@ namespace TextBasedGame
 
 
         //magic
-        static void DisplayAvailableMagic(bool staffFireball)
+        static void DisplayAvailableMagic()
         {
+            bool staffFireball;
             Console.WriteLine("\nYou chose magic!");
             Console.WriteLine();
             Console.WriteLine("[M] - Magic Missile - 3 MP");
-            // Temporary bool to test unlocking magic 
+            // Temporary bool to test unlocking magic
+            staffFireball = InvCheck("Staff of Fireball");
             if (staffFireball == true)
             {
                 Console.WriteLine("[F] - Fireball - 6 MP");
@@ -1190,7 +1191,7 @@ namespace TextBasedGame
         }
 
 
-        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth, bool staffFireball)
+        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth)
         {
             switch (spellSelect)
             {
@@ -1236,7 +1237,7 @@ namespace TextBasedGame
                     Console.ReadLine();
                     return true;
                 case 'f':
-                    
+                    bool staffFireball = InvCheck("Staff of Fireball");
                     while (staffFireball == true)
                     {
                         if (playerMana < 6)
@@ -1492,12 +1493,10 @@ namespace TextBasedGame
                             break;
 
                         case 'm':
-                            // Temporary bool to test magic unlocking
-                            bool staffFireball = true;
-                            DisplayAvailableMagic(staffFireball);
+                            DisplayAvailableMagic();
                             userselect = MagicInput();
                             char spellselect = userselect[0];
-                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth, staffFireball);
+                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth);
                             break;
 
 
@@ -1798,13 +1797,13 @@ namespace TextBasedGame
         }
 
         // Market menu
-        static void Market()
+        static void MerchantShop()
         {
             int healthPotionPrice = 6;
 
             Console.Clear();
-            Console.WriteLine("\n========== MARKETS ==========");
-            Console.WriteLine($"1. Health Potion: {healthPotionPrice}G");
+            Console.WriteLine("\n========== MERCHANTS SHOP ==========");
+            Console.WriteLine($"1. Healing Potion: {healthPotionPrice}G");
 
             Console.WriteLine("\n[NUM] Purchase Item");
             Console.WriteLine("[ANY OTHER INPUT] Leave");
@@ -1827,8 +1826,8 @@ namespace TextBasedGame
                         if (playerGold >= healthPotionPrice)
                         {
                             playerGold -= healthPotionPrice;
-                            Console.WriteLine($"\nYou bought the Health Potion! You now have {playerGold} gold.");
-                            AddItem("Health Potion");
+                            Console.WriteLine($"\nYou bought the Healing Potion! You now have {playerGold} gold.");
+                            AddItem("Healing Potion");
                         }
                         else
                         {
@@ -1852,9 +1851,9 @@ namespace TextBasedGame
                     {
                         Console.Clear();
                         Console.WriteLine("\n========== MARKET ==========");
-                        Console.WriteLine("[1] Talk to Merchant");
-                        Console.WriteLine("[2] Search for loot");
-                        Console.WriteLine("[3] Check the markets");
+                        Console.WriteLine("[1] Talk to merchant");
+                        Console.WriteLine("[2] Check the merchants shop");
+                        Console.WriteLine("[3] Search for loot");
                         Console.WriteLine("[0] Leave");
 
                         char choice = Console.ReadKey(true).KeyChar;
@@ -1866,6 +1865,10 @@ namespace TextBasedGame
                                 break;
 
                             case '2':
+                                MerchantShop();
+                                break;
+
+                            case '3':
                                 Console.WriteLine("You search around the market...");
 
                                 int lootChance = rand.Next(1, 4);
@@ -1888,10 +1891,6 @@ namespace TextBasedGame
                                 }
                                 break;
 
-                            case '3':
-                                Market();
-                                break;
-
                             case '0':
                                 Console.WriteLine("You leave the market.");
                                 break;
@@ -1907,7 +1906,7 @@ namespace TextBasedGame
                 case (2, 2):
                     Console.WriteLine("You search the Dark Forest...");
 
-                    int result = rand.Next(1, 4);
+                    int result = rand.Next(1, 5);
 
                     switch (result)
                     {
@@ -1923,6 +1922,10 @@ namespace TextBasedGame
 
                         case 3:
                             Console.WriteLine("You found nothing.");
+                            break;
+                        case 4:
+                            Console.WriteLine("staffFireball test item");
+                            AddItem("Staff of Fireball");
                             break;
                     }
                     break;
@@ -2306,7 +2309,7 @@ namespace TextBasedGame
                   "side_merchant_02",
                   "The Merchant's Delivery",
                   "Deliver the merchant's package to the Witch's Hut.",
-                  true,
+                  false,
                   0, 4,
                   "side_merchant_01"
                 );
