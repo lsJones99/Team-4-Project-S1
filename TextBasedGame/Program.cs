@@ -57,6 +57,7 @@ namespace TextBasedGame
         static int playerY = 2;
         static int markerScreenX;
         static int markerScreenY;
+        static bool keyall = false;
 
 
         //Randomizer
@@ -108,64 +109,7 @@ namespace TextBasedGame
         }
 
 
-        //Enemies
-        static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
-        static int enemyDamage = 0;
-        public struct Enemies
-        {
-            public string enemyName;
-            public int enemyMaxHealth;
-            public int enemyMinAttack;
-            public int enemyMaxAttack;
-            public int enemyPhysicalResistance;
-            public int enemyMagicResistance;
-            public int enemyDodgeChance;
-            public int enemyExperienceReward;
-            public int enemyGoldRewardRange;
-        }
-
-        static void LoadEnemies(Enemies[] enemy)
-        {
-            using StreamReader sr = new StreamReader("../../../enemyList.txt");
-
-            int enemyCount = 0;
-            string? lineReader;
-
-            string[] enemySpecifics;
-            while ((lineReader = sr.ReadLine()) != null)
-            {
-                if (string.IsNullOrWhiteSpace(lineReader))
-                    continue;
-
-                enemySpecifics = lineReader.Split(',');
-
-                for (int i = 0; i < enemySpecifics.Length; i++)
-                {
-                    enemySpecifics[i] = enemySpecifics[i].Trim();
-                }
-
-                if (enemySpecifics.Length != 9)
-                    continue;
-
-                if (enemyCount >= enemy.Length)
-                    break;
-
-                enemy[enemyCount] = new Enemies
-                {
-                    enemyName = enemySpecifics[0],
-                    enemyMaxHealth = int.Parse(enemySpecifics[1]),
-                    enemyMinAttack = int.Parse(enemySpecifics[2]),
-                    enemyMaxAttack = int.Parse(enemySpecifics[3]),
-                    enemyPhysicalResistance = int.Parse(enemySpecifics[4]),
-                    enemyMagicResistance = int.Parse(enemySpecifics[5]),
-                    enemyDodgeChance = int.Parse(enemySpecifics[6]),
-                    enemyExperienceReward = int.Parse(enemySpecifics[7]),
-                    enemyGoldRewardRange = int.Parse(enemySpecifics[8])
-                };
-
-                enemyCount++;
-            }
-        }
+     
         //Combat Information
         static List<string> combatLog = new List<string>();
 
@@ -1075,10 +1019,91 @@ namespace TextBasedGame
 
 
         //Make combat commands into separate methods to save lines of code
-        static void EnemyEncounter(string enemyName)
+        //Enemies
+        static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
+        public static int enemyDamage = 0;
+        public struct Enemies
         {
+            public int enemyID;
+            public string enemyName;
+            public int enemyMaxHealth;
+            public int enemyMinAttack;
+            public int enemyMaxAttack;
+            public int enemyPhysicalResistance;
+            public int enemyMagicResistance;
+            public int enemyDodgeChance;
+            public int enemyExperienceReward;
+            public int enemyGoldRewardRange;
+        }
+
+        static Enemies currentEnemy;
+
+        static void LoadEnemies(Enemies[] enemy)
+        {
+            using StreamReader sr = new StreamReader("../../../enemyList.txt");
+
+            int enemyCount = 0;
+            string? lineReader;
+
+            string[] enemySpecifics;
+            while ((lineReader = sr.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(lineReader))
+                    continue;
+
+                enemySpecifics = lineReader.Split(',');
+
+                for (int i = 0; i < enemySpecifics.Length; i++)
+                {
+                    enemySpecifics[i] = enemySpecifics[i].Trim();
+                }
+
+                if (enemySpecifics.Length != 10)
+                    continue;
+
+                if (enemyCount >= enemy.Length)
+                    break;
+
+                enemy[enemyCount] = new Enemies
+                {
+                    enemyID = int.Parse(enemySpecifics[0]),
+                    enemyName = enemySpecifics[1],
+                    enemyMaxHealth = int.Parse(enemySpecifics[2]),
+                    enemyMinAttack = int.Parse(enemySpecifics[3]),
+                    enemyMaxAttack = int.Parse(enemySpecifics[4]),
+                    enemyPhysicalResistance = int.Parse(enemySpecifics[5]),
+                    enemyMagicResistance = int.Parse(enemySpecifics[6]),
+                    enemyDodgeChance = int.Parse(enemySpecifics[7]),
+                    enemyExperienceReward = int.Parse(enemySpecifics[8]),
+                    enemyGoldRewardRange = int.Parse(enemySpecifics[9])
+                };
+
+                enemyCount++;
+            }
+        }
+
+        static Enemies GetEnemyByID(Enemies[] enemyArray, int searchID)
+        {
+            for (int i = 0; i < enemyArray.Length; i++)
+            {
+                if (enemyArray[i].enemyID == searchID)
+                {
+                    Console.WriteLine(enemyArray[i].enemyName);
+                    return enemyArray[i];
+                }
+            }
+            return default(Enemies);
+        }
+
+        static void EnemyEncounter(Enemies[] loadedEnemies, int totalEnemies)
+        {
+            //Console.WriteLine(loadedEnemies[0].enemyName, totalEnemies);
+            int randomGenerator = rand.Next(1, totalEnemies);
+            int randomID = loadedEnemies[randomGenerator].enemyID;
+            currentEnemy = GetEnemyByID(loadedEnemies, randomID);
+
             Console.WriteLine("\n========== ENCOUNTER ==========");
-            Console.WriteLine($"A {enemyName} approaches!");
+            Console.WriteLine($"A {currentEnemy.enemyName} approaches!");
             Console.WriteLine("\nPress Enter to begin combat.");
         }
 
@@ -1467,12 +1492,14 @@ namespace TextBasedGame
         }
         static bool CombatMenu(string enemyName)
         {
+            Enemies[] loadedEnemies = new Enemies[3];
+            int totalEnemies = 3;
             combatLog.Clear();
             int enemyHealth = 50;
             bool inCombat = true;
             bool playerTurnCompleted = false, playerEscape = false, runAway, enemyHPCheck, playerHPCheck;
             Console.Clear();
-            EnemyEncounter(enemyName);
+            EnemyEncounter(loadedEnemies, 3);
             Console.ReadLine();
 
             while (inCombat && playerHealth > 0 && enemyHealth > 0)
@@ -2738,6 +2765,21 @@ namespace TextBasedGame
                 {
                     TrackQuest(selectedId);
                 }
+            }
+        }
+        public static void FinalBossReq()
+        {
+            bool key1 = InvCheck("Key1");
+            bool key2 = InvCheck("Key2");
+            bool key3 = InvCheck("Key3");
+            if (key1 == true && key2 == true && key3 == true)
+            {
+                FinalBoss();
+            }
+            else
+            {
+                Console.WriteLine("Nothing happens");
+                Console.ReadLine();
             }
         }
         public static void FinalBoss()
