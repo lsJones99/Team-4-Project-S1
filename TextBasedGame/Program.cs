@@ -1,8 +1,8 @@
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Generic;
-﻿using System.ComponentModel.Design;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -57,6 +57,7 @@ namespace TextBasedGame
         static int playerY = 2;
         static int markerScreenX;
         static int markerScreenY;
+        static bool keyall = false;
 
 
         //Randomizer
@@ -64,6 +65,13 @@ namespace TextBasedGame
         static int randomEnemyEncounter = 0;
         static int escapeChance = 0;
 
+        //Shop
+        static int healingPotionPrice = 4;
+        static int rustyArmourPrice = 8;
+        static int steelSwordPrice = 20;
+        static int steelSwordLV = 5;
+        static int steelArmourPrice = 20;
+        static int steelArmourLV = 5;
 
         //Quest
         static bool activequest = false;
@@ -98,18 +106,6 @@ namespace TextBasedGame
                 MapX = mapX;
                 MapY = mapY;
             }
-        }
-        public struct Bosses
-        {
-            public string bossName;
-            public int bossMaxHealth;
-            public int bossMinAttack;
-            public int bossMaxAttack;
-            public int bossPhysicalResistance;
-            public int bossMagicResistance;
-            public int DodgeChance;
-            public int bossExperienceReward;
-            public int bossGoldRewardRange;
         }
 
         static int enemyDamage = 0;
@@ -178,6 +174,7 @@ namespace TextBasedGame
         {
             int bossCount = 0;
         }
+
         //Combat Information
         static List<string> combatLog = new List<string>();
 
@@ -541,7 +538,8 @@ namespace TextBasedGame
 
             int padding = (windowWidth - text.Length) / 2;
 
-            if (padding > 0) {
+            if (padding > 0)
+            {
                 Console.WriteLine(text.PadLeft(text.Length + padding));
             }
             else
@@ -575,7 +573,7 @@ namespace TextBasedGame
 
             CenterText("\"Hero, tell me your name.\"");
             CenterText("(Enter your name)");
-            playerName = Console.ReadLine() ??"";
+            playerName = Console.ReadLine() ?? "";
 
             //prevents the players from having a blank name
             if (string.IsNullOrWhiteSpace(playerName))
@@ -932,7 +930,7 @@ namespace TextBasedGame
                     default:
                         Console.WriteLine("Invalid command, please input a valid command");
                         break;
-                    }
+                }
             }
         }
         // Gaining XP
@@ -1009,7 +1007,7 @@ namespace TextBasedGame
                             }
                             inventoryMaxSize = 5 + playerStrength;
                             inventory = new string[inventoryMaxSize];
-                            for (int i = 0; i < tempInv.Length-1;  i++)
+                            for (int i = 0; i < tempInv.Length - 1; i++)
                             {
                                 inventory[i] = tempInv[i];
                             }
@@ -1059,7 +1057,7 @@ namespace TextBasedGame
         {
             combatLog.Add(message);
 
-            if(combatLog.Count > 21)
+            if (combatLog.Count > 21)
             {
                 combatLog.RemoveAt(0);
             }
@@ -1085,11 +1083,10 @@ namespace TextBasedGame
 
 
 
-        //Make combat commands into separate methods to save lines of code
-        static void EnemyEncounter(string enemyName)
+        static void EnemyEncounter(Enemies enemy)
         {
             Console.WriteLine("\n========== ENCOUNTER ==========");
-            Console.WriteLine($"A {enemyName} approaches!");
+            Console.WriteLine($"A {enemy.enemyName} approaches!");
             Console.WriteLine("\nPress Enter to begin combat.");
         }
 
@@ -1127,16 +1124,18 @@ namespace TextBasedGame
             Console.ReadLine();
             finalHitChance = Math.Min(100, baseHitChance + playerMeleeHit);
             if(finalHitChance > 100)
+            finalHitChance = baseHitChance + playerMeleeHit;
+            if (finalHitChance > 100)
             {
                 finalHitChance = 100;
             }
             
             int hitRoll = rand.Next(1, 101);
-            
+
             finalCritChance = baseCritChance + playerCritChance;
-            if(hitRoll <= finalHitChance)
+            if (hitRoll <= finalHitChance)
             {
-                if(finalCritChance > 100)
+                if (finalCritChance > 100)
                 {
                     finalCritChance = 100;
                 }
@@ -1182,9 +1181,9 @@ namespace TextBasedGame
                 Console.WriteLine("Your attack misses!");
                 AddCombatLog("Your attack misses!");
             }
-            
 
-            
+
+
             return true;
         }
 
@@ -1280,7 +1279,7 @@ namespace TextBasedGame
                         playerMana -= 6;
 
                         casting = rand.Next(1, 101) + playerSpellMiscast;
-                        
+
                         if (casting <= 55)
                         {
                             playerDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
@@ -1315,13 +1314,13 @@ namespace TextBasedGame
                     Console.WriteLine("Invalid spell selection.");
                     return false;
                 case '0':
-                        Console.WriteLine("Returning to the combat menu.");
-                        return false;
+                    Console.WriteLine("Returning to the combat menu.");
+                    return false;
 
                 default:
-                        Console.WriteLine("Invalid spell selection.");
-                        return false;
-                    }
+                    Console.WriteLine("Invalid spell selection.");
+                    return false;
+            }
         }
 
 
@@ -1338,7 +1337,7 @@ namespace TextBasedGame
                 AddCombatLog($"You have successfully escaped from {enemyName}!");
                 AddCombatLog("\n");
                 return true;
-                
+
             }
             else
             {
@@ -1406,9 +1405,9 @@ namespace TextBasedGame
         static bool CombatDodge()
         {
             int playerDodgeChance = Math.Min(playerDodge, 100);
-            int dodgeRoll = rand.Next(1,101);
-            if(dodgeRoll <= playerDodgeChance)
-            { 
+            int dodgeRoll = rand.Next(1, 101);
+            if (dodgeRoll <= playerDodgeChance)
+            {
                 return true;
             }
             else
@@ -1421,7 +1420,7 @@ namespace TextBasedGame
         {
             int playerBlock = Math.Min(playerBlockChance, 100);
             int blockRoll = rand.Next(1, 101);
-            if(blockRoll <= playerBlock)
+            if (blockRoll <= playerBlock)
             {
                 return true;
             }
@@ -1441,7 +1440,7 @@ namespace TextBasedGame
 
             //physical resist
             int finalDamage;
-            if(dodgeAttack == true)
+            if (dodgeAttack == true)
             {
                 Console.WriteLine("You have dodged!");
                 AddCombatLog("You have dodged!");
@@ -1454,7 +1453,7 @@ namespace TextBasedGame
                 if (blockAttack == true)
                 {
                     reducedDamage = enemyDamage - playerBlockReduction;
-                    if(reducedDamage < 0)
+                    if (reducedDamage < 0)
                     {
                         enemyDamage = 0;
                     }
@@ -1478,7 +1477,7 @@ namespace TextBasedGame
                 AddCombatLog($"You received {finalDamage} damage!");
                 AddCombatLog("\n");
             }
-            
+
         }
         static bool CombatMenu(Enemies enemy)
         {
@@ -1488,7 +1487,7 @@ namespace TextBasedGame
             bool inCombat = true;
             bool playerTurnCompleted = false, playerEscape = false, runAway, enemyHPCheck, playerHPCheck;
             Console.Clear();
-            EnemyEncounter(enemyName);
+            EnemyEncounter(enemy);
             Console.ReadLine();
 
             while (inCombat && playerHealth > 0 && enemyHealth > 0)
@@ -1538,7 +1537,7 @@ namespace TextBasedGame
 
                         case 'r':
                             runAway = RunCommand(enemyName);
-                            if(runAway == true)
+                            if (runAway == true)
                             {
                                 inCombat = false;
                                 playerTurnCompleted = false;
@@ -1561,7 +1560,7 @@ namespace TextBasedGame
 
                 //check if enemy hp is 0 or less
                 enemyHPCheck = CheckEnemyHealth(ref enemyHealth, enemyName);
-                if(enemyHPCheck == true)
+                if (enemyHPCheck == true)
                 {
                     inCombat = false;
                     playerTurnCompleted = false;
@@ -1569,7 +1568,7 @@ namespace TextBasedGame
 
                 //check for player hp
                 playerHPCheck = CheckPlayerHealth(ref playerHealth);
-                if(playerHPCheck == true)
+                if (playerHPCheck == true)
                 {
                     playerTurnCompleted = false;
                     inCombat = false;
@@ -1592,7 +1591,7 @@ namespace TextBasedGame
                         inCombat = false;
                     }
                 }
-                
+
 
 
                 //command after running away
@@ -1618,12 +1617,7 @@ namespace TextBasedGame
 
         //END OF COMBAT COMMANDS
 
-        //Enemy generator
-        static string Enemy(string[] enemyArray)
-        {
-            randomEnemyEncounter = rand.Next(0, enemyArray.Length);
-            return enemyArray[randomEnemyEncounter];
-        }
+
 
 
         // Run command
@@ -1753,32 +1747,11 @@ namespace TextBasedGame
         {
             Console.Clear();
             Console.WriteLine("========== MERCHANT ==========");
-            //All merchant quests finished
-            if (completedQuests.Contains("main_quest_01"))
-            {
-                Console.WriteLine($"Merchant: Thank you {playerName}, those monsters trouble my caravans no more");
-                return;
-            }
-            // Both side quests finished
+
+            // Both quests finished
             if (completedQuests.Contains("side_merchant_02"))
             {
-                Console.WriteLine($"Merchant: {playerName}! I have an urgent job for you!");
-                Console.WriteLine("Merchant: A pair of powerful undead are attacking the roads. Will you help?");
-                Console.WriteLine("[1] Accept quest");
-                Console.WriteLine("[2] Decline");
-
-                char choice = Console.ReadKey().KeyChar;
-
-                if (choice == '1')
-                {
-                    bool given = GiveQuest("main_quest_01");
-
-                    if (given)
-                    {
-                        Console.WriteLine("New quest: The Dark Twins");
-                    }
-                }
-
+                Console.WriteLine("Merchant: Thank you for all your help!");
                 return;
             }
 
@@ -1860,11 +1833,12 @@ namespace TextBasedGame
         // Market menu
         static void MerchantShop()
         {
-            int healthPotionPrice = 6;
-
             Console.Clear();
             Console.WriteLine("\n========== MERCHANTS SHOP ==========");
-            Console.WriteLine($"1. Healing Potion: {healthPotionPrice}G");
+            Console.WriteLine($"1. Healing Potion: {healingPotionPrice}G");
+            Console.WriteLine($"2. Rusty Armour: {rustyArmourPrice}G");
+            Console.WriteLine($"3. [LV5] Steel Sword: {steelSwordPrice}G");
+            Console.WriteLine($"4. [LV5] Steel Armour: {steelArmourPrice}G");
 
             Console.WriteLine("\n[NUM] Purchase Item");
             Console.WriteLine("[ANY OTHER INPUT] Leave");
@@ -1880,25 +1854,49 @@ namespace TextBasedGame
             {
 
                 char marketChoice = Console.ReadKey(true).KeyChar;
-            
+
                 switch (marketChoice)
                 {
                     case '1':
-                        if (playerGold >= healthPotionPrice)
-                        {
-                            playerGold -= healthPotionPrice;
-                            Console.WriteLine($"\nYou bought the Healing Potion! You now have {playerGold} gold.");
-                            AddItem("Healing Potion");
-                        }
-                        else
-                        {
-                            Console.WriteLine("\nYou do not have enough gold to buy this.");
-                        }
+                        CheckGold("Healing Potion", healingPotionPrice, 0);
+                        break;
+
+                    case '2':
+                        CheckGold("Rusty Armour", rustyArmourPrice, 0);
+                        break;
+
+                    case '3':
+                        CheckGold("Steel Sword", steelSwordPrice, steelSwordLV);
+                        break;
+
+                    case '4':
+                        CheckGold("Steel Armour", steelArmourPrice, steelArmourLV);
                         break;
 
                     default:
                         break;
                 }
+            }
+        }
+
+        static void CheckGold(string item, int price, int level)
+        {
+            if (playerLevel >= level)
+            {
+                if (playerGold >= price)
+                {
+                    playerGold -= price;
+                    Console.WriteLine($"\nYou bought the {item}! You now have {playerGold} gold.");
+                    AddItem(item);
+                }
+                else
+                {
+                    Console.WriteLine("\nYou do not have enough gold to buy this.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nYou are not a high enough level to buy this. The merchant only sells his wares to those who deserve them.");
             }
         }
 
@@ -2013,15 +2011,8 @@ namespace TextBasedGame
                         break;
                         //Later add witch dialogue
                     }
-                case (4, 4):
-                    Console.WriteLine("You approach a twisted bramble");
-                    if (acceptedQuests.Contains("main_quest_01"))
-                    {
-                        Console.WriteLine("From the brambles, a pair of shambling undead rush you!");
 
-                    }
-                    break;
-                    
+
 
 
                 // DARK CAVE (1,4)
@@ -2086,7 +2077,7 @@ namespace TextBasedGame
             Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
 
             Console.WriteLine($"\nEquipped weapon: {playerWpn}");
-            Console.WriteLine($"Equipped armor: {playerAmr}");
+            Console.WriteLine($"Equipped Armour: {playerAmr}");
 
             Console.WriteLine("\nWhat do you want to do?");
             Console.WriteLine("\n[U] Use an item");
@@ -2142,42 +2133,55 @@ namespace TextBasedGame
                 Console.Clear();
                 Console.WriteLine("\n---------- INVENTORY ----------");
 
-                // What happens when using a healing potion
-                if (inventory[useChoice - 1] == "Healing Potion")
+                switch (inventory[useChoice - 1])
                 {
-                    playerHealth = playerHealth + 30;
-                    slotEmpty = true;
-                    Console.WriteLine("The healing potion was used! +30 HP");
-                    if (playerHealth > playerMaxHealth)
-                    {
-                        playerHealth = playerMaxHealth;
-                    }
-                    Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
-                }
-                // What happens when using a rusty sword
-                else if (inventory[useChoice - 1] == "Rusty Sword")
-                {
-                    // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
-                    if (playerWpn != "")
-                    {
-                        inventory[useChoice - 1] = playerWpn;
-                    }
-                    else
-                    {
+                    // What happens when equipping weapons. add [or "item name"] to case for new weapons
+                    case "Rusty Sword" or "Steel Sword":
+                        // Checks if equipped wpn is empty, clears old inv slot if true, replaces slot not
+                        if (playerWpn != "")
+                        {
+                            inventory[useChoice - 1] = playerWpn;
+                        }
+                        else
+                        {
+                            slotEmpty = true;
+                        }
+                        playerWpn = inventory[useChoice - 1];
+                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                        PauseStory();
+                        break;
+
+                    // What happens when equipping armours. add [or "item name"] to case for new armours
+                    case "Rusty Armour" or "Steel Armour":
+                        // Checks if equipped amr is empty, clears old inv slot if true, replaces if not
+                        if (playerAmr != "")
+                        {
+                            inventory[useChoice - 1] = playerAmr;
+                        }
+                        else
+                        {
+                            slotEmpty = true;
+                        }
+                        playerAmr = inventory[useChoice - 1];
+                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                        PauseStory();
+                        break;
+
+                    // What happens when using a healing potion
+                    case "Healing Potion":
+                        playerHealth = playerHealth + 30;
                         slotEmpty = true;
-                    }
-                    playerWpn = "Rusty Sword";
-                    Console.WriteLine("You equipped the Rusty Sword.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
-                }
-                else
-                {
-                    Console.WriteLine("That input is unrecognised.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
+                        Console.WriteLine("The healing potion was used! +30 HP");
+                        if (playerHealth > playerMaxHealth)
+                        {
+                            playerHealth = playerMaxHealth;
+                        }
+                        Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
+                        PauseStory();
+                        break;
+
+                    default:
+                        break;
                 }
 
                 if (slotEmpty == true)
@@ -2189,6 +2193,12 @@ namespace TextBasedGame
                     }
                     inventory[inventoryCount - 1] = null;
                     inventoryCount--;
+                }
+                else
+                {
+                    Console.WriteLine("That input is unrecognised.");
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
                 }
             }
 
@@ -2284,7 +2294,7 @@ namespace TextBasedGame
             // Keep the marker inside its map cell
             int maxLength = 20;
 
-            if (activequest && questDefinitions.TryGetValue(trackedQuest, out QuestDefinition target) &&playerX == target.MapX &&playerY == target.MapY)
+            if (activequest && questDefinitions.TryGetValue(trackedQuest, out QuestDefinition target) && playerX == target.MapX && playerY == target.MapY)
             {
                 maxLength = 16;
             }
@@ -2364,33 +2374,31 @@ namespace TextBasedGame
         // The story/NPC team will add quest here.
         public static void RegisterQuests()
         {
-            
-                RegisterQuest(
-                    "side_merchant_01",
-                    "The Missing Sword",
-                    "Find a Rusty Sword and return to the merchant.",
-                    false,
-                    2, 3
-                );
-            
-                RegisterQuest(
-                  "side_merchant_02",
-                  "The Merchant's Delivery",
-                  "Deliver the merchant's package to the Witch's Hut.",
-                  false,
-                  0, 4,
-                  "side_merchant_01"
-                );
 
-                RegisterQuest(
-                    "main_quest_01",
-                    "The Dark Twins",
-                    "Slay the undead twins located in the north east",
-                    true,
-                    4, 4,
-                    "side_merchant_02"
-                );
+            RegisterQuest(
+                "side_merchant_01",
+                "The Missing Sword",
+                "Find a Rusty Sword and return to the merchant.",
+                false,
+                2, 3
+            );
 
+            RegisterQuest(
+              "side_merchant_02",
+              "The Merchant's Delivery",
+              "Deliver the merchant's package to the Witch's Hut.",
+              false,
+              0, 4,
+              "side_merchant_01"
+            );
+            RegisterQuest(
+               "Final_Boss",
+               "Severing the nexus",
+               "Defeat the One who made you",
+               true,
+               1, 3,
+               "Keys_all"
+            );
         }
 
         // Stores the definition of a quest in the game.
@@ -2749,6 +2757,27 @@ namespace TextBasedGame
                     TrackQuest(selectedId);
                 }
             }
+        }
+        public static void FinalBossReq()
+        {
+            bool key1 = InvCheck("Key1");
+            bool key2 = InvCheck("Key2");
+            bool key3 = InvCheck("Key3");
+            if (key1 == true && key2 == true && key3 == true)
+            {
+                FinalBoss();
+            }
+            else
+            {
+                Console.WriteLine("Nothing happens");
+                Console.ReadLine();
+            }
+        }
+        public static void FinalBoss()
+        {
+            Console.WriteLine("A sudden darkness envelops you\nYou see that you are falling through the void");
+            Console.WriteLine("");
+
         }
     }
 }
