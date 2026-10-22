@@ -19,16 +19,6 @@ namespace TextBasedGame
         // savedata
         private static readonly string saveFile = "savedata.txt";
 
-        // importing command to find console window
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
-
-        // importing command to change console window properties
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr wHandle, int nCmdShow);
-
-        // 3 is the Windows constant for Maximized
-        private const int SW_MAXIMIZE = 3;
         //Player information
         static int inventoryMaxSize = 5;
         static string playerName = "";
@@ -185,10 +175,6 @@ namespace TextBasedGame
 
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
-
-            // getting console window ID then maximising window (for text centering purposes)
-            IntPtr handle = GetConsoleWindow();
-            ShowWindow(handle, SW_MAXIMIZE);
 
             Console.WriteLine("\nThis game is best played maximised.");
             PauseStory();
