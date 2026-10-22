@@ -606,6 +606,19 @@ namespace TextBasedGame
 
 
         }
+        //Inventory Check for item
+        static bool InvCheck(string itemNeeded)
+        {
+            bool result = false;
+            foreach (string item in inventory)
+            {
+                if (item == itemNeeded)
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
         // Character Selection
         public static void CreateCharacter()
         {
@@ -1160,12 +1173,14 @@ namespace TextBasedGame
 
 
         //magic
-        static void DisplayAvailableMagic(bool staffFireball)
+        static void DisplayAvailableMagic()
         {
+            bool staffFireball;
             Console.WriteLine("\nYou chose magic!");
             Console.WriteLine();
             Console.WriteLine("[M] - Magic Missile - 3 MP");
-            // Temporary bool to test unlocking magic 
+            // Temporary bool to test unlocking magic
+            staffFireball = InvCheck("Staff of Fireball");
             if (staffFireball == true)
             {
                 Console.WriteLine("[F] - Fireball - 6 MP");
@@ -1190,7 +1205,7 @@ namespace TextBasedGame
         }
 
 
-        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth, bool staffFireball)
+        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth)
         {
             switch (spellSelect)
             {
@@ -1236,7 +1251,7 @@ namespace TextBasedGame
                     Console.ReadLine();
                     return true;
                 case 'f':
-                    
+                    bool staffFireball = InvCheck("Staff of Fireball");
                     while (staffFireball == true)
                     {
                         if (playerMana < 6)
@@ -1492,12 +1507,10 @@ namespace TextBasedGame
                             break;
 
                         case 'm':
-                            // Temporary bool to test magic unlocking
-                            bool staffFireball = true;
-                            DisplayAvailableMagic(staffFireball);
+                            DisplayAvailableMagic();
                             userselect = MagicInput();
                             char spellselect = userselect[0];
-                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth, staffFireball);
+                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth);
                             break;
 
 
@@ -1907,7 +1920,7 @@ namespace TextBasedGame
                 case (2, 2):
                     Console.WriteLine("You search the Dark Forest...");
 
-                    int result = rand.Next(1, 4);
+                    int result = rand.Next(1, 5);
 
                     switch (result)
                     {
@@ -1923,6 +1936,10 @@ namespace TextBasedGame
 
                         case 3:
                             Console.WriteLine("You found nothing.");
+                            break;
+                        case 4:
+                            Console.WriteLine("staffFireball test item");
+                            AddItem("Staff of Fireball");
                             break;
                     }
                     break;
