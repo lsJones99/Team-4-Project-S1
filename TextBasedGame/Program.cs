@@ -64,6 +64,13 @@ namespace TextBasedGame
         static int randomEnemyEncounter = 0;
         static int escapeChance = 0;
 
+        //Shop
+        static int healingPotionPrice = 4;
+        static int rustyArmourPrice = 8;
+        static int steelSwordPrice = 20;
+        static int steelSwordLV = 5;
+        static int steelArmourPrice = 20;
+        static int steelArmourLV = 5;
 
         //Quest
         static bool activequest = false;
@@ -1808,13 +1815,12 @@ namespace TextBasedGame
         // Market menu
         static void MerchantShop()
         {
-            int healingPotionPrice = 4;
-            int rustyArmourPrice = 8;
-
             Console.Clear();
             Console.WriteLine("\n========== MERCHANTS SHOP ==========");
             Console.WriteLine($"1. Healing Potion: {healingPotionPrice}G");
             Console.WriteLine($"2. Rusty Armour: {rustyArmourPrice}G");
+            Console.WriteLine($"3. [LV5] Steel Sword: {steelSwordPrice}G");
+            Console.WriteLine($"4. [LV5] Steel Armour: {steelArmourPrice}G");
 
             Console.WriteLine("\n[NUM] Purchase Item");
             Console.WriteLine("[ANY OTHER INPUT] Leave");
@@ -1834,34 +1840,45 @@ namespace TextBasedGame
                 switch (marketChoice)
                 {
                     case '1':
-                        if (playerGold >= healingPotionPrice)
-                        {
-                            playerGold -= healingPotionPrice;
-                            Console.WriteLine($"\nYou bought the Healing Potion! You now have {playerGold} gold.");
-                            AddItem("Healing Potion");
-                        }
-                        else
-                        {
-                            Console.WriteLine("\nYou do not have enough gold to buy this.");
-                        }
+                        CheckGold("Healing Potion", healingPotionPrice, 0);
                         break;
 
                     case '2':
-                        if (playerGold >= rustyArmourPrice)
-                        {
-                            playerGold -= rustyArmourPrice;
-                            Console.WriteLine($"\nYou bought the Rusty Armour! You now have {playerGold} gold.");
-                            AddItem("Rusty Armour");
-                        }
-                        else
-                        {
-                            Console.WriteLine("\nYou do not have enough gold to buy this.");
-                        }
+                        CheckGold("Rusty Armour", rustyArmourPrice, 0);
+                        break;
+
+                    case '3':
+                        CheckGold("Steel Sword", steelSwordPrice, steelSwordLV);                         
+                        break;
+
+                    case '4':
+                        CheckGold("Steel Armour", steelArmourPrice, steelArmourLV);
                         break;
 
                     default:
                         break;
                 }
+            }
+        }
+
+        static void CheckGold(string item, int price, int level)
+        {
+            if (playerLevel >= level)
+            {
+                if (playerGold >= price)
+                {
+                    playerGold -= price;
+                    Console.WriteLine($"\nYou bought the {item}! You now have {playerGold} gold.");
+                    AddItem(item);
+                }
+                else
+                {
+                    Console.WriteLine("\nYou do not have enough gold to buy this.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nYou are not a high enough level to buy this. The merchant only sells his wares to those who deserve them.");
             }
         }
 
@@ -2101,7 +2118,7 @@ namespace TextBasedGame
                 switch (inventory[useChoice - 1])
                 {
                     // What happens when equipping weapons. add [or "item name"] to case for new weapons
-                    case "Rusty Sword":
+                    case "Rusty Sword" or "Steel Sword":
                         // Checks if equipped wpn is empty, clears old inv slot if true, replaces slot not
                         if (playerWpn != "")
                         {
@@ -2117,9 +2134,9 @@ namespace TextBasedGame
                         break;
 
                     // What happens when equipping armours. add [or "item name"] to case for new armours
-                    case "Rusty Armour":
-                        // Checks if equipped wpn is empty, clears old inv slot if true, replaces if not
-                        if (playerWpn != "")
+                    case "Rusty Armour" or "Steel Armour":
+                        // Checks if equipped amr is empty, clears old inv slot if true, replaces if not
+                        if (playerAmr != "")
                         {
                             inventory[useChoice - 1] = playerAmr;
                         }
@@ -2127,7 +2144,7 @@ namespace TextBasedGame
                         {
                             slotEmpty = true;
                         }
-                        playerWpn = inventory[useChoice - 1];
+                        playerAmr = inventory[useChoice - 1];
                         Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
                         PauseStory();
                         break;
