@@ -1811,13 +1811,13 @@ namespace TextBasedGame
         }
 
         // Market menu
-        static void Market()
+        static void MerchantShop()
         {
             int healthPotionPrice = 6;
 
             Console.Clear();
-            Console.WriteLine("\n========== MARKETS ==========");
-            Console.WriteLine($"1. Health Potion: {healthPotionPrice}G");
+            Console.WriteLine("\n========== MERCHANTS SHOP ==========");
+            Console.WriteLine($"1. Healing Potion: {healthPotionPrice}G");
 
             Console.WriteLine("\n[NUM] Purchase Item");
             Console.WriteLine("[ANY OTHER INPUT] Leave");
@@ -1840,8 +1840,8 @@ namespace TextBasedGame
                         if (playerGold >= healthPotionPrice)
                         {
                             playerGold -= healthPotionPrice;
-                            Console.WriteLine($"\nYou bought the Health Potion! You now have {playerGold} gold.");
-                            AddItem("Health Potion");
+                            Console.WriteLine($"\nYou bought the Healing Potion! You now have {playerGold} gold.");
+                            AddItem("Healing Potion");
                         }
                         else
                         {
@@ -1865,9 +1865,9 @@ namespace TextBasedGame
                     {
                         Console.Clear();
                         Console.WriteLine("\n========== MARKET ==========");
-                        Console.WriteLine("[1] Talk to Merchant");
-                        Console.WriteLine("[2] Search for loot");
-                        Console.WriteLine("[3] Check the markets");
+                        Console.WriteLine("[1] Talk to merchant");
+                        Console.WriteLine("[2] Check the merchants shop");
+                        Console.WriteLine("[3] Search for loot");
                         Console.WriteLine("[0] Leave");
 
                         char choice = Console.ReadKey(true).KeyChar;
@@ -1879,6 +1879,10 @@ namespace TextBasedGame
                                 break;
 
                             case '2':
+                                MerchantShop();
+                                break;
+
+                            case '3':
                                 Console.WriteLine("You search around the market...");
 
                                 int lootChance = rand.Next(1, 4);
@@ -1899,10 +1903,6 @@ namespace TextBasedGame
                                         Console.WriteLine("You found nothing.");
                                         break;
                                 }
-                                break;
-
-                            case '3':
-                                Market();
                                 break;
 
                             case '0':
@@ -2323,7 +2323,7 @@ namespace TextBasedGame
                   "side_merchant_02",
                   "The Merchant's Delivery",
                   "Deliver the merchant's package to the Witch's Hut.",
-                  true,
+                  false,
                   0, 4,
                   "side_merchant_01"
                 );
