@@ -57,6 +57,7 @@ namespace TextBasedGame
         static int playerY = 2;
         static int markerScreenX;
         static int markerScreenY;
+        static bool keyall = false;
 
 
         //Randomizer
@@ -2687,6 +2688,21 @@ namespace TextBasedGame
                 {
                     TrackQuest(selectedId);
                 }
+            }
+        }
+        public static void FinalBossReq()
+        {
+            bool key1 = InvCheck("Key1");
+            bool key2 = InvCheck("Key2");
+            bool key3 = InvCheck("Key3");
+            if (key1 == true && key2 == true && key3 == true)
+            {
+                FinalBoss();
+            }
+            else
+            {
+                Console.WriteLine("Nothing happens");
+                Console.ReadLine();
             }
         }
         public static void FinalBoss()
