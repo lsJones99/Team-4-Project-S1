@@ -99,7 +99,18 @@ namespace TextBasedGame
                 MapY = mapY;
             }
         }
-
+        public struct Bosses
+        {
+            public string bossName;
+            public int bossMaxHealth;
+            public int bossMinAttack;
+            public int bossMaxAttack;
+            public int bossPhysicalResistance;
+            public int bossMagicResistance;
+            public int DodgeChance;
+            public int bossExperienceReward;
+            public int bossGoldRewardRange;
+        }
 
         //Enemies
         static string[] enemies = ["Skeleton", "Ghoul", "Zombie"];
@@ -116,7 +127,7 @@ namespace TextBasedGame
             public int enemyExperienceReward;
             public int enemyGoldRewardRange;
         }
-
+        //Basic enemy loader
         static void LoadEnemies(Enemies[] enemy)
         {
             using StreamReader sr = new StreamReader("../../../enemyList.txt");
@@ -158,6 +169,11 @@ namespace TextBasedGame
 
                 enemyCount++;
             }
+        }
+        //Quest boss loader
+        static void LoadBosses()
+        {
+            int bossCount = 0;
         }
         //Combat Information
         static List<string> combatLog = new List<string>();
