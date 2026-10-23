@@ -1748,13 +1748,41 @@ namespace TextBasedGame
             Console.Clear();
             Console.WriteLine("========== MERCHANT ==========");
 
-            // Both quests finished
-            if (completedQuests.Contains("side_merchant_02"))
+            // All quests finished
+            if (completedQuests.Contains("main_quest_01"))
             {
                 Console.WriteLine("Merchant: Thank you for all your help!");
                 return;
             }
 
+            //Main quest in progress
+            if (acceptedQuests.Contains("main_quest_01"))
+            {
+                Console.WriteLine("Merchant: You must slay those undead! They are ruining my business!");
+                return;
+            }
+            //Second quest completed: offer main quest start
+            if (completedQuests.Contains("side_merchant_02"))
+            {
+                Console.WriteLine($"Merchant: {playerName}! You must help an pair of powerful undead have been attacking my caravans!");
+                Console.WriteLine("Merchant: Will you help me? please?");
+                Console.WriteLine("[1] Accept quest to slay the undead");
+                Console.WriteLine("[2] Decline");
+
+                char choice = Console.ReadKey().KeyChar;
+
+                if (choice == '1')
+                {
+                    bool given = GiveQuest("main_quest_01");
+
+                    if (given)
+                    {
+                        Console.WriteLine("New quest: The Dark Twins");
+                    }
+                }
+
+                return;
+            }
             // Second quest in progress
             if (acceptedQuests.Contains("side_merchant_02"))
             {
@@ -2029,7 +2057,14 @@ namespace TextBasedGame
 
                     // Later: TalkToCommander();
                     break;
+                case (4, 4):
+                    Console.WriteLine("You hear rustling from the twisting brambles");
+                    if (acceptedQuests.Contains("main_quest_01"))
+                    {
+                        Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
 
+                    }
+                    break;
 
                 // ALL OTHER LOCATIONS
                 default:
@@ -2390,6 +2425,14 @@ namespace TextBasedGame
               false,
               0, 4,
               "side_merchant_01"
+            );
+            RegisterQuest(
+                "main_quest_01",
+                "The Dark Twins",
+                "Slay a pair of undead twins in the north east",
+                true,
+                4, 4,
+                "side_merchant_02"
             );
             RegisterQuest(
                "Final_Boss",
