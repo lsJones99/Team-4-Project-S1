@@ -1082,7 +1082,6 @@ namespace TextBasedGame
         }
 
 
-
         static void EnemyEncounter(Enemies enemy)
         {
             Console.WriteLine("\n========== ENCOUNTER ==========");
@@ -1350,18 +1349,17 @@ namespace TextBasedGame
         }
 
         //check for enemy hp
-        static bool CheckEnemyHealth(ref int enemyHealth, string enemyName)
+        static bool CheckEnemyHealth(Enemies enemy, ref int enemyHealth)
         {
             if (enemyHealth <= 0)
             {
                 enemyHealth = 0;
-                Console.WriteLine($"You have defeated the {enemyName}!");
+                Console.WriteLine($"You have defeated the {enemy.enemyName}!");
 
-                int temp = rand.Next(2, 6);
-                playerGold += temp;
-                Console.WriteLine($"\nYou gained {temp} gold!");
+                playerGold += enemy.enemyGoldRewardRange;
+                Console.WriteLine($"\nYou gained {enemy.enemyGoldRewardRange} gold!");
 
-                playerLevel = GainXP(50);
+                playerLevel = GainXP(enemy.enemyExperienceReward);
 
                 Console.WriteLine("\nPress enter to continue exploration.");
                 Console.ReadLine();
@@ -1559,7 +1557,7 @@ namespace TextBasedGame
                 }
 
                 //check if enemy hp is 0 or less
-                enemyHPCheck = CheckEnemyHealth(ref enemyHealth, enemyName);
+                enemyHPCheck = CheckEnemyHealth(enemy, ref enemyHealth);
                 if (enemyHPCheck == true)
                 {
                     inCombat = false;
