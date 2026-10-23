@@ -1103,7 +1103,7 @@ namespace TextBasedGame
         }
 
         //attack
-        static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, ref bool playerTurnCompleted, Enemies enemy)
+        static bool AttackCommand(ref int playerDamage, ref string enemyName, ref int enemyHealth, Enemies enemy)
         {
             //variables for hit chance
             int baseHitChance = 75, finalHitChance;
@@ -1113,64 +1113,73 @@ namespace TextBasedGame
 
             //variable for actual damage
             int finalAttackDamage;
+
+            //enemy dodge
+            int enemyDodge;
+
+            //initial display
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
             finalHitChance = Math.Min(100, baseHitChance + playerMeleeHit);
-            if(finalHitChance > 100)
-            finalHitChance = baseHitChance + playerMeleeHit;
-            if (finalHitChance > 100)
-            {
-                finalHitChance = 100;
-            }
             
             int hitRoll = rand.Next(1, 101);
 
-            finalCritChance = baseCritChance + playerCritChance;
             if (hitRoll <= finalHitChance)
             {
-                if (finalCritChance > 100)
-                {
-                    finalCritChance = 100;
-                }
-                int critRoll = rand.Next(1, 101);
-                bool isCritical = critRoll <= finalCritChance;
-                if (isCritical)
-                {
-                    finalAttackDamage = (playerDamage + playerMeleeDmg) * 2;
+                //enemy dodge
+                enemyDodge = Math.Clamp(enemy.enemyDodgeChance, 0, 100);
+                int enemyDodgeRoll = rand.Next(1, 101);
+                if(enemyDodgeRoll <= enemyDodge) {
+                    Console.WriteLine($"The {enemy.enemyName} dodges your attack!");
+                    AddCombatLog($"The {enemy.enemyName} dodges your attack!");
                 }
 
+                //if attack connects
                 else
                 {
-                    finalAttackDamage = playerDamage + playerMeleeDmg;
-                }
+                    finalCritChance = Math.Clamp(playerCritChance, 0, 100);
+                    int critRoll = rand.Next(1, 101);
+                    bool isCritical = critRoll <= finalCritChance;
 
-                finalAttackDamage = Math.Max(0, finalAttackDamage - enemy.enemyPhysicalResistance);
-                enemyHealth -= finalAttackDamage;
+                    //if attack is critical
+                    if (isCritical)
+                    {
+                        finalAttackDamage = (playerDamage + playerMeleeDmg) * 2;
+                    }
 
-                if (isCritical)
-                {
-                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
-                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
-                }
-                else
-                {
-                    Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} damage.");
-                    AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} damage.");
-                }
+                    else
+                    {
+                        finalAttackDamage = playerDamage + playerMeleeDmg;
+                    }
 
-                //add mana after attacking
-                if (playerMana < playerMaxMana)
-                {
-                    playerMana += playerDamage / 10;
+                    //calculate damage base on player and enemy stats
+                    finalAttackDamage = Math.Max(0, finalAttackDamage - enemy.enemyPhysicalResistance);
+                    enemyHealth -= finalAttackDamage;
+
+
+                    //display output
+                    if (isCritical)
+                    {
+                        Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
+                        AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} CRITICAL HIT.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\nYou attack the {enemyName} for {finalAttackDamage} damage.");
+                        AddCombatLog($"You attack the {enemyName} for {finalAttackDamage} damage.");
+                    }
+
+                    //add mana after attacking
+                    playerMana = Math.Min(playerMana + (playerDamage / 10), playerMaxMana);
+                    
                 }
-                else
-                {
-                    playerMana = playerMaxMana;
-                }
+                
             }
 
             else
             {
+
+                //if player misses attack
                 Console.WriteLine("Your attack misses!");
                 AddCombatLog("Your attack misses!");
             }
@@ -1214,8 +1223,10 @@ namespace TextBasedGame
         }
 
 
-        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth)
+        static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth, Enemies enemy)
         {
+            int enemyMagicResist = Math.Max(0, enemy.enemyMagicResistance);
+            int finalMagicDamage;
             switch (spellSelect)
             {
                 case 'm':
@@ -1232,17 +1243,18 @@ namespace TextBasedGame
                     if (casting <= 75)
                     {
                         playerDamage = rand.Next(8, 25) + playerSpellDmg;
-                        enemyHealth -= playerDamage;
+                        finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                        enemyHealth -= finalMagicDamage;
 
                         string message =
-                            $"You cast Magic Missile, blasting {enemyName} for {playerDamage} damage.";
+                            $"You cast Magic Missile, blasting {enemyName} for {finalMagicDamage} damage.";
 
                         Console.WriteLine(message);
                         AddCombatLog(message);
                     }
                     else
                     {
-                        playerDamage = rand.Next(1, 11);
+                        playerDamage = rand.Next(8, 25) - playerMagicResist;
                         playerHealth -= playerDamage;
 
                         string message =
@@ -1276,17 +1288,18 @@ namespace TextBasedGame
                         if (casting <= 55)
                         {
                             playerDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
-                            enemyHealth -= playerDamage;
+                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            enemyHealth -= finalMagicDamage;
 
                             string message =
-                                $"You cast Fireball, scorching {enemyName} for {playerDamage} damage.";
+                                $"You cast Fireball, scorching {enemyName} for {finalMagicDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
                         }
                         else
                         {
-                            playerDamage = rand.Next(2, 15);
+                            playerDamage = rand.Next(8, 25) - playerMagicResist;
                             playerHealth -= playerDamage;
 
                             string message =
@@ -1427,8 +1440,6 @@ namespace TextBasedGame
             bool dodgeAttack = CombatDodge();
             bool blockAttack;
 
-            //variable if attack was blocked
-            int reducedDamage;
 
             //physical resist
             int finalDamage;
@@ -1444,26 +1455,19 @@ namespace TextBasedGame
                 enemyDamage = rand.Next(enemy.enemyMinAttack, enemy.enemyMaxAttack + 1);
                 if (blockAttack == true)
                 {
-                    reducedDamage = enemyDamage - playerBlockReduction;
-                    if (reducedDamage < 0)
-                    {
-                        enemyDamage = 0;
-                    }
-                    else
-                    {
-                        enemyDamage = reducedDamage;
-                    }
+                    enemyDamage = Math.Max(0, enemyDamage - playerBlockReduction);
+
                     Console.WriteLine($"The {enemy.enemyName} attacks but you have blocked it!");
                     AddCombatLog($"The {enemy.enemyName} attacks but you have blocked it!");
                 }
                 else
                 {
-                    Console.WriteLine();
                     Console.WriteLine($"The {enemy.enemyName} attacks!");
-                    Console.ReadLine();
-                    AddCombatLog($"The {enemy.enemyName} attacks");
+                    AddCombatLog($"The {enemy.enemyName} attacks!");
                 }
-                finalDamage = int.Max(0, enemyDamage - playerPhysicalResist);
+
+                finalDamage = Math.Max(0, enemyDamage - playerPhysicalResist);
+
                 playerHealth -= finalDamage;
                 Console.WriteLine($"You received {finalDamage} damage!");
                 AddCombatLog($"You received {finalDamage} damage!");
@@ -1512,14 +1516,14 @@ namespace TextBasedGame
                     {
                         case 'a':
                             playerDamage = rand.Next(8, 16);
-                            playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, ref playerTurnCompleted, enemy);
+                            playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, enemy);
                             break;
 
                         case 'm':
                             DisplayAvailableMagic();
                             userselect = MagicInput();
                             char spellselect = userselect[0];
-                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth);
+                            playerTurnCompleted = MagicSubMenu(spellselect, enemyName, ref enemyHealth, enemy);
                             break;
 
 
