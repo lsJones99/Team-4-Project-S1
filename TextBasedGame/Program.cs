@@ -124,7 +124,7 @@ namespace TextBasedGame
         }
 
         //load available enemies
-        static Enemies[] enemies = new Enemies[3];
+        static Enemies[] enemies = new Enemies[4];
         static int enemyCount = 0;
         //Basic enemy loader
         static int LoadEnemies(Enemies[] enemy)
@@ -169,11 +169,6 @@ namespace TextBasedGame
 
             return loadedCount;
         }
-        //Quest boss loader
-        static void LoadBosses()
-        {
-            int bossCount = 0;
-        }
 
         //Combat Information
         static List<string> combatLog = new List<string>();
@@ -181,7 +176,6 @@ namespace TextBasedGame
         // Main void for running game then ending
         static void Main()
         {
-
             enemyCount = LoadEnemies(enemies);
             // all quest definitions
             RegisterQuests();
@@ -1740,6 +1734,14 @@ namespace TextBasedGame
                 Console.WriteLine("The path is clear.");
             }
         }
+        // Boss Loader
+        static void BossLoader(int index)
+        {
+            Enemies encounteredEnemy = enemies[index];
+            Console.WriteLine($"\nThe deadly {encounteredEnemy.enemyName} arrives to challenge you!");
+            AddCombatLog($"\nThe deadly {encounteredEnemy.enemyName} arrives to challenge you!");
+            CombatMenu(encounteredEnemy);
+        }
         //NPC
         //Merchant
 
@@ -2062,7 +2064,8 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
-
+                        BossLoader(3);
+                        Console.WriteLine("The Undead twins lie defeated");
                     }
                     break;
 
