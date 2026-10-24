@@ -2071,6 +2071,7 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
+<<<<<<< HEAD
                         bool bossDefeated = BossLoader(0);
 
                         if(bossDefeated)
@@ -2079,6 +2080,28 @@ namespace TextBasedGame
                             CompleteQuest("main_quest_01");
                         }
                         
+=======
+                        BossLoader(3);
+                        Console.WriteLine("The Undead twins lie defeated, one clutching a rusted key and an old journal on thier belt");
+                        AddItem("Rusted Key");
+                        AddItem("Twin's Journal");
+                        JournalHint();
+                        CompleteQuest("main_quest_01");
+                        bool given1 = GiveQuest("main_quest_02");
+                        if (given1)
+                        {
+                            Console.WriteLine("New Quest: The Broken Paladin");
+                        }
+                        bool given2 = GiveQuest("main_quest_03");
+                        if (given2)
+                        {
+                            Console.WriteLine("New Quest: The Devil's Dealer");
+                        }
+                        if (completedQuests.Contains("main_quest_01"))
+                        {
+                            Console.WriteLine("The brambles are now silent");
+                        }
+>>>>>>> 8b5ae73046989a369a430755adeea34b79d4c3f4
                     }
                     break;
 
@@ -2088,7 +2111,32 @@ namespace TextBasedGame
                     break;
             }
         }
-
+        static void JournalHint()
+        {
+            Console.Clear();
+            CenterText("---- Journal of Alabaster and Ronnie ----");
+            CenterText("");
+            CenterText("We're off to go and slay that lich, getting paid well for it too");
+            CenterText("not just us though, Wizard hired some others as well.");
+            CenterText("");
+            CenterText("A Paladin from that light order bunch, keeps giving us the side eye");
+            CenterText("and some Warlock who can't stop complaining about a run of bad bets.");
+            CenterText("");
+            CenterText("Said to face the lich at that old temple, but told us to find some keys first");
+            CenterText("in case things went bad, but we'll be fine, just some old bag of bones with magic");
+            CenterText("What's the worst that could happen?");
+            CenterText("---- The next serveral pages are ragged and torn ----");
+            CenterText("");
+            CenterText("We all made it out, locked that bag of bones in there");
+            CenterText("Can still hear them cackling though, in my head, Ronnie can too...");
+            CenterText("");
+            CenterText("Don't know what the lich did but the others are out of it as well");
+            CenterText("");
+            CenterText("Gotta leave before this cackling gets worse, was my skin always this grey...?");
+            CenterText("");
+            CenterText("Press ENTER to close the journal");
+            Console.ReadLine();
+        }
         // Adding items to the inventory
         static void AddItem(string item)
         {
@@ -2160,6 +2208,7 @@ namespace TextBasedGame
             // Using items
             static void UseItems()
             {
+                bool reuseable = false;
                 bool slotEmpty = false;
                 Console.Clear();
                 Console.WriteLine("\n---------- INVENTORY ----------");
@@ -2230,7 +2279,10 @@ namespace TextBasedGame
                         Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
                         PauseStory();
                         break;
-
+                    case "Twin's Journal":
+                        JournalHint();
+                        reuseable = true;
+                        break;
                     default:
                         break;
                 }
@@ -2245,6 +2297,13 @@ namespace TextBasedGame
                     inventory[inventoryCount - 1] = null;
                     inventoryCount--;
                 }
+                else if (reuseable == true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("You return the item to your bag");
+                    Console.ReadLine();
+                }
+                
                 else
                 {
                     Console.WriteLine("That input is unrecognised.");
@@ -2449,6 +2508,22 @@ namespace TextBasedGame
                 true,
                 4, 4,
                 "side_merchant_02"
+            );
+            RegisterQuest(
+                "main_quest_02",
+                "The Broken Paladin",
+                "Find the Paladin of Light, in whatever state they're now in",
+                true,
+                3, 1,
+                "main_quest_01"
+            );
+            RegisterQuest(
+                "main_quest_03",
+                "The Devil's Dealer",
+                "Find the Warlock with a habit of bad bets",
+                true,
+                2, 0,
+                "main_quest_01"
             );
             RegisterQuest(
                "Final_Boss",
