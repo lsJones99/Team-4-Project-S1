@@ -2071,7 +2071,6 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
-<<<<<<< HEAD
                         bool bossDefeated = BossLoader(0);
 
                         if(bossDefeated)
@@ -2080,9 +2079,6 @@ namespace TextBasedGame
                             CompleteQuest("main_quest_01");
                         }
                         
-=======
-                        BossLoader(3);
-                        Console.WriteLine("The Undead twins lie defeated, one clutching a rusted key and an old journal on thier belt");
                         AddItem("Rusted Key");
                         AddItem("Twin's Journal");
                         JournalHint();
@@ -2101,7 +2097,6 @@ namespace TextBasedGame
                         {
                             Console.WriteLine("The brambles are now silent");
                         }
->>>>>>> 8b5ae73046989a369a430755adeea34b79d4c3f4
                     }
                     break;
 
