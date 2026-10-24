@@ -124,12 +124,17 @@ namespace TextBasedGame
         }
 
         //load available enemies
+        //small enemies
         static Enemies[] enemies = new Enemies[4];
         static int enemyCount = 0;
+
+        //bosses
+        static Enemies[] bosses = new Enemies[2];
+        static int bossCount = 0;
         //Basic enemy loader
-        static int LoadEnemies(Enemies[] enemy)
+        static int LoadEnemies(Enemies[] enemy, string filePath)
         {
-            using StreamReader sr = new StreamReader("../../../enemyList.txt");
+            using StreamReader sr = new StreamReader(filePath);
 
             int loadedCount = 0;
             string? lineReader;
@@ -176,7 +181,8 @@ namespace TextBasedGame
         // Main void for running game then ending
         static void Main()
         {
-            enemyCount = LoadEnemies(enemies);
+            enemyCount = LoadEnemies(enemies, "../../../enemyList.txt");
+            bossCount = LoadEnemies(bosses, "../../../bossList.txt");
             // all quest definitions
             RegisterQuests();
             // Loading a save if there is one
@@ -1608,7 +1614,7 @@ namespace TextBasedGame
 
             }
 
-            return true;
+            return enemyHealth <= 0;
         }
 
         //END OF COMBAT COMMANDS
@@ -1737,12 +1743,11 @@ namespace TextBasedGame
             }
         }
         // Boss Loader
-        static void BossLoader(int index)
+        static bool BossLoader(int index)
         {
-            Enemies encounteredEnemy = enemies[index];
-            Console.WriteLine($"\nThe deadly {encounteredEnemy.enemyName} arrives to challenge you!");
-            AddCombatLog($"\nThe deadly {encounteredEnemy.enemyName} arrives to challenge you!");
-            CombatMenu(encounteredEnemy);
+            Enemies encounteredBoss = bosses[index];
+            Console.WriteLine($"{encounteredBoss.enemyName} arrives!");
+            return CombatMenu(encounteredBoss);
         }
         //NPC
         //Merchant
@@ -2066,8 +2071,14 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
-                        BossLoader(3);
-                        Console.WriteLine("The Undead twins lie defeated");
+                        bool bossDefeated = BossLoader(0);
+
+                        if(bossDefeated)
+                        {
+                            Console.WriteLine("The Undead twins lie defeated");
+                            CompleteQuest("main_quest_01");
+                        }
+                        
                     }
                     break;
 
