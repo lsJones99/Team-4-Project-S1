@@ -129,7 +129,7 @@ namespace TextBasedGame
         static int enemyCount = 0;
 
         //bosses
-        static Enemies[] bosses = new Enemies[2];
+        static Enemies[] bosses = new Enemies[4];
         static int bossCount = 0;
         //Basic enemy loader
         static int LoadEnemies(Enemies[] enemy, string filePath)
@@ -2066,23 +2066,25 @@ namespace TextBasedGame
 
                     // Later: TalkToCommander();
                     break;
+
+                //UNDEAD TWINS BOSS FIGHT
                 case (4, 4):
                     Console.WriteLine("You hear rustling from the twisting brambles");
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
                         bool bossDefeated = BossLoader(0);
-
+                        
                         if(bossDefeated)
                         {
                             Console.WriteLine("The Undead twins lie defeated");
                             CompleteQuest("main_quest_01");
+                            AddItem("Rusted Key");
+                            AddItem("Twin's Journal");
+                            JournalHint();
+                            CompleteQuest("main_quest_01");
                         }
-                        
-                        AddItem("Rusted Key");
-                        AddItem("Twin's Journal");
-                        JournalHint();
-                        CompleteQuest("main_quest_01");
+
                         bool given1 = GiveQuest("main_quest_02");
                         if (given1)
                         {
@@ -2098,8 +2100,54 @@ namespace TextBasedGame
                             Console.WriteLine("The brambles are now silent");
                         }
                     }
+                    else
+                    {
+                        Console.WriteLine("You found nothing!");
+                    }
                     break;
 
+                //PALADIN BOSS FIGHT
+                case (3, 1):
+                    if (acceptedQuests.Contains("main_quest_02"))
+                    {
+                        Console.WriteLine("The Paladin ambushes you!");
+                        bool bossDefeated = BossLoader(1);
+                        if (bossDefeated)
+                        {
+                            Console.WriteLine("You have defeated the Paladin!");
+                            CompleteQuest("main_quest_02");
+                        }
+                    }
+                    
+                    break;
+
+                //WARLOCK BOSS FIGHT
+                case (2, 0):
+                    if (acceptedQuests.Contains("main_quest_03"))
+                    {
+                        Console.WriteLine("The Warlock curses you!");
+                        bool bossDefeated = BossLoader(2);
+                        if (bossDefeated)
+                        {
+                            Console.WriteLine("You have defeated the Warlock!");
+                            CompleteQuest("main_quest_03");
+                        }
+                    }
+                    break;
+
+                //FINAL BOSS
+                case (1, 3):
+                    if (acceptedQuests.Contains("main_quest_04"))
+                    {
+                        Console.WriteLine("THE GOD!");
+                        bool bossDefeated = BossLoader(3);
+                        if (bossDefeated)
+                        {
+                            Console.WriteLine("???");
+                            CompleteQuest("main_quest_04");
+                        }
+                    }
+                    break;
                 // ALL OTHER LOCATIONS
                 default:
                     Console.WriteLine("There is nothing special to investigate here yet.");
