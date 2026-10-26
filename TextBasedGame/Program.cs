@@ -2206,7 +2206,8 @@ namespace TextBasedGame
 
                 //FINAL BOSS
                 case (1, 3):
-                    if (acceptedQuests.Contains("main_quest_04"))
+                    bool access = FinalBossReq();
+                    if (access == true)
                     {
                         Console.ReadLine();
                         Console.WriteLine("THE GOD!");
@@ -2217,6 +2218,10 @@ namespace TextBasedGame
                             Console.ReadLine();
                             CompleteQuest("main_quest_04");
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("The temple lies silent, a large black crystaline door calls from the back of the temple...");
                     }
                     break;
                 // ALL OTHER LOCATIONS
@@ -2668,12 +2673,20 @@ namespace TextBasedGame
                 "main_quest_01"
             );
             RegisterQuest(
-               "Final_Boss",
-               "Severing the nexus",
-               "Defeat the One who made you",
+               "main_quest_04",
+               "Unlock the Threshold",
+               "Find the keys to the locks",
                true,
                1, 3,
-               "Keys_all"
+               "main_quest_01"
+            );
+            RegisterQuest(
+                "main_quest_05",
+                "Untangle",
+                "Unmake that which made you",
+                true,
+                1, 3,
+                "main_quest_04"
             );
         }
 
@@ -3034,26 +3047,37 @@ namespace TextBasedGame
                 }
             }
         }
-        public static void FinalBossReq()
+        public static bool FinalBossReq()
         {
             bool key1 = InvCheck("Rusted Key");
             bool key2 = InvCheck("Adorned Key");
             bool key3 = InvCheck("Twisted Key");
             if (key1 == true && key2 == true && key3 == true)
             {
-                FinalBoss();
+                Console.WriteLine("The door begins to crack open");
+                return true;
+            }
+            else if (completedQuests.Contains("main_quest_01"))
+            {
+                if (key1 = InvCheck("Rusted Key") == true)
+                {
+                    Console.WriteLine("A lock on the door thrums in the presence of the Rusted Key");
+                    bool given = GiveQuest("main_quest_04");
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("One of the locks looks similar to the Rusted Key you left on the Dark Twins...");
+                    bool given = GiveQuest("main_quest_04");
+                    return false;
+                }
             }
             else
             {
                 Console.WriteLine("Nothing happens");
                 Console.ReadLine();
+                return false;
             }
-        }
-        public static void FinalBoss()
-        {
-            Console.WriteLine("A sudden darkness envelops you\nYou see that you are falling through the void");
-            Console.WriteLine("");
-
         }
     }
 }
