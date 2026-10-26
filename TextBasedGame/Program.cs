@@ -2102,6 +2102,11 @@ namespace TextBasedGame
                             Console.WriteLine("The brambles are now silent");
                         }
                     }
+                    else if ((completedQuests.Contains("main_quest_01")) && ((InvCheck("Rusted Key") == false)))
+                    {
+                        Console.WriteLine("The Rusted key lies on the ground where you left it");
+                        AddItem("Rusted Key");
+                    }
                     else
                     {
                         Console.WriteLine("You found nothing!");
@@ -2122,7 +2127,12 @@ namespace TextBasedGame
                             CompleteQuest("main_quest_02");
                         }
                     }
-                    
+                    if ((completedQuests.Contains("main_quest_02")) && (InvCheck("Adorned Key") == false))
+                    {
+                        Console.WriteLine("The Adorned key lies on the ground where you left it");
+                        AddItem("Adorned Key");
+                    }
+
                     break;
 
                 //WARLOCK BOSS FIGHT
@@ -2134,10 +2144,18 @@ namespace TextBasedGame
                         if (bossDefeated)
                         {
                             Console.WriteLine("You have defeated the Warlock!");
+                            Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echo's around you");
                             AddItem("Twisted Key");
+                            Console.WriteLine("You begin to suspect defeating this particular warlock may be harder than you first thought. But you have the key you need");
                             GainXP(200);
                             CompleteQuest("main_quest_03");
+
                         }
+                    }
+                    if ((completedQuests.Contains("main_quest_03")) && (InvCheck("Twisted Key") == false))
+                    {
+                        Console.WriteLine("A Twisted key lies on the ground where you left it");
+                        AddItem("Twisted Key");
                     }
                     break;
 
