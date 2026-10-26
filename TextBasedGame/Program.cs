@@ -2500,7 +2500,10 @@ namespace TextBasedGame
             int cursorY = Console.CursorTop;
 
             bool visible = true;
-
+            if (markerScreenY < 0 || markerScreenY >= Console.BufferHeight)
+            {
+                return char.ToLower(Console.ReadKey(true).KeyChar);
+            }
             while (!Console.KeyAvailable)
             {
                 Console.SetCursorPosition(markerScreenX, markerScreenY);
