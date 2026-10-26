@@ -178,6 +178,8 @@ namespace TextBasedGame
         //Combat Information
         static List<string> combatLog = new List<string>();
 
+        //add more enemies based on level
+
         // Main void for running game then ending
         static void Main()
         {
