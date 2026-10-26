@@ -2202,10 +2202,6 @@ namespace TextBasedGame
                             CompleteQuest("main_quest_04");
                         }
                     }
-                    else
-                    {
-                        Console.WriteLine("The temple lies silent, a large black crystaline door calls from the back of the temple...");
-                    }
                     break;
                 // ALL OTHER LOCATIONS
                 default:
@@ -3032,6 +3028,7 @@ namespace TextBasedGame
         }
         public static bool FinalBossReq()
         {
+            Console.WriteLine("The temple lies silent, a large black crystaline door calls from the back of the temple...");
             bool key1 = InvCheck("Rusted Key");
             bool key2 = InvCheck("Adorned Key");
             bool key3 = InvCheck("Twisted Key");
