@@ -953,6 +953,8 @@ namespace TextBasedGame
         // Level Up
         static int LevelUp()
         {
+            playerHealth = playerMaxHealth;
+            playerMana = playerMaxMana;
             bool valid = false, test;
             while (valid == false)
             {
@@ -1391,6 +1393,7 @@ namespace TextBasedGame
             if (playerHealth <= 0)
             {
                 playerHealth = 0;
+                Console.WriteLine($"{playerName} has been defeated.");
                 AddCombatLog($"{playerName} has been defeated.");
 
                 if (activequest && trackedQuest.Length > 0)
@@ -1451,8 +1454,8 @@ namespace TextBasedGame
             int finalDamage;
             if (dodgeAttack == true)
             {
-                Console.WriteLine("You have dodged!");
-                AddCombatLog("You have dodged!");
+                Console.WriteLine($"The {enemy.enemyName} attacks you but you have dodged!");
+                AddCombatLog($"The {enemy.enemyName} attacks you but you have dodged!");
                 AddCombatLog("\n");
             }
             else
@@ -1521,7 +1524,7 @@ namespace TextBasedGame
                     switch (combatChoice)
                     {
                         case 'a':
-                            playerDamage = rand.Next(8, 16);
+                            playerDamage = rand.Next(playerMeleeDmg + 5, playerMeleeDmg + 15);
                             playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, enemy);
                             break;
 
@@ -2071,19 +2074,22 @@ namespace TextBasedGame
                 //UNDEAD TWINS BOSS FIGHT
                 case (4, 4):
                     Console.WriteLine("You hear rustling from the twisting brambles");
+                    Console.ReadLine();
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(0);
                         
                         if(bossDefeated)
                         {
                             Console.WriteLine("The Undead twins lie defeated");
+                            Console.ReadLine();
+                            GainXP(100);
                             CompleteQuest("main_quest_01");
                             AddItem("Rusted Key");
                             AddItem("Twin's Journal");
                             JournalHint();
-                            GainXP(100);
                             CompleteQuest("main_quest_01");
                         }
 
@@ -2118,6 +2124,7 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_02"))
                     {
                         Console.WriteLine("The Paladin ambushes you!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(1);
                         if (bossDefeated)
                         {
@@ -2139,6 +2146,7 @@ namespace TextBasedGame
                 case (2, 0):
                     if (acceptedQuests.Contains("main_quest_03"))
                     {
+                        Console.ReadLine();
                         Console.WriteLine("The Warlock curses you!");
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
@@ -2163,11 +2171,13 @@ namespace TextBasedGame
                 case (1, 3):
                     if (acceptedQuests.Contains("main_quest_04"))
                     {
+                        Console.ReadLine();
                         Console.WriteLine("THE GOD!");
                         bool bossDefeated = BossLoader(3);
                         if (bossDefeated)
                         {
                             Console.WriteLine("???");
+                            Console.ReadLine();
                             CompleteQuest("main_quest_04");
                         }
                     }
