@@ -217,7 +217,13 @@ namespace TextBasedGame
                 gameRunning = Menu();
             }
 
-            Console.WriteLine("\nThank you for playing.");
+            if(playerHealth > 0)
+            {
+                Outro();
+            }
+            
+            Console.ReadLine();
+            Console.WriteLine("\n\nThank you for playing.");
             Console.ReadLine();
         }
         // Saving progress
@@ -627,6 +633,17 @@ namespace TextBasedGame
             CenterText("Your journey begins now.");
             Console.ReadLine();
 
+
+        }
+
+        //Outro
+        static void Outro()
+        {
+            CenterText($"{playerName}, thank you for saving our world!");
+            Console.ReadLine();
+
+            CenterText("You get transported back to where you were before");
+            Console.ReadLine();
 
         }
         //Inventory Check for item
