@@ -2035,6 +2035,7 @@ namespace TextBasedGame
                         if (acceptedQuests.Contains("side_merchant_02"))
                         {
                             Console.WriteLine("The witch accepts the merchant's delivery.");
+                            GainXP(30);
 
                             if (CompleteQuest("side_merchant_02"))
                             {
@@ -2082,6 +2083,7 @@ namespace TextBasedGame
                             AddItem("Rusted Key");
                             AddItem("Twin's Journal");
                             JournalHint();
+                            GainXP(100);
                             CompleteQuest("main_quest_01");
                         }
 
@@ -2115,6 +2117,8 @@ namespace TextBasedGame
                         if (bossDefeated)
                         {
                             Console.WriteLine("You have defeated the Paladin!");
+                            AddItem("Adorned Key");
+                            GainXP(150);
                             CompleteQuest("main_quest_02");
                         }
                     }
@@ -2130,6 +2134,8 @@ namespace TextBasedGame
                         if (bossDefeated)
                         {
                             Console.WriteLine("You have defeated the Warlock!");
+                            AddItem("Twisted Key");
+                            GainXP(200);
                             CompleteQuest("main_quest_03");
                         }
                     }
@@ -2937,9 +2943,9 @@ namespace TextBasedGame
         }
         public static void FinalBossReq()
         {
-            bool key1 = InvCheck("Key1");
-            bool key2 = InvCheck("Key2");
-            bool key3 = InvCheck("Key3");
+            bool key1 = InvCheck("Rusted Key");
+            bool key2 = InvCheck("Adorned Key");
+            bool key3 = InvCheck("Twisted Key");
             if (key1 == true && key2 == true && key3 == true)
             {
                 FinalBoss();
