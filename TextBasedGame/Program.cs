@@ -2128,9 +2128,8 @@ namespace TextBasedGame
                         bool bossDefeated = BossLoader(1);
                         if (bossDefeated)
                         {
-                            Console.WriteLine("You have defeated the Paladin!");
-                            AddItem("Adorned Key");
                             GainXP(150);
+                            AddItem("Adorned Key");
                             CompleteQuest("main_quest_02");
                         }
                     }
@@ -2146,16 +2145,16 @@ namespace TextBasedGame
                 case (2, 0):
                     if (acceptedQuests.Contains("main_quest_03"))
                     {
-                        Console.ReadLine();
                         Console.WriteLine("The Warlock curses you!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
                         {
+                            GainXP(200);
                             Console.WriteLine("You have defeated the Warlock!");
                             Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echo's around you");
                             AddItem("Twisted Key");
                             Console.WriteLine("You begin to suspect defeating this particular warlock may be harder than you first thought. But you have the key you need");
-                            GainXP(200);
                             CompleteQuest("main_quest_03");
 
                         }
