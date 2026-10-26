@@ -51,6 +51,8 @@ namespace TextBasedGame
         static int playerSpellMiscast = 0;
         static int playerSpellDmg = 0;
         static int playerMagicResist = 0;
+        static int playerWpnStat = 0;
+        static int playerAmrStat = 0;
         static string playerWpn = "";
         static string playerAmr = "";
         static int playerX = 2; // Start in Dark Forest
@@ -64,6 +66,7 @@ namespace TextBasedGame
         static Random rand = new Random();
         static int randomEnemyEncounter = 0;
         static int escapeChance = 0;
+        
 
         //Shop
         static int healingPotionPrice = 4;
@@ -72,6 +75,13 @@ namespace TextBasedGame
         static int steelSwordLV = 5;
         static int steelArmourPrice = 20;
         static int steelArmourLV = 5;
+
+        //Items
+        static int rustySwordDMG = 3;
+        static int rustyArmourDEF = 3;
+        static int steelSwordDMG = 8;
+        static int steelArmourDEF = 8;
+
 
         //Quest
         static bool activequest = false;
@@ -177,6 +187,8 @@ namespace TextBasedGame
 
         //Combat Information
         static List<string> combatLog = new List<string>();
+
+        //add more enemies based on level
 
         // Main void for running game then ending
         static void Main()
@@ -344,6 +356,9 @@ namespace TextBasedGame
                 $"playerSpellDmg={playerSpellDmg}",
                 $"playerSpellMiscast={playerSpellMiscast}",
 
+                $"playerWpnStat={playerWpnStat}",
+                $"playerAmrStat={playerAmrStat}",
+
                 $"markerScreenX={markerScreenX}",
                 $"markerScreenY={markerScreenY}",
 
@@ -480,6 +495,12 @@ namespace TextBasedGame
 
                 else if (key == "playerSpellMiscast")
                     int.TryParse(value, out playerSpellMiscast);
+
+                else if (key == "playerWpnStat")
+                    int.TryParse(value, out playerWpnStat);
+
+                else if (key == "playerAmrStat")
+                    int.TryParse(value, out playerAmrStat);
 
                 else if (key == "markerScreenX")
                     int.TryParse(value, out markerScreenX);
@@ -2128,9 +2149,8 @@ namespace TextBasedGame
                         bool bossDefeated = BossLoader(1);
                         if (bossDefeated)
                         {
-                            Console.WriteLine("You have defeated the Paladin!");
-                            AddItem("Adorned Key");
                             GainXP(150);
+                            AddItem("Adorned Key");
                             CompleteQuest("main_quest_02");
                         }
                     }
@@ -2146,16 +2166,16 @@ namespace TextBasedGame
                 case (2, 0):
                     if (acceptedQuests.Contains("main_quest_03"))
                     {
-                        Console.ReadLine();
                         Console.WriteLine("The Warlock curses you!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
                         {
+                            GainXP(200);
                             Console.WriteLine("You have defeated the Warlock!");
                             Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echo's around you");
                             AddItem("Twisted Key");
                             Console.WriteLine("You begin to suspect defeating this particular warlock may be harder than you first thought. But you have the key you need");
-                            GainXP(200);
                             CompleteQuest("main_quest_03");
 
                         }
@@ -2317,36 +2337,34 @@ namespace TextBasedGame
 
                 switch (inventory[useChoice - 1])
                 {
-                    // What happens when equipping weapons. add [or "item name"] to case for new weapons
-                    case "Rusty Sword" or "Steel Sword":
-                        // Checks if equipped wpn is empty, clears old inv slot if true, replaces slot not
-                        if (playerWpn != "")
-                        {
-                            inventory[useChoice - 1] = playerWpn;
-                        }
-                        else
-                        {
-                            slotEmpty = true;
-                        }
-                        playerWpn = inventory[useChoice - 1];
-                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
-                        PauseStory();
+                    // What happens when equipping weapons, calculates stat change as well.
+                    case "Rusty Sword":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = rustySwordDMG;
+                        playerMeleeDmg += playerWpnStat;
                         break;
 
-                    // What happens when equipping armours. add [or "item name"] to case for new armours
-                    case "Rusty Armour" or "Steel Armour":
-                        // Checks if equipped amr is empty, clears old inv slot if true, replaces if not
-                        if (playerAmr != "")
-                        {
-                            inventory[useChoice - 1] = playerAmr;
-                        }
-                        else
-                        {
-                            slotEmpty = true;
-                        }
-                        playerAmr = inventory[useChoice - 1];
-                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
-                        PauseStory();
+                    case "Steel Sword":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = steelSwordDMG;
+                        playerMeleeDmg += playerWpnStat;
+                        break;
+
+                    // What happens when equipping armours, calculates stat change as well.
+                    case "Rusty Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerAmrStat = rustyArmourDEF;
+                        playerPhysicalResist += playerAmrStat;
+                        break;
+
+                    case "Steel Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerAmrStat = steelArmourDEF;
+                        playerPhysicalResist += playerAmrStat;
                         break;
 
                     // What happens when using a healing potion
@@ -2361,10 +2379,12 @@ namespace TextBasedGame
                         Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
                         PauseStory();
                         break;
+
                     case "Twin's Journal":
                         JournalHint();
                         reuseable = true;
                         break;
+
                     default:
                         break;
                 }
@@ -2385,13 +2405,38 @@ namespace TextBasedGame
                     Console.WriteLine("You return the item to your bag");
                     Console.ReadLine();
                 }
-                
+            }
+
+            // equip method for all weapons
+            static void equipWpn(ref int useChoice, ref bool slotEmpty)
+            {
+                if (playerWpn != "")
+                {
+                    inventory[useChoice - 1] = playerWpn;
+                }
                 else
                 {
-                    Console.WriteLine("That input is unrecognised.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
+                    slotEmpty = true;
                 }
+                playerWpn = inventory[useChoice - 1];
+                Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                PauseStory();
+            }
+
+            // equip method for all armours
+            static void equipAmr(ref int useChoice, ref bool slotEmpty)
+            {
+                if (playerAmr != "")
+                {
+                    inventory[useChoice - 1] = playerAmr;
+                }
+                else
+                {
+                    slotEmpty = true;
+                }
+                playerAmr = inventory[useChoice - 1];
+                Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                PauseStory();
             }
 
             // Throwing away items
