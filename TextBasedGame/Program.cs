@@ -2192,9 +2192,10 @@ namespace TextBasedGame
                         {
                             GainXP(200);
                             Console.WriteLine("You have defeated the Warlock!");
-                            Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echo's around you");
+                            Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you");
                             AddItem("Twisted Key");
-                            Console.WriteLine("You begin to suspect defeating this particular warlock may be harder than you first thought. But you have the key you need");
+                            Console.WriteLine("You begin to suspect that defeating this particular warlock may be harder than you first thought. But you have the key you need");
+                            GainXP(200);
                             CompleteQuest("main_quest_03");
 
                         }
@@ -2297,7 +2298,7 @@ namespace TextBasedGame
 
             Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
 
-            Console.WriteLine($"\nEquipped weapon: {playerWpn}");
+            Console.WriteLine($"\nEquipped Weapon: {playerWpn}");
             Console.WriteLine($"Equipped Armour: {playerAmr}");
 
             Console.WriteLine("\nWhat do you want to do?");
@@ -2402,7 +2403,6 @@ namespace TextBasedGame
 
                     case "Twin's Journal":
                         JournalHint();
-                        reuseable = true;
                         break;
 
                     default:
@@ -2419,17 +2419,12 @@ namespace TextBasedGame
                     inventory[inventoryCount - 1] = null;
                     inventoryCount--;
                 }
-                else if (reuseable == true)
-                {
-                    Console.Clear();
-                    Console.WriteLine("You return the item to your bag");
-                    Console.ReadLine();
-                }
             }
 
             // equip method for all weapons
             static void equipWpn(ref int useChoice, ref bool slotEmpty)
             {
+                string temp = inventory[useChoice - 1];
                 if (playerWpn != "")
                 {
                     inventory[useChoice - 1] = playerWpn;
@@ -2438,14 +2433,15 @@ namespace TextBasedGame
                 {
                     slotEmpty = true;
                 }
-                playerWpn = inventory[useChoice - 1];
-                Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                playerWpn = temp;
+                Console.WriteLine($"You equipped the {temp}.");
                 PauseStory();
             }
 
             // equip method for all armours
             static void equipAmr(ref int useChoice, ref bool slotEmpty)
             {
+                string temp = inventory[useChoice - 1];
                 if (playerAmr != "")
                 {
                     inventory[useChoice - 1] = playerAmr;
@@ -2454,8 +2450,8 @@ namespace TextBasedGame
                 {
                     slotEmpty = true;
                 }
-                playerAmr = inventory[useChoice - 1];
-                Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
+                playerAmr = temp;
+                Console.WriteLine($"You equipped the {temp}.");
                 PauseStory();
             }
 
