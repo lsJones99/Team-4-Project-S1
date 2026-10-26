@@ -193,6 +193,7 @@ namespace TextBasedGame
         // Main void for running game then ending
         static void Main()
         {
+            bool gameFinished = false;
             enemyCount = LoadEnemies(enemies, "../../../enemyList.txt");
             bossCount = LoadEnemies(bosses, "../../../bossList.txt");
             // all quest definitions
@@ -212,9 +213,9 @@ namespace TextBasedGame
                 CreateCharacter();
             }
 
-            while (gameRunning && playerHealth > 0)
+            while (gameRunning && playerHealth > 0 && gameFinished == false)
             {
-                gameRunning = Menu();
+                gameRunning = Menu(ref gameFinished);
             }
 
             if(playerHealth > 0)
@@ -223,6 +224,7 @@ namespace TextBasedGame
             }
             
             Console.ReadLine();
+            Console.Clear();
             Console.WriteLine("\n\nThank you for playing.");
             Console.ReadLine();
         }
@@ -815,7 +817,7 @@ namespace TextBasedGame
 
         }
         // Menu commands
-        static bool Menu()
+        static bool Menu(ref bool gameFinished)
         {
             Console.Clear();
             Console.WriteLine("\n---------- EXPLORATION ----------");
@@ -852,7 +854,7 @@ namespace TextBasedGame
                     break;
 
                 case 'i':
-                    Investigate();
+                    Investigate(ref gameFinished);
                     PauseStory();
                     break;
 
@@ -1979,7 +1981,7 @@ namespace TextBasedGame
         }
 
         // Investigation command
-        static void Investigate()
+        static void Investigate(ref bool gameFinished)
         {
             switch ((playerX, playerY))
             {
@@ -2217,6 +2219,7 @@ namespace TextBasedGame
                             Console.WriteLine("???");
                             Console.ReadLine();
                             CompleteQuest("main_quest_04");
+                            gameFinished = true;
                         }
                     }
                     else
