@@ -953,6 +953,8 @@ namespace TextBasedGame
         // Level Up
         static int LevelUp()
         {
+            playerHealth = playerMaxHealth;
+            playerMana = playerMaxMana;
             bool valid = false, test;
             while (valid == false)
             {
@@ -1391,6 +1393,7 @@ namespace TextBasedGame
             if (playerHealth <= 0)
             {
                 playerHealth = 0;
+                Console.WriteLine($"{playerName} has been defeated.");
                 AddCombatLog($"{playerName} has been defeated.");
 
                 if (activequest && trackedQuest.Length > 0)
@@ -1451,8 +1454,8 @@ namespace TextBasedGame
             int finalDamage;
             if (dodgeAttack == true)
             {
-                Console.WriteLine("You have dodged!");
-                AddCombatLog("You have dodged!");
+                Console.WriteLine($"The {enemy.enemyName} attacks you but you have dodged!");
+                AddCombatLog($"The {enemy.enemyName} attacks you but you have dodged!");
                 AddCombatLog("\n");
             }
             else
@@ -1521,7 +1524,7 @@ namespace TextBasedGame
                     switch (combatChoice)
                     {
                         case 'a':
-                            playerDamage = rand.Next(8, 16);
+                            playerDamage = rand.Next(playerMeleeDmg - 2, playerMeleeDmg + 7);
                             playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, enemy);
                             break;
 
