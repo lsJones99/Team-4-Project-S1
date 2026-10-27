@@ -2500,6 +2500,7 @@ namespace TextBasedGame
             }
             while (!Console.KeyAvailable)
             {
+                
                 Console.SetCursorPosition(markerScreenX, markerScreenY);
 
                 if (visible)
