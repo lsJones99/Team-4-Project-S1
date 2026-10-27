@@ -2354,9 +2354,25 @@ namespace TextBasedGame
                     Console.ReadLine();
                 }
             }
-
-            // Throwing away items
+            // Throw several items in a row
             static void ThrowItems()
+            {
+                bool throwAnother = true;
+                while (throwAnother && inventoryCount > 0)
+                {
+                    ThrowOneItem();
+                    if (inventoryCount == 0)
+                    {
+                        break;
+                    }
+                    Console.Clear();
+                    Console.Write("Throw away another item? (y/n): ");
+                    string throwAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
+                    throwAnother = throwAnswer.StartsWith("y");
+                }
+            }
+            // Throwing away items
+            static void ThrowOneItem()
             {
                 Console.Clear();
                 Console.WriteLine("\n---------- THROW ITEM ----------");
