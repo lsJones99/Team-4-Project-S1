@@ -218,7 +218,7 @@ namespace TextBasedGame
                 gameRunning = Menu(ref gameFinished);
             }
 
-            if(playerHealth > 0)
+            if(playerHealth > 0 && gameFinished == true)
             {
                 Outro();
             }
