@@ -2271,6 +2271,71 @@ namespace TextBasedGame
                 Console.WriteLine("Your inventory is full.");
             }
         }
+        // Post combat item generator
+        static void EnemyItemDrop()
+        {
+            Random rand = new Random();
+            int pool = rand.Next(1, 11), select;
+            switch (pool)
+            {
+                // Melee Weapon pool
+                case 1:
+                    select = rand.Next(1, 11);
+                    break;
+                // Armour pool
+                case 2:
+                    select = rand.Next(1, 11);
+                    break;
+                // Range Weapon pool
+                case 3:
+                    select = rand.Next(1, 11);
+                    break;
+                // Magic Item pool
+                case 4:
+                    select = rand.Next(1, 12);
+                    switch (select)
+                    {
+                        case 1: case 2: case 3:
+                            AddItem("Staff of Fireball");
+                            break;
+                        case 4: case 5: case 6:
+                            AddItem("Wand of Lightning");
+                            break;
+                        case 7: case 8:
+                            AddItem("Scroll of Blight");
+                            break;
+                        case 9: case 10:
+                            AddItem("Orb of Disintegration");
+                            break;
+                        case 11:
+                            AddItem("Ring of Graviton");
+                            break;
+
+                    }
+                    break;
+                // Potion pool
+                case 5:
+                    select = rand.Next(1, 11);
+                    switch (select)
+                    {
+                        case 1: case 2: case 3:
+                            AddItem("Healing Potion");
+                            break;
+                        case 4: case 5: case 6:
+                            AddItem("Mana Potion");
+                            break;
+                        case 7: case 8:
+                            AddItem("Greater Healing Potion");
+                            break;
+                        case 9: case 10:
+                            AddItem("Greater Mana Potion");
+                            break;
+                    }
+                    break;
+                // No item drop
+                default:
+                    break;
+            }
 
         // View inv & inv commands
         static void ViewInventory()
