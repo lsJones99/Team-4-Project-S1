@@ -51,6 +51,8 @@ namespace TextBasedGame
         static int playerSpellMiscast = 0;
         static int playerSpellDmg = 0;
         static int playerMagicResist = 0;
+        static int playerWpnStat = 0;
+        static int playerAmrStat = 0;
         static string playerWpn = "";
         static string playerAmr = "";
         static int playerX = 2; // Start in Dark Forest
@@ -64,6 +66,7 @@ namespace TextBasedGame
         static Random rand = new Random();
         static int randomEnemyEncounter = 0;
         static int escapeChance = 0;
+        
 
         //Shop
         static int healingPotionPrice = 4;
@@ -72,6 +75,13 @@ namespace TextBasedGame
         static int steelSwordLV = 5;
         static int steelArmourPrice = 20;
         static int steelArmourLV = 5;
+
+        //Items
+        static int rustySwordDMG = 3;
+        static int rustyArmourDEF = 3;
+        static int steelSwordDMG = 8;
+        static int steelArmourDEF = 8;
+
 
         //Quest
         static bool activequest = false;
@@ -178,9 +188,12 @@ namespace TextBasedGame
         //Combat Information
         static List<string> combatLog = new List<string>();
 
+        //add more enemies based on level
+
         // Main void for running game then ending
         static void Main()
         {
+            bool gameFinished = false;
             enemyCount = LoadEnemies(enemies, "../../../enemyList.txt");
             bossCount = LoadEnemies(bosses, "../../../bossList.txt");
             // all quest definitions
@@ -200,12 +213,19 @@ namespace TextBasedGame
                 CreateCharacter();
             }
 
-            while (gameRunning && playerHealth > 0)
+            while (gameRunning && playerHealth > 0 && gameFinished == false)
             {
-                gameRunning = Menu();
+                gameRunning = Menu(ref gameFinished);
             }
 
-            Console.WriteLine("\nThank you for playing.");
+            if(playerHealth > 0 && gameFinished == true)
+            {
+                Outro();
+            }
+            
+            Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("\n\nThank you for playing.");
             Console.ReadLine();
         }
         // Saving progress
@@ -344,6 +364,9 @@ namespace TextBasedGame
                 $"playerSpellDmg={playerSpellDmg}",
                 $"playerSpellMiscast={playerSpellMiscast}",
 
+                $"playerWpnStat={playerWpnStat}",
+                $"playerAmrStat={playerAmrStat}",
+
                 $"markerScreenX={markerScreenX}",
                 $"markerScreenY={markerScreenY}",
 
@@ -481,6 +504,12 @@ namespace TextBasedGame
                 else if (key == "playerSpellMiscast")
                     int.TryParse(value, out playerSpellMiscast);
 
+                else if (key == "playerWpnStat")
+                    int.TryParse(value, out playerWpnStat);
+
+                else if (key == "playerAmrStat")
+                    int.TryParse(value, out playerAmrStat);
+
                 else if (key == "markerScreenX")
                     int.TryParse(value, out markerScreenX);
 
@@ -606,6 +635,17 @@ namespace TextBasedGame
             CenterText("Your journey begins now.");
             Console.ReadLine();
 
+
+        }
+
+        //Outro
+        static void Outro()
+        {
+            CenterText($"{playerName}, thank you for saving our world!");
+            Console.ReadLine();
+
+            CenterText("You get transported back to where you were before");
+            Console.ReadLine();
 
         }
         //Inventory Check for item
@@ -777,7 +817,7 @@ namespace TextBasedGame
 
         }
         // Menu commands
-        static bool Menu()
+        static bool Menu(ref bool gameFinished)
         {
             Console.Clear();
             Console.WriteLine("\n---------- EXPLORATION ----------");
@@ -814,7 +854,7 @@ namespace TextBasedGame
                     break;
 
                 case 'i':
-                    Investigate();
+                    Investigate(ref gameFinished);
                     PauseStory();
                     break;
 
@@ -953,6 +993,8 @@ namespace TextBasedGame
         // Level Up
         static int LevelUp()
         {
+            playerHealth = playerMaxHealth;
+            playerMana = playerMaxMana;
             bool valid = false, test;
             while (valid == false)
             {
@@ -1391,6 +1433,7 @@ namespace TextBasedGame
             if (playerHealth <= 0)
             {
                 playerHealth = 0;
+                Console.WriteLine($"{playerName} has been defeated.");
                 AddCombatLog($"{playerName} has been defeated.");
 
                 if (activequest && trackedQuest.Length > 0)
@@ -1451,8 +1494,8 @@ namespace TextBasedGame
             int finalDamage;
             if (dodgeAttack == true)
             {
-                Console.WriteLine("You have dodged!");
-                AddCombatLog("You have dodged!");
+                Console.WriteLine($"The {enemy.enemyName} attacks you but you have dodged!");
+                AddCombatLog($"The {enemy.enemyName} attacks you but you have dodged!");
                 AddCombatLog("\n");
             }
             else
@@ -1521,7 +1564,7 @@ namespace TextBasedGame
                     switch (combatChoice)
                     {
                         case 'a':
-                            playerDamage = rand.Next(8, 16);
+                            playerDamage = rand.Next(playerMeleeDmg + 5, playerMeleeDmg + 15);
                             playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, enemy);
                             break;
 
@@ -1938,7 +1981,7 @@ namespace TextBasedGame
         }
 
         // Investigation command
-        static void Investigate()
+        static void Investigate(ref bool gameFinished)
         {
             switch ((playerX, playerY))
             {
@@ -2035,6 +2078,7 @@ namespace TextBasedGame
                         if (acceptedQuests.Contains("side_merchant_02"))
                         {
                             Console.WriteLine("The witch accepts the merchant's delivery.");
+                            GainXP(30);
 
                             if (CompleteQuest("side_merchant_02"))
                             {
@@ -2070,14 +2114,18 @@ namespace TextBasedGame
                 //UNDEAD TWINS BOSS FIGHT
                 case (4, 4):
                     Console.WriteLine("You hear rustling from the twisting brambles");
+                    Console.ReadLine();
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
                         Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(0);
                         
                         if(bossDefeated)
                         {
                             Console.WriteLine("The Undead twins lie defeated");
+                            Console.ReadLine();
+                            GainXP(100);
                             CompleteQuest("main_quest_01");
                             AddItem("Rusted Key");
                             AddItem("Twin's Journal");
@@ -2100,6 +2148,11 @@ namespace TextBasedGame
                             Console.WriteLine("The brambles are now silent");
                         }
                     }
+                    else if ((completedQuests.Contains("main_quest_01")) && ((InvCheck("Rusted Key") == false)))
+                    {
+                        Console.WriteLine("The Rusted key lies on the ground where you left it");
+                        AddItem("Rusted Key");
+                    }
                     else
                     {
                         Console.WriteLine("You found nothing!");
@@ -2111,14 +2164,21 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_02"))
                     {
                         Console.WriteLine("The Paladin ambushes you!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(1);
                         if (bossDefeated)
                         {
-                            Console.WriteLine("You have defeated the Paladin!");
+                            GainXP(150);
+                            AddItem("Adorned Key");
                             CompleteQuest("main_quest_02");
                         }
                     }
-                    
+                    if ((completedQuests.Contains("main_quest_02")) && (InvCheck("Adorned Key") == false))
+                    {
+                        Console.WriteLine("The Adorned key lies on the ground where you left it");
+                        AddItem("Adorned Key");
+                    }
+
                     break;
 
                 //WARLOCK BOSS FIGHT
@@ -2126,25 +2186,41 @@ namespace TextBasedGame
                     if (acceptedQuests.Contains("main_quest_03"))
                     {
                         Console.WriteLine("The Warlock curses you!");
+                        Console.ReadLine();
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
                         {
+                            GainXP(200);
                             Console.WriteLine("You have defeated the Warlock!");
+                            Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you");
+                            AddItem("Twisted Key");
+                            Console.WriteLine("You begin to suspect that defeating this particular warlock may be harder than you first thought. But you have the key you need");
+                            GainXP(200);
                             CompleteQuest("main_quest_03");
+
                         }
+                    }
+                    if ((completedQuests.Contains("main_quest_03")) && (InvCheck("Twisted Key") == false))
+                    {
+                        Console.WriteLine("A Twisted key lies on the ground where you left it");
+                        AddItem("Twisted Key");
                     }
                     break;
 
                 //FINAL BOSS
                 case (1, 3):
-                    if (acceptedQuests.Contains("main_quest_04"))
+                    bool access = FinalBossReq();
+                    if (access == true)
                     {
+                        Console.ReadLine();
                         Console.WriteLine("THE GOD!");
                         bool bossDefeated = BossLoader(3);
                         if (bossDefeated)
                         {
                             Console.WriteLine("???");
+                            Console.ReadLine();
                             CompleteQuest("main_quest_04");
+                            gameFinished = true;
                         }
                     }
                     break;
@@ -2218,7 +2294,7 @@ namespace TextBasedGame
 
             Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
 
-            Console.WriteLine($"\nEquipped weapon: {playerWpn}");
+            Console.WriteLine($"\nEquipped Weapon: {playerWpn}");
             Console.WriteLine($"Equipped Armour: {playerAmr}");
 
             Console.WriteLine("\nWhat do you want to do?");
@@ -2278,36 +2354,34 @@ namespace TextBasedGame
 
                 switch (inventory[useChoice - 1])
                 {
-                    // What happens when equipping weapons. add [or "item name"] to case for new weapons
-                    case "Rusty Sword" or "Steel Sword":
-                        // Checks if equipped wpn is empty, clears old inv slot if true, replaces slot not
-                        if (playerWpn != "")
-                        {
-                            inventory[useChoice - 1] = playerWpn;
-                        }
-                        else
-                        {
-                            slotEmpty = true;
-                        }
-                        playerWpn = inventory[useChoice - 1];
-                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
-                        PauseStory();
+                    // What happens when equipping weapons, calculates stat change as well.
+                    case "Rusty Sword":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = rustySwordDMG;
+                        playerMeleeDmg += playerWpnStat;
                         break;
 
-                    // What happens when equipping armours. add [or "item name"] to case for new armours
-                    case "Rusty Armour" or "Steel Armour":
-                        // Checks if equipped amr is empty, clears old inv slot if true, replaces if not
-                        if (playerAmr != "")
-                        {
-                            inventory[useChoice - 1] = playerAmr;
-                        }
-                        else
-                        {
-                            slotEmpty = true;
-                        }
-                        playerAmr = inventory[useChoice - 1];
-                        Console.WriteLine($"You equipped the {inventory[useChoice - 1]}.");
-                        PauseStory();
+                    case "Steel Sword":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = steelSwordDMG;
+                        playerMeleeDmg += playerWpnStat;
+                        break;
+
+                    // What happens when equipping armours, calculates stat change as well.
+                    case "Rusty Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerAmrStat = rustyArmourDEF;
+                        playerPhysicalResist += playerAmrStat;
+                        break;
+
+                    case "Steel Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerAmrStat = steelArmourDEF;
+                        playerPhysicalResist += playerAmrStat;
                         break;
 
                     // What happens when using a healing potion
@@ -2322,10 +2396,11 @@ namespace TextBasedGame
                         Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
                         PauseStory();
                         break;
+
                     case "Twin's Journal":
                         JournalHint();
-                        reuseable = true;
                         break;
+
                     default:
                         break;
                 }
@@ -2340,19 +2415,40 @@ namespace TextBasedGame
                     inventory[inventoryCount - 1] = null;
                     inventoryCount--;
                 }
-                else if (reuseable == true)
+            }
+
+            // equip method for all weapons
+            static void equipWpn(ref int useChoice, ref bool slotEmpty)
+            {
+                string temp = inventory[useChoice - 1];
+                if (playerWpn != "")
                 {
-                    Console.Clear();
-                    Console.WriteLine("You return the item to your bag");
-                    Console.ReadLine();
+                    inventory[useChoice - 1] = playerWpn;
                 }
-                
                 else
                 {
-                    Console.WriteLine("That input is unrecognised.");
-                    Console.WriteLine("Press enter to continue");
-                    Console.ReadLine();
+                    slotEmpty = true;
                 }
+                playerWpn = temp;
+                Console.WriteLine($"You equipped the {temp}.");
+                PauseStory();
+            }
+
+            // equip method for all armours
+            static void equipAmr(ref int useChoice, ref bool slotEmpty)
+            {
+                string temp = inventory[useChoice - 1];
+                if (playerAmr != "")
+                {
+                    inventory[useChoice - 1] = playerAmr;
+                }
+                else
+                {
+                    slotEmpty = true;
+                }
+                playerAmr = temp;
+                Console.WriteLine($"You equipped the {temp}.");
+                PauseStory();
             }
             // Throw several items in a row
             static void ThrowItems()
@@ -2589,12 +2685,20 @@ namespace TextBasedGame
                 "main_quest_01"
             );
             RegisterQuest(
-               "Final_Boss",
-               "Severing the nexus",
-               "Defeat the One who made you",
+               "main_quest_04",
+               "Unlock the Threshold",
+               "Find the keys to the locks",
                true,
                1, 3,
-               "Keys_all"
+               "main_quest_01"
+            );
+            RegisterQuest(
+                "main_quest_05",
+                "Untangle",
+                "Unmake that which made you",
+                true,
+                1, 3,
+                "main_quest_04"
             );
         }
 
@@ -2955,26 +3059,38 @@ namespace TextBasedGame
                 }
             }
         }
-        public static void FinalBossReq()
+        public static bool FinalBossReq()
         {
-            bool key1 = InvCheck("Key1");
-            bool key2 = InvCheck("Key2");
-            bool key3 = InvCheck("Key3");
+            Console.WriteLine("The temple lies silent, a large black crystaline door calls from the back of the temple...");
+            bool key1 = InvCheck("Rusted Key");
+            bool key2 = InvCheck("Adorned Key");
+            bool key3 = InvCheck("Twisted Key");
             if (key1 == true && key2 == true && key3 == true)
             {
-                FinalBoss();
+                Console.WriteLine("The door begins to crack open");
+                return true;
+            }
+            else if (completedQuests.Contains("main_quest_01"))
+            {
+                if (key1 = InvCheck("Rusted Key") == true)
+                {
+                    Console.WriteLine("A lock on the door thrums in the presence of the Rusted Key");
+                    bool given = GiveQuest("main_quest_04");
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("One of the locks looks similar to the Rusted Key you left on the Dark Twins...");
+                    bool given = GiveQuest("main_quest_04");
+                    return false;
+                }
             }
             else
             {
                 Console.WriteLine("Nothing happens");
                 Console.ReadLine();
+                return false;
             }
-        }
-        public static void FinalBoss()
-        {
-            Console.WriteLine("A sudden darkness envelops you\nYou see that you are falling through the void");
-            Console.WriteLine("");
-
         }
     }
 }
