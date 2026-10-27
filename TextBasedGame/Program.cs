@@ -2336,6 +2336,7 @@ namespace TextBasedGame
                 default:
                     break;
             }
+        }
 
         // View inv & inv commands
         static void ViewInventory()
