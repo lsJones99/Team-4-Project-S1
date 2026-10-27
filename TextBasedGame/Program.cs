@@ -2323,9 +2323,25 @@ namespace TextBasedGame
                 default:
                     break;
             }
-
-            // Using items
+            // Use several items in a row
             static void UseItems()
+            {
+                bool useAnother = true;
+                while (useAnother && inventoryCount > 0)
+                {
+                    UseOneItem();
+                    if (inventoryCount == 0)
+                    {
+                        break;
+                    }
+                    Console.Clear();
+                    Console.Write("Use another item? (y/n): ");
+                    string useAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
+                    useAnother = useAnswer.StartsWith("y");
+                }
+            }
+            // Using items
+            static void UseOneItem()
             {
                 bool reuseable = false;
                 bool slotEmpty = false;
