@@ -2388,9 +2388,25 @@ namespace TextBasedGame
                 default:
                     break;
             }
-
-            // Using items
+            // Use several items in a row
             static void UseItems()
+            {
+                bool useAnother = true;
+                while (useAnother && inventoryCount > 0)
+                {
+                    UseOneItem();
+                    if (inventoryCount == 0)
+                    {
+                        break;
+                    }
+                    Console.Clear();
+                    Console.Write("Use another item? (y/n): ");
+                    string useAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
+                    useAnother = useAnswer.StartsWith("y");
+                }
+            }
+            // Using items
+            static void UseOneItem()
             {
                 bool reuseable = false;
                 bool slotEmpty = false;
@@ -2515,9 +2531,25 @@ namespace TextBasedGame
                 Console.WriteLine($"You equipped the {temp}.");
                 PauseStory();
             }
-
-            // Throwing away items
+            // Throw several items in a row
             static void ThrowItems()
+            {
+                bool throwAnother = true;
+                while (throwAnother && inventoryCount > 0)
+                {
+                    ThrowOneItem();
+                    if (inventoryCount == 0)
+                    {
+                        break;
+                    }
+                    Console.Clear();
+                    Console.Write("Throw away another item? (y/n): ");
+                    string throwAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
+                    throwAnother = throwAnswer.StartsWith("y");
+                }
+            }
+            // Throwing away items
+            static void ThrowOneItem()
             {
                 Console.Clear();
                 Console.WriteLine("\n---------- THROW ITEM ----------");
@@ -2661,6 +2693,7 @@ namespace TextBasedGame
             }
             while (!Console.KeyAvailable)
             {
+                
                 Console.SetCursorPosition(markerScreenX, markerScreenY);
 
                 if (visible)
