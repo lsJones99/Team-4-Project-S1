@@ -43,7 +43,9 @@ namespace TextBasedGame
         static int playerSpellDmg = 0;
         static int playerMagicResist = 0;
         static int playerWpnStat = 0;
+        static int playerWpnStatOld = 0;
         static int playerWpnHitStat = 0;
+        static int playerWpnHitStatOld = 0;
         static int playerAmrStat = 0;
         static int playerAmrDge = 0;
         static string playerWpn = "";
@@ -75,19 +77,19 @@ namespace TextBasedGame
         static int rustySwordDMG = 3;
         static int rustyArmourDEF = 3;
         static int leatherArmourDGE = 5;
-        static int oldBowDMG = 3 + playerRangeDmg;
-        static int oldBowHIT = playerRangeHit;
+        static int oldBowDMG = 3;
+        static int oldBowHIT = 0;
         static int steelSwordDMG = 8;
         static int steelArmourDEF = 8;
         static int studLeathArmourDGE = 15;
-        static int steelframeDMG = 8 + playerRangeDmg;
-        static int steelframeHIT = 1 + playerRangeHit;
-        static int spellSwordDMG = 2 + playerSpellDmg;
-        static int spellBowDMG = 2 + playerSpellDmg;
-        static int spellBowHIT = 2 + playerRangeHit;
+        static int steelframeDMG = 8;
+        static int steelframeHIT = 1;
+        static int spellSwordDMG = 2;
+        static int spellBowDMG = 2;
+        static int spellBowHIT = 2;
         static int throneCleaveDMG = 14;
         static int witherStringDMG = 14;
-        static int witherStringHIT = 4 + playerRangeHit;
+        static int witherStringHIT = 4;
         static bool shellFound = false;
         static bool goneSwimming = false;
 
@@ -371,7 +373,9 @@ namespace TextBasedGame
                 $"playerSpellMiscast={playerSpellMiscast}",
 
                 $"playerWpnStat={playerWpnStat}",
+                $"playerWpnStatOld={playerWpnStatOld}",
                 $"playerWpnHitStat={playerWpnHitStat}",
+                $"playerWpnHitStatOld={playerWpnHitStatOld}",
                 $"playerAmrStat={playerAmrStat}",
                 $"playerAmrDge={playerAmrDge}",
 
@@ -519,8 +523,14 @@ namespace TextBasedGame
                 else if (key == "playerWpnStat")
                     int.TryParse(value, out playerWpnStat);
 
+                else if (key == "playerWpnStatOld")
+                    int.TryParse(value, out playerWpnStatOld);
+
                 else if (key == "playerWpnHitStat")
                     int.TryParse(value, out playerWpnHitStat);
+
+                else if (key == "playerWpnHitStatOld")
+                    int.TryParse(value,out playerWpnHitStatOld);
 
                 else if (key == "playerAmrStat")
                     int.TryParse(value, out playerAmrStat);
@@ -2596,7 +2606,7 @@ namespace TextBasedGame
                             case '3':
                                 Console.WriteLine("You search around the market...");
 
-                                int lootChance = rand.Next(1, 4);
+                                int lootChance = rand.Next(1, 5);
 
                                 switch (lootChance)
                                 {
@@ -2613,7 +2623,14 @@ namespace TextBasedGame
                                     case 3:
                                         Console.WriteLine("You found nothing.");
                                         break;
+
+                                    case 4:
+                                        Console.WriteLine("You found an Old Bow!");
+                                        AddItem("Old Bow");
+                                        break;
+
                                 }
+                                PauseStory();
                                 break;
 
                             case '0':
@@ -2662,7 +2679,7 @@ namespace TextBasedGame
                 case (2, 2):
                     Console.WriteLine("\nYou search the Dark Forest...");
 
-                    int result = rand.Next(1, 4);
+                    int result = rand.Next(1, 5);
 
                     switch (result)
                     {
@@ -2678,6 +2695,11 @@ namespace TextBasedGame
 
                         case 3:
                             Console.WriteLine("You found nothing.");
+                            break;
+
+                        case 4:
+                            Console.WriteLine("You found an Old Bow!");
+                            AddItem("Old Bow");
                             break;
 
                     }
@@ -3156,73 +3178,94 @@ namespace TextBasedGame
                     // What happens when equipping weapons, calculates stat change as well.
                     case "Rusty Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
                         playerWpnStat = rustySwordDMG;
                         playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit = playerStrength;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
 
                     case "Steel Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
                         playerWpnStat = steelSwordDMG;
                         playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit = playerStrength;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
 
                     case "Spellfire Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
-                        playerWpnStat = spellSwordDMG;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
+                        playerWpnStat = spellSwordDMG + (2 * playerArcane);
+                        playerWpnHitStat = playerArcane;
                         playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit = playerWpnHitStat;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
                     case "Throne-Cleaver":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
                         playerWpnStat = throneCleaveDMG;
                         playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit = playerStrength;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
 
                     case "Old Bow":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
-                        playerWpnStat = oldBowDMG;
-                        playerWpnHitStat = oldBowHIT;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
+                        playerWpnStat = oldBowDMG + playerRangeDmg;
+                        playerWpnHitStat = oldBowHIT + playerRangeHit + playerStrength;
                         playerMeleeDmg += playerWpnStat;
-                        playerMeleeHit += playerWpnHitStat;
+                        playerMeleeHit = playerWpnHitStat;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
 
                     case "Steelframe Bow":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
-                        playerWpnStat = steelframeDMG;
-                        playerWpnHitStat = steelframeHIT;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
+                        playerWpnStat = steelframeDMG + playerRangeDmg;
+                        playerWpnHitStat = steelframeHIT + playerRangeHit + playerStrength;
                         playerMeleeDmg += playerWpnStat;
-                        playerMeleeHit += playerWpnHitStat;
+                        playerMeleeHit = playerWpnHitStat;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
 
                     case "Spellfire Bow":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
-                        playerWpnStat = spellBowDMG;
-                        playerWpnHitStat = spellBowHIT;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
+                        playerWpnStat = spellBowDMG + (2 * playerSpellDmg);
+                        playerWpnHitStat = spellBowHIT + playerArcane + playerStrength;
                         playerMeleeDmg += playerWpnStat;
-                        playerMeleeHit += playerWpnHitStat;
+                        playerMeleeHit = playerWpnHitStat;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
 
                     case "Wither-String":
                         equipWpn(ref useChoice, ref slotEmpty);
-                        playerMeleeHit -= playerWpnHitStat;
-                        playerMeleeDmg -= playerWpnStat;
-                        playerWpnStat = witherStringDMG;
-                        playerWpnHitStat = witherStringHIT;
+                        playerMeleeHit -= playerWpnHitStatOld;
+                        playerMeleeDmg -= playerWpnStatOld;
+                        playerWpnStat = witherStringDMG + playerRangeDmg;
+                        playerWpnHitStat = witherStringHIT + playerRangeHit + playerStrength;
                         playerMeleeDmg += playerWpnStat;
-                        playerMeleeHit += playerWpnHitStat;
+                        playerMeleeHit = playerWpnHitStat;
+                        playerWpnStatOld = playerWpnStat;
+                        playerWpnHitStatOld = playerWpnHitStat;
                         break;
                     // What happens when equipping armours, calculates stat change as well.
                     case "Rusty Armour":
