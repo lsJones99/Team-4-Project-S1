@@ -1241,7 +1241,7 @@ namespace TextBasedGame
         //magic
         static void DisplayAvailableMagic()
         {
-            bool staffFireball;
+            bool staffFireball, wandLightning, scrollBlight, orbDisintegrate, ringGraviton;
             Console.WriteLine("\nYou chose magic!");
             Console.WriteLine();
             Console.WriteLine("[M] - Magic Missile - 3 MP");
@@ -1250,6 +1250,26 @@ namespace TextBasedGame
             if (staffFireball == true)
             {
                 Console.WriteLine("[F] - Fireball - 6 MP");
+            }
+            wandLightning = InvCheck("Wand of Lightning");
+            if (wandLightning == true)
+            {
+                Console.WriteLine("[L] - Lightning Bolt - 8 MP");
+            }
+            scrollBlight = InvCheck("Scroll of Blight");
+            if (scrollBlight == true)
+            {
+                Console.WriteLine("[B] - Blighting Winds - 11 MP");
+            }
+            orbDisintegrate = InvCheck("Orb of Disintegrate");
+            if (orbDisintegrate == true)
+            {
+                Console.WriteLine("[D] - Disintegration Ray - 14 MP");
+            }
+            ringGraviton = InvCheck("Ring of Graviton");
+            if (ringGraviton == true)
+            {
+                Console.WriteLine("[G] - Gravity Collapse - 17 MP");
             }
             Console.WriteLine("[0] - Return to previous menu");
         }
@@ -1262,11 +1282,11 @@ namespace TextBasedGame
             {
 
                 magicInput = Console.ReadLine()?.Trim().ToLower() ?? "";
-                if (magicInput != "m" && magicInput != "0" && magicInput != "f")
+                if (magicInput != "m" && magicInput != "0" && magicInput != "f" && magicInput != "l" && magicInput != "b" && magicInput != "d" && magicInput != "g")
                 {
                     Console.WriteLine("Invalid selection, please try again");
                 }
-            } while (magicInput != "m" && magicInput != "0" && magicInput != "f");
+            } while (magicInput != "m" && magicInput != "0" && magicInput != "f" && magicInput != "l" && magicInput != "b" && magicInput != "d" && magicInput != "g");
             return magicInput;
         }
 
@@ -1341,6 +1361,198 @@ namespace TextBasedGame
 
                             string message =
                                 $"You cast Fireball, scorching {enemyName} for {finalMagicDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+                        }
+                        else
+                        {
+                            playerDamage = rand.Next(8, 25) - playerMagicResist;
+                            playerHealth -= playerDamage;
+
+                            string message =
+                                $"The spell miscasts! You take {playerDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+
+                            if (playerHealth <= 0)
+                            {
+                                playerHealth = 0;
+                            }
+                        }
+
+                        Console.ReadLine();
+                        return true;
+                    }
+                    Console.WriteLine("Invalid spell selection.");
+                    return false;
+                case 'l':
+                    bool wandLightning = InvCheck("Wand of Lightning");
+                    while (wandLightning == true)
+                    {
+                        if (playerMana < 8)
+                        {
+                            Console.WriteLine("You do not have enough Mana to cast Lightning Bolt.");
+                            return false;
+                        }
+
+                        playerMana -= 8;
+
+                        casting = rand.Next(1, 101) + playerSpellMiscast;
+
+                        if (casting <= 45)
+                        {
+                            playerDamage = rand.Next(20, 45) + (playerSpellDmg * 2);
+                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            enemyHealth -= finalMagicDamage;
+
+                            string message =
+                                $"You cast Lightning Bolt, zapping {enemyName} for {finalMagicDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+                        }
+                        else
+                        {
+                            playerDamage = rand.Next(8, 25) - playerMagicResist;
+                            playerHealth -= playerDamage;
+
+                            string message =
+                                $"The spell miscasts! You take {playerDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+
+                            if (playerHealth <= 0)
+                            {
+                                playerHealth = 0;
+                            }
+                        }
+
+                        Console.ReadLine();
+                        return true;
+                    }
+                    Console.WriteLine("Invalid spell selection.");
+                    return false;
+                case 'b':
+                    bool scrollBlight = InvCheck("Scroll of Blight");
+                    while (scrollBlight == true)
+                    {
+                        if (playerMana < 11)
+                        {
+                            Console.WriteLine("You do not have enough Mana to cast Blighting Winds.");
+                            return false;
+                        }
+
+                        playerMana -= 11;
+
+                        casting = rand.Next(1, 101) + playerSpellMiscast;
+
+                        if (casting <= 35)
+                        {
+                            playerDamage = (rand.Next(10, 30)) + (5 * playerSpellDmg);
+                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            enemyHealth -= finalMagicDamage;
+
+                            string message =
+                                $"You cast Blighting Winds, {enemyName} decays away for {finalMagicDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+                        }
+                        else
+                        {
+                            playerDamage = rand.Next(8, 25) - playerMagicResist;
+                            playerHealth -= playerDamage;
+
+                            string message =
+                                $"The spell miscasts! You take {playerDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+
+                            if (playerHealth <= 0)
+                            {
+                                playerHealth = 0;
+                            }
+                        }
+
+                        Console.ReadLine();
+                        return true;
+                    }
+                    Console.WriteLine("Invalid spell selection.");
+                    return false;
+                case 'd':
+                    bool orbDisintegrate = InvCheck("Orb of Disintegrate");
+                    while (orbDisintegrate == true)
+                    {
+                        if (playerMana < 14)
+                        {
+                            Console.WriteLine("You do not have enough Mana to cast Disintegration Ray.");
+                            return false;
+                        }
+
+                        playerMana -= 14;
+
+                        casting = rand.Next(1, 101) + playerSpellMiscast;
+
+                        if (casting <= 20)
+                        {
+                            playerDamage = (15 * playerSpellDmg) - rand.Next(0, (3 * playerSpellDmg));
+                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            enemyHealth -= finalMagicDamage;
+
+                            string message =
+                                $"You cast Disintegration Ray, You atomize {enemyName} for {finalMagicDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+                        }
+                        else
+                        {
+                            playerDamage = rand.Next(8, 25) - playerMagicResist;
+                            playerHealth -= playerDamage;
+
+                            string message =
+                                $"The spell miscasts! You take {playerDamage} damage.";
+
+                            Console.WriteLine(message);
+                            AddCombatLog(message);
+
+                            if (playerHealth <= 0)
+                            {
+                                playerHealth = 0;
+                            }
+                        }
+
+                        Console.ReadLine();
+                        return true;
+                    }
+                    Console.WriteLine("Invalid spell selection.");
+                    return false;
+                case 'g':
+                    bool ringGraviton = InvCheck("Ring of Graviton");
+                    while (ringGraviton == true)
+                    {
+                        if (playerMana < 17)
+                        {
+                            Console.WriteLine("You do not have enough Mana to cast Gravity Collapse.");
+                            return false;
+                        }
+
+                        playerMana -= 17;
+
+                        casting = rand.Next(1, 101) + playerSpellMiscast;
+
+                        if (casting <= 10)
+                        {
+                            playerDamage = playerSpellDmg * (rand.Next(10, 21));
+                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            enemyHealth -= finalMagicDamage;
+
+                            string message =
+                                $"You cast Gravity Collapse, You crush {enemyName} for {finalMagicDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -2295,7 +2507,7 @@ namespace TextBasedGame
                             AddItem("Spellfire Sword");
                             break;
                         case 10:
-                            AddItem("Excalibur");
+                            AddItem("Throne-Cleaver");
                             break;
                     }
                     break;
@@ -2304,24 +2516,19 @@ namespace TextBasedGame
                     select = rand.Next(1, 10);
                     switch (select)
                     {
-                        case 1: case 2:
+                        case 1: case 2: case 3:
                             AddItem("Rusty Armour");
                             break;
-                        case 3: case 4:
+                        case 4: case 5: case 6:
                             AddItem("Leather Armour");
                             break;
-                        case 5: case 6:
-                            AddItem("Rusty Shield");
-                            break;
-                        case 7:
+                        case 7: case 8:
                             AddItem("Steel Armour");
                             break;
-                        case 8:
+                        case 9: case 10:
                             AddItem("Studded Leather Armour");
                             break;
-                        case 9:
-                            AddItem("Steel Shield");
-                            break;
+
                     }
                     break;
                 // Range Weapon pool
@@ -2330,12 +2537,16 @@ namespace TextBasedGame
                     switch (select)
                     {
                         case 1: case 2: case 3:
+                            AddItem("Old Bow");
                             break;
-                        case 4: case 5: case 6:
+                        case 4: case 5:
+                            AddItem("Steelframe Bow");
                             break;
-                        case 7: case 8:
+                        case 6: case 8:
+                            AddItem("Spellfire Bow");
                             break;
-                        case 9: case 10:
+                        case 9:
+                            AddItem("Wither-String");
                             break;
                     }
                     break;
