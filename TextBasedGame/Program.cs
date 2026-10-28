@@ -618,7 +618,7 @@ namespace TextBasedGame
             CenterText("The streets are quiet, and your mind is occupied with thoughts of assignments and upcoming deadlines.");
             Console.ReadLine();
 
-            CenterText("You bought yourself a spaghetti for takeaway");
+            CenterText("You bought yourself some spaghetti for takeaway.");
             Console.ReadLine();
 
             CenterText("Without warning, a blinding light surrounds you.");
@@ -665,14 +665,13 @@ namespace TextBasedGame
             Console.ReadLine();
 
             CenterText("\"Help him, and perhaps you will discover why you were brought here.\"");
-
-            CenterText("Before you can ask anything else, the voice disappears.");
             Console.ReadLine();
 
             CenterText("\"Your journey is your own now. Choose your path wisely.\"");
+            CenterText("Before you can ask anything else, the voice disappears.");
             Console.ReadLine();
 
-            CenterText("Silence returns to the forest");
+            CenterText("Silence returns to the forest.");
             Console.ReadLine();
 
             CenterText("You are alone in an unfamiliar world, with no clear way home.");
