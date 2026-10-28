@@ -1256,6 +1256,9 @@ namespace TextBasedGame
             //enemy dodge
             int enemyDodge;
 
+            //base damage
+            int baseDamage = rand.Next(1, 5);
+
             //initial display
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
@@ -1280,15 +1283,11 @@ namespace TextBasedGame
                     int critRoll = rand.Next(1, 101);
                     bool isCritical = critRoll <= finalCritChance;
 
+                    finalAttackDamage = baseDamage + playerDamage + playerMeleeDmg;
                     //if attack is critical
                     if (isCritical)
                     {
-                        finalAttackDamage = (playerDamage + playerMeleeDmg) * 2;
-                    }
-
-                    else
-                    {
-                        finalAttackDamage = playerDamage + playerMeleeDmg;
+                        finalAttackDamage *=2;
                     }
 
                     //calculate damage base on player and enemy stats
@@ -1384,6 +1383,7 @@ namespace TextBasedGame
 
         static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth, Enemies enemy)
         {
+            int spellDamage;
             int enemyMagicResist = Math.Max(0, enemy.enemyMagicResistance);
             int finalMagicDamage;
             switch (spellSelect)
@@ -1401,8 +1401,8 @@ namespace TextBasedGame
 
                     if (casting <= 75)
                     {
-                        playerDamage = rand.Next(8, 25) + playerSpellDmg;
-                        finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                        spellDamage = rand.Next(8, 25) + playerSpellDmg;
+                        finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                         enemyHealth -= finalMagicDamage;
 
                         string message =
@@ -1413,11 +1413,11 @@ namespace TextBasedGame
                     }
                     else
                     {
-                        playerDamage = rand.Next(8, 25) - playerMagicResist;
-                        playerHealth -= playerDamage;
+                        spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                        playerHealth -= spellDamage;
 
                         string message =
-                            $"The spell miscasts! You take {playerDamage} damage.";
+                            $"The spell miscasts! You take {spellDamage} damage.";
 
                         Console.WriteLine(message);
                         AddCombatLog(message);
@@ -1446,8 +1446,8 @@ namespace TextBasedGame
 
                         if (casting <= 55)
                         {
-                            playerDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1458,11 +1458,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1494,8 +1494,8 @@ namespace TextBasedGame
 
                         if (casting <= 45)
                         {
-                            playerDamage = rand.Next(20, 45) + (playerSpellDmg * 2);
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = rand.Next(20, 45) + (playerSpellDmg * 2);
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1506,11 +1506,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1542,8 +1542,8 @@ namespace TextBasedGame
 
                         if (casting <= 35)
                         {
-                            playerDamage = (rand.Next(10, 30)) + (5 * playerSpellDmg);
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = (rand.Next(10, 30)) + (5 * playerSpellDmg);
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1554,11 +1554,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1590,8 +1590,8 @@ namespace TextBasedGame
 
                         if (casting <= 20)
                         {
-                            playerDamage = (15 * playerSpellDmg) - rand.Next(0, (3 * playerSpellDmg));
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = (15 * playerSpellDmg) - rand.Next(0, (3 * playerSpellDmg));
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1602,11 +1602,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1638,8 +1638,8 @@ namespace TextBasedGame
 
                         if (casting <= 10)
                         {
-                            playerDamage = playerSpellDmg * (rand.Next(10, 21));
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = playerSpellDmg * (rand.Next(10, 21));
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1650,11 +1650,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1868,7 +1868,6 @@ namespace TextBasedGame
                     switch (combatChoice)
                     {
                         case 'a':
-                            playerDamage = rand.Next(playerMeleeDmg + 5, playerMeleeDmg + 15);
                             playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, enemy);
                             break;
 
