@@ -52,7 +52,9 @@ namespace TextBasedGame
         static int playerSpellDmg = 0;
         static int playerMagicResist = 0;
         static int playerWpnStat = 0;
+        static int playerWpnHitStat = 0;
         static int playerAmrStat = 0;
+        static int playerAmrDge = 0;
         static string playerWpn = "";
         static string playerAmr = "";
         static int playerX = 2; // Start in Dark Forest
@@ -378,7 +380,9 @@ namespace TextBasedGame
                 $"playerSpellMiscast={playerSpellMiscast}",
 
                 $"playerWpnStat={playerWpnStat}",
+                $"playerWpnHitStat={playerWpnHitStat}",
                 $"playerAmrStat={playerAmrStat}",
+                $"playerAmrDge={playerAmrDge}",
 
                 $"markerScreenX={markerScreenX}",
                 $"markerScreenY={markerScreenY}",
@@ -520,8 +524,14 @@ namespace TextBasedGame
                 else if (key == "playerWpnStat")
                     int.TryParse(value, out playerWpnStat);
 
+                else if (key == "playerWpnHitStat")
+                    int.TryParse(value, out playerWpnHitStat);
+
                 else if (key == "playerAmrStat")
                     int.TryParse(value, out playerAmrStat);
+
+                else if (key == "playerAmrDge")
+                    int.TryParse(value, out playerAmrDge);
 
                 else if (key == "markerScreenX")
                     int.TryParse(value, out markerScreenX);
@@ -2859,15 +2869,33 @@ namespace TextBasedGame
                     case "Rusty Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
                         playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
                         playerAmrStat = rustyArmourDEF;
                         playerPhysicalResist += playerAmrStat;
+                        break;
+
+                    case "Leather Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
+                        playerAmrDge = leatherArmourDGE;
+                        playerDodge += playerAmrDge;
                         break;
 
                     case "Steel Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
                         playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
                         playerAmrStat = steelArmourDEF;
                         playerPhysicalResist += playerAmrStat;
+                        break;
+
+                    case "Studded Leather Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
+                        playerAmrDge = studLeathArmourDGE;
+                        playerDodge += playerAmrDge;
                         break;
 
                     // What happens when using a healing potion
