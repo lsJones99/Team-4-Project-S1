@@ -1409,6 +1409,8 @@ namespace TextBasedGame
                 playerGold += enemy.enemyGoldRewardRange;
                 Console.WriteLine($"\nYou gained {enemy.enemyGoldRewardRange} gold!");
 
+                EnemyItemDrop();
+
                 playerLevel = GainXP(enemy.enemyExperienceReward);
 
                 Console.WriteLine("\nPress enter to continue exploration.");
@@ -2374,14 +2376,61 @@ namespace TextBasedGame
                 // Melee Weapon pool
                 case 1:
                     select = rand.Next(1, 11);
+                    switch (select)
+                    {
+                        case 1: case 2: case 3: case 4:
+                            AddItem("Rusty Sword");
+                            break;
+                        case 5: case 6: case 7:
+                            AddItem("Steel Sword");
+                            break;
+                        case 8: case 9:
+                            AddItem("Spellfire Sword");
+                            break;
+                        case 10:
+                            AddItem("Excalibur");
+                            break;
+                    }
                     break;
                 // Armour pool
                 case 2:
-                    select = rand.Next(1, 11);
+                    select = rand.Next(1, 10);
+                    switch (select)
+                    {
+                        case 1: case 2:
+                            AddItem("Rusty Armour");
+                            break;
+                        case 3: case 4:
+                            AddItem("Leather Armour");
+                            break;
+                        case 5: case 6:
+                            AddItem("Rusty Shield");
+                            break;
+                        case 7:
+                            AddItem("Steel Armour");
+                            break;
+                        case 8:
+                            AddItem("Studded Leather Armour");
+                            break;
+                        case 9:
+                            AddItem("Steel Shield");
+                            break;
+                    }
                     break;
                 // Range Weapon pool
                 case 3:
                     select = rand.Next(1, 11);
+                    switch (select)
+                    {
+                        case 1: case 2: case 3:
+                            break;
+                        case 4: case 5: case 6:
+                            break;
+                        case 7: case 8:
+                            break;
+                        case 9: case 10:
+                            break;
+                    }
                     break;
                 // Magic Item pool
                 case 4:
@@ -2572,8 +2621,44 @@ namespace TextBasedGame
                         PauseStory();
                         break;
 
+<<<<<<< HEAD
                     case "Unique Shell":
                         Console.WriteLine("The sounds of the ocean are beautiful... Someone may be willing to purchase this.");
+=======
+                    case "Mana Potion":
+                        playerMana = playerMana + 10;
+                        slotEmpty = true;
+                        Console.WriteLine("The mana potion was used! +10 MP");
+                        if (playerMana > playerMaxMana)
+                        {
+                            playerMana = playerMaxMana;
+                        }
+                        Console.WriteLine($"Your MP is now {playerMana}/{playerMaxMana}.");
+                        PauseStory();
+                        break;
+
+                    case "Greater Healing Potion":
+                        playerHealth = playerHealth + 100;
+                        slotEmpty = true;
+                        Console.WriteLine("The healing potion was used! +100 HP");
+                        if (playerHealth > playerMaxHealth)
+                        {
+                            playerHealth = playerMaxHealth;
+                        }
+                        Console.WriteLine($"Your HP is now {playerHealth}/{playerMaxHealth}.");
+                        PauseStory();
+                        break;
+
+                    case "Greater Mana Potion":
+                        playerMana = playerMana + 25;
+                        slotEmpty = true;
+                        Console.WriteLine("The mana potion was used! +25 MP");
+                        if (playerMana > playerMaxMana)
+                        {
+                            playerMana = playerMaxMana;
+                        }
+                        Console.WriteLine($"Your MP is now {playerMana}/{playerMaxMana}.");
+>>>>>>> 7502155756809a4ec6c969b58a966748aaebe761
                         PauseStory();
                         break;
 
