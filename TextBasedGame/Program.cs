@@ -3970,7 +3970,7 @@ namespace TextBasedGame
             }
             else if (completedQuests.Contains("main_quest_01"))
             {
-                if (key1 = InvCheck("Rusted Key") == true)
+                if (key1 == true)
                 {
                     Console.WriteLine("A lock on the door thrums in the presence of the Rusted Key");
                     bool given = GiveQuest("main_quest_04");
