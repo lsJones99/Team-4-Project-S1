@@ -611,16 +611,28 @@ namespace TextBasedGame
             CenterText("You are a student from Otago Polytechnic, walking home after a long day of classes.");
             Console.ReadLine();
 
+            CenterText("The streets are quiet, and your mind is occupied with thoughts of assignments and upcoming deadlines.");
+            Console.ReadLine();
+
             CenterText("Without warning, a blinding light surrounds you.");
             Console.ReadLine();
 
             CenterText("When you open your eyes, you find yourself lying in an unfamiliar forest.");
             Console.ReadLine();
 
-            CenterText("Towering trees surround you, and a cold wind moves through their branches.");
+            CenterText("Towering trees surround you, their branches blocking most of the sunlight. The air feels unfamiliar, and strange sounds echo through the forest.");
+            Console.ReadLine();
+
+            CenterText("You struggle to your feet, trying to understand what just happened.");
             Console.ReadLine();
 
             CenterText("A mysterious voice echoes inside your mind...");
+            Console.ReadLine();
+
+            CenterText("At last... you have arrived.");
+            Console.ReadLine();
+
+            CenterText("You look around, but there is nobody in sight.");
             Console.ReadLine();
 
             CenterText("\"Hero, tell me your name.\"");
@@ -636,40 +648,92 @@ namespace TextBasedGame
             CenterText($"\"{playerName}... A fitting name for the one chosen to save our world.\"");
             Console.ReadLine();
 
-            CenterText("You demand answers, but the mysterious voice ignores your questions.");
+            CenterText("You demand to know why you are here.");
             Console.ReadLine();
 
-            CenterText("\"Our kingdom is being ravaged by creatures of darkness.\"");
+            CenterText("\"The land is suffering. Darkness spreads, and its people grow desperate. But there are those who still fight to protect what remains.\"");
             Console.ReadLine();
 
-            CenterText("\"Travel north and find the village of Greymoor. Your journey begins there.\"");
+            CenterText("\"Seek out the merchant. He may appear to be an ordinary trader, but he knows more about the troubles of this land than most.\"");
             Console.ReadLine();
+
+            CenterText("\"Help him, and perhaps you will discover why you were brought here.\"");
 
             CenterText("Before you can ask anything else, the voice disappears.");
             Console.ReadLine();
 
-            CenterText("You are alone. You have no idea where you are or how you arrived here.");
+            CenterText("\"Your journey is your own now.Choose your path wisely.\"");
             Console.ReadLine();
 
-            CenterText("Suddenly, you hear something moving in the nearby bushes...");
+            CenterText("Silence returns to the forest");
             Console.ReadLine();
 
-            CenterText("You take a deep breath and prepare to move.");
-            CenterText("Your journey begins now.");
+            CenterText("You are alone in an unfamiliar world, with no clear way home.");
             Console.ReadLine();
 
+            CenterText("For now, you have only one lead.");
+            Console.ReadLine();
 
+            CenterText("Find the merchant.");
+            Console.ReadLine();
         }
 
         //Outro
         static void Outro()
         {
-            CenterText($"{playerName}, thank you for saving our world!");
+            CenterText($"Godghetti, the mighty Spaghetti God, has finally fallen.");
             Console.ReadLine();
 
-            CenterText("You get transported back to where you were before");
+            CenterText("The skies of Ogatoberg clear, and peace returns to the land.");
             Console.ReadLine();
 
+            CenterText("A familiar voice echoes in your mind.");
+            Console.ReadLine();
+
+            CenterText($"\"{playerName}... You have saved our world. Your courage shall never be forgotten.\"");
+            Console.ReadLine();
+
+            CenterText("\"But now, it is time to return home.\"");
+            Console.ReadLine();
+
+            CenterText("A blinding light surrounds you.");
+            Console.ReadLine();
+
+            CenterText("...");
+            Console.ReadLine();
+
+            CenterText("\"OI! WATCH OUT WHERE YOU'RE GOING!\"");
+            Console.ReadLine();
+
+            CenterText("You suddenly snap back to reality. You're standing outside Otago Polytechnic.");
+            Console.ReadLine();
+
+            CenterText("Your takeaway container is empty.");
+            Console.ReadLine();
+
+            CenterText("Your spaghetti is scattered across the pavement.");
+            Console.ReadLine();
+
+            CenterText("You stare at the mess.");
+            Console.ReadLine();
+
+            CenterText("Ogatoberg... The Undead Twins... The Paladin... The Warlock... Godghetti...");
+            Console.ReadLine();
+
+            CenterText("It was all a daydream.");
+            Console.ReadLine();
+
+            CenterText("You look down at your ruined lunch.");
+            Console.ReadLine();
+
+            CenterText("\"All that effort... for nothing.\"");
+            Console.ReadLine();
+
+            CenterText("Suddenly, a familiar voice whispers:");
+            Console.ReadLine();
+
+            CenterText("\"Five-second rule, chosen one.\"");
+            Console.ReadLine();
         }
         //Inventory Check for item
         static bool InvCheck(string itemNeeded)
