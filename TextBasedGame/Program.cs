@@ -2656,7 +2656,7 @@ namespace TextBasedGame
                 case (2, 2):
                     Console.WriteLine("\nYou search the Dark Forest...");
 
-                    int result = rand.Next(1, 5);
+                    int result = rand.Next(1, 4);
 
                     switch (result)
                     {
@@ -2674,10 +2674,6 @@ namespace TextBasedGame
                             Console.WriteLine("You found nothing.");
                             break;
 
-                        case 4:
-                            Console.WriteLine("staffFireball test item");
-                            AddItem("Staff of Fireball");
-                            break;
                     }
                     PauseStory();
                     break;
