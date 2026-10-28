@@ -2128,6 +2128,8 @@ namespace TextBasedGame
             if (completedQuests.Contains("main_quest_01"))
             {
                 Console.WriteLine("Merchant: Thank you for all your help!");
+                Console.WriteLine();
+                PauseStory();
                 return;
             }
 
@@ -2135,12 +2137,14 @@ namespace TextBasedGame
             if (acceptedQuests.Contains("main_quest_01"))
             {
                 Console.WriteLine("Merchant: You must slay those undead! They are ruining my business!");
+                Console.WriteLine();
+                PauseStory();
                 return;
             }
             //Second quest completed: offer main quest start
             if (completedQuests.Contains("side_merchant_02"))
             {
-                Console.WriteLine($"Merchant: {playerName}! You must help an pair of powerful undead have been attacking my caravans!");
+                Console.WriteLine($"Merchant: {playerName}, You must help! A pair of powerful undead have been attacking my caravans!");
                 Console.WriteLine("Merchant: Will you help me? please?");
                 Console.WriteLine("[1] Accept quest to slay the undead");
                 Console.WriteLine("[2] Decline");
@@ -2154,6 +2158,8 @@ namespace TextBasedGame
                     if (given)
                     {
                         Console.WriteLine("New quest: The Dark Twins");
+                        Console.WriteLine();
+                        PauseStory();
                     }
                 }
 
@@ -2163,6 +2169,8 @@ namespace TextBasedGame
             if (acceptedQuests.Contains("side_merchant_02"))
             {
                 Console.WriteLine("Merchant: Please deliver my package to the Witch's Hut.");
+                Console.WriteLine();
+                PauseStory();
                 return;
             }
 
@@ -2183,6 +2191,8 @@ namespace TextBasedGame
                     if (given)
                     {
                         Console.WriteLine("New quest: The Merchant's Delivery!");
+                        Console.WriteLine();
+                        PauseStory();
                     }
                 }
 
@@ -2206,10 +2216,14 @@ namespace TextBasedGame
                         playerLevel = GainXP(20);
                         Console.WriteLine("Quest completed: The Missing Sword!");
                         Console.WriteLine("Merchant: Come back. I have another job!");
+                        Console.WriteLine();
+                        PauseStory();
                     }
                     else
                     {
                         Console.WriteLine("You don't have a Rusty Sword.");
+                        Console.WriteLine();
+                        PauseStory();
                     }
                 }
 
@@ -2230,6 +2244,8 @@ namespace TextBasedGame
                 if (given)
                 {
                     Console.WriteLine("New quest accepted: The Missing Sword!");
+                    Console.WriteLine();
+                    PauseStory();
                 }
             }
         }
@@ -2248,7 +2264,7 @@ namespace TextBasedGame
             Console.WriteLine($"7. [LV5] Steel Sword: {steelSwordPrice}G");
             Console.WriteLine($"8. [LV5] Steel Armour: {steelArmourPrice}G");
             Console.WriteLine($"9. [LV5] Studded Leather Armour: {studdedArmourPrice}G");
-            if (shellFound == true)
+            if (InvCheck("Unique Shell") == true)
             {
                 Console.WriteLine("\n[S] Offer shell");
             }
@@ -2318,6 +2334,8 @@ namespace TextBasedGame
         {
             if (angeredMerchant == false)
             {
+                Console.Clear();
+                Console.WriteLine("\n========== MERCHANTS SHOP ==========");
                 Console.WriteLine("\nYou offer the unique shell to the merchant...");
                 Console.WriteLine("\nMerchant: Hmmm... I'll give you 6 gold for it.");
                 Console.WriteLine("\n[Y] Sell shell for 6 gold");
@@ -2335,7 +2353,7 @@ namespace TextBasedGame
                     case 'n':
                         Console.Clear();
                         Console.WriteLine("\n========== MERCHANTS SHOP ==========");
-                        Console.WriteLine("Merchant: Grr.. Fine, 8 gold. Take it or leave it.");
+                        Console.WriteLine("\nMerchant: Grr.. Fine, 8 gold. Take it or leave it.");
                         Console.WriteLine("\n[Y] Sell shell for 8 gold");
                         Console.WriteLine("[N] Haggle for a better price again");
                         char shellChoice2 = char.ToLower(Console.ReadKey(true).KeyChar);
@@ -2351,7 +2369,7 @@ namespace TextBasedGame
                             case 'n':
                                 Console.Clear();
                                 Console.WriteLine("\n========== MERCHANTS SHOP ==========");
-                                Console.WriteLine("Merchant: You know what?! I don't want it anymore. Get this shell out of my face, fool!");
+                                Console.WriteLine("\nMerchant: You know what?! I don't want it anymore. Get this shell out of my face, fool!");
                                 Console.WriteLine("\nIt seems the Merchant has a short temper and has been haggled too much, now he wont buy the shell.");
                                 PauseStory();
                                 angeredMerchant = true;
@@ -2411,7 +2429,6 @@ namespace TextBasedGame
                 case (0, 4):
                     {
                         Console.WriteLine("\nYou approach the Witch's Hut.");
-
                         if (acceptedQuests.Contains("side_merchant_02"))
                         {
                             Console.WriteLine("The witch accepts the merchant's delivery.");
@@ -2824,6 +2841,8 @@ namespace TextBasedGame
                             Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you.");
                             AddItem("Twisted Key");
                             Console.WriteLine("You begin to suspect that defeating this particular warlock may've been harder than you first thought. But you have the key you need.");
+                            Console.WriteLine();
+                            PauseStory();
                             GainXP(200);
                             CompleteQuest("main_quest_03");
 
@@ -3099,7 +3118,9 @@ namespace TextBasedGame
                     }
                     Console.Clear();
                     Console.WriteLine("\n---------- INVENTORY ----------");
-                    Console.Write("\nUse another item? (y/n): ");
+                    Console.Write("\nUse another item?");
+                    Console.Write("[Y] Yes");
+                    Console.Write("[ANY OTHER INPUT] No");
                     string useAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
                     useAnother = useAnswer.StartsWith("y");
                 }
@@ -3359,7 +3380,10 @@ namespace TextBasedGame
                         break;
                     }
                     Console.Clear();
-                    Console.Write("Throw away another item? (y/n): ");
+                    Console.WriteLine("\n---------- THROW ITEM ----------");
+                    Console.Write("\nThrow away another item?");
+                    Console.Write("[Y] Yes");
+                    Console.Write("[ANY OTHER INPUT] No");
                     string throwAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
                     throwAnother = throwAnswer.StartsWith("y");
                 }
