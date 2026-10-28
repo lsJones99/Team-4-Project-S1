@@ -52,7 +52,9 @@ namespace TextBasedGame
         static int playerSpellDmg = 0;
         static int playerMagicResist = 0;
         static int playerWpnStat = 0;
+        static int playerWpnHitStat = 0;
         static int playerAmrStat = 0;
+        static int playerAmrDge = 0;
         static string playerWpn = "";
         static string playerAmr = "";
         static int playerX = 2; // Start in Dark Forest
@@ -66,18 +68,35 @@ namespace TextBasedGame
         
         //Shop
         static int healingPotionPrice = 4;
+        static int manaPotionPrice = 6;
+        static int greaterPotionLV = 4;
+        static int healingGreaterPotionPrice = 12;
+        static int manaGreaterPotionPrice = 18;
         static int rustyArmourPrice = 8;
+        static int leatherArmourPrice = 7;
         static int steelSwordPrice = 20;
-        static int steelSwordLV = 5;
+        static int steelLV = 5;
         static int steelArmourPrice = 20;
-        static int steelArmourLV = 5;
+        static int studdedArmourPrice = 18;
         static bool angeredMerchant = false;
 
         //Items
         static int rustySwordDMG = 3;
         static int rustyArmourDEF = 3;
+        static int leatherArmourDGE = 5;
+        static int oldBowDMG = 3 + playerRangeDmg;
+        static int oldBowHIT = playerRangeHit;
         static int steelSwordDMG = 8;
         static int steelArmourDEF = 8;
+        static int studLeathArmourDGE = 15;
+        static int steelframeDMG = 8 + playerRangeDmg;
+        static int steelframeHIT = 1 + playerRangeHit;
+        static int spellSwordDMG = 2 + playerSpellDmg;
+        static int spellBowDMG = 2 + playerSpellDmg;
+        static int spellBowHIT = 2 + playerRangeHit;
+        static int throneCleaveDMG = 14;
+        static int witherStringDMG = 14;
+        static int witherStringHIT = 4 + playerRangeHit;
         static bool shellFound = false;
 
         //Quest
@@ -132,7 +151,7 @@ namespace TextBasedGame
 
         //load available enemies
         //small enemies
-        static Enemies[] enemies = new Enemies[4];
+        static Enemies[] enemies = new Enemies[20];
         static int enemyCount = 0;
 
         //bosses
@@ -361,7 +380,9 @@ namespace TextBasedGame
                 $"playerSpellMiscast={playerSpellMiscast}",
 
                 $"playerWpnStat={playerWpnStat}",
+                $"playerWpnHitStat={playerWpnHitStat}",
                 $"playerAmrStat={playerAmrStat}",
+                $"playerAmrDge={playerAmrDge}",
 
                 $"markerScreenX={markerScreenX}",
                 $"markerScreenY={markerScreenY}",
@@ -503,8 +524,14 @@ namespace TextBasedGame
                 else if (key == "playerWpnStat")
                     int.TryParse(value, out playerWpnStat);
 
+                else if (key == "playerWpnHitStat")
+                    int.TryParse(value, out playerWpnHitStat);
+
                 else if (key == "playerAmrStat")
                     int.TryParse(value, out playerAmrStat);
+
+                else if (key == "playerAmrDge")
+                    int.TryParse(value, out playerAmrDge);
 
                 else if (key == "markerScreenX")
                     int.TryParse(value, out markerScreenX);
@@ -584,16 +611,31 @@ namespace TextBasedGame
             CenterText("You are a student from Otago Polytechnic, walking home after a long day of classes.");
             Console.ReadLine();
 
+            CenterText("The streets are quiet, and your mind is occupied with thoughts of assignments and upcoming deadlines.");
+            Console.ReadLine();
+
+            CenterText("You bought yourself a spaghetti for takeaway");
+            Console.ReadLine();
+
             CenterText("Without warning, a blinding light surrounds you.");
             Console.ReadLine();
 
             CenterText("When you open your eyes, you find yourself lying in an unfamiliar forest.");
             Console.ReadLine();
 
-            CenterText("Towering trees surround you, and a cold wind moves through their branches.");
+            CenterText("Towering trees surround you, their branches blocking most of the sunlight. The air feels unfamiliar, and strange sounds echo through the forest.");
+            Console.ReadLine();
+
+            CenterText("You struggle to your feet, trying to understand what just happened.");
             Console.ReadLine();
 
             CenterText("A mysterious voice echoes inside your mind...");
+            Console.ReadLine();
+
+            CenterText("At last... you have arrived.");
+            Console.ReadLine();
+
+            CenterText("You look around, but there is nobody in sight.");
             Console.ReadLine();
 
             CenterText("\"Hero, tell me your name.\"");
@@ -609,40 +651,94 @@ namespace TextBasedGame
             CenterText($"\"{playerName}... A fitting name for the one chosen to save our world.\"");
             Console.ReadLine();
 
-            CenterText("You demand answers, but the mysterious voice ignores your questions.");
+            CenterText("You demand to know why you are here.");
             Console.ReadLine();
 
-            CenterText("\"Our kingdom is being ravaged by creatures of darkness.\"");
+            CenterText("\"The land is suffering. Darkness spreads, and its people grow desperate. But there are those who still fight to protect what remains.\"");
             Console.ReadLine();
 
-            CenterText("\"Travel north and find the village of Greymoor. Your journey begins there.\"");
+            CenterText("\"Seek out the merchant. He may appear to be an ordinary trader, but he knows more about the troubles of this land than most.\"");
             Console.ReadLine();
+
+            CenterText("\"Help him, and perhaps you will discover why you were brought here.\"");
 
             CenterText("Before you can ask anything else, the voice disappears.");
             Console.ReadLine();
 
-            CenterText("You are alone. You have no idea where you are or how you arrived here.");
+            CenterText("\"Your journey is your own now. Choose your path wisely.\"");
             Console.ReadLine();
 
-            CenterText("Suddenly, you hear something moving in the nearby bushes...");
+            CenterText("Silence returns to the forest");
             Console.ReadLine();
 
-            CenterText("You take a deep breath and prepare to move.");
-            CenterText("Your journey begins now.");
+            CenterText("You are alone in an unfamiliar world, with no clear way home.");
             Console.ReadLine();
 
+            CenterText("For now, you have only one lead.");
+            Console.ReadLine();
 
+            CenterText("Find the merchant.");
+            Console.ReadLine();
         }
 
         //Outro
         static void Outro()
         {
-            CenterText($"{playerName}, thank you for saving our world!");
+            Console.Clear();
+
+            CenterText($"Godghetti, the mighty Spaghetti God, has finally fallen.");
             Console.ReadLine();
 
-            CenterText("You get transported back to where you were before");
+            CenterText("The skies of Ogatoberg clear, and peace returns to the land.");
             Console.ReadLine();
 
+            CenterText("A familiar voice echoes in your mind.");
+            Console.ReadLine();
+
+            CenterText($"\"{playerName}... You have saved our world. Your courage shall never be forgotten.\"");
+            Console.ReadLine();
+
+            CenterText("\"But now, it is time to return home.\"");
+            Console.ReadLine();
+
+            CenterText("A blinding light surrounds you.");
+            Console.ReadLine();
+
+            CenterText("...");
+            Console.ReadLine();
+
+            CenterText("\"OI! WATCH OUT WHERE YOU'RE GOING!\"");
+            Console.ReadLine();
+
+            CenterText("You suddenly snap back to reality. You're standing outside Otago Polytechnic.");
+            Console.ReadLine();
+
+            CenterText("Your takeaway container is empty.");
+            Console.ReadLine();
+
+            CenterText("Your spaghetti is scattered across the pavement.");
+            Console.ReadLine();
+
+            CenterText("You stare at the mess.");
+            Console.ReadLine();
+
+            CenterText("Ogatoberg... The Undead Twins... The Paladin... The Warlock... Godghetti...");
+            Console.ReadLine();
+
+            CenterText("It was all a daydream.");
+            Console.ReadLine();
+
+            CenterText("You look down at your ruined lunch.");
+            Console.ReadLine();
+
+            CenterText("\"All that effort... for nothing.\"");
+            Console.ReadLine();
+
+            CenterText("Suddenly, a familiar voice whispers:");
+            Console.ReadLine();
+
+            CenterText("\"Five-second rule, chosen one.\"");
+            Console.ReadLine();
         }
         //Inventory Check for item
         static bool InvCheck(string itemNeeded)
@@ -1160,6 +1256,9 @@ namespace TextBasedGame
             //enemy dodge
             int enemyDodge;
 
+            //base damage
+            int baseDamage = rand.Next(1, 5);
+
             //initial display
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
@@ -1184,15 +1283,11 @@ namespace TextBasedGame
                     int critRoll = rand.Next(1, 101);
                     bool isCritical = critRoll <= finalCritChance;
 
+                    finalAttackDamage = baseDamage + playerDamage + playerMeleeDmg;
                     //if attack is critical
                     if (isCritical)
                     {
-                        finalAttackDamage = (playerDamage + playerMeleeDmg) * 2;
-                    }
-
-                    else
-                    {
-                        finalAttackDamage = playerDamage + playerMeleeDmg;
+                        finalAttackDamage *=2;
                     }
 
                     //calculate damage base on player and enemy stats
@@ -1288,6 +1383,7 @@ namespace TextBasedGame
 
         static bool MagicSubMenu(char spellSelect, string enemyName, ref int enemyHealth, Enemies enemy)
         {
+            int spellDamage;
             int enemyMagicResist = Math.Max(0, enemy.enemyMagicResistance);
             int finalMagicDamage;
             switch (spellSelect)
@@ -1305,8 +1401,8 @@ namespace TextBasedGame
 
                     if (casting <= 75)
                     {
-                        playerDamage = rand.Next(8, 25) + playerSpellDmg;
-                        finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                        spellDamage = rand.Next(8, 25) + playerSpellDmg;
+                        finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                         enemyHealth -= finalMagicDamage;
 
                         string message =
@@ -1317,11 +1413,11 @@ namespace TextBasedGame
                     }
                     else
                     {
-                        playerDamage = rand.Next(8, 25) - playerMagicResist;
-                        playerHealth -= playerDamage;
+                        spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                        playerHealth -= spellDamage;
 
                         string message =
-                            $"The spell miscasts! You take {playerDamage} damage.";
+                            $"The spell miscasts! You take {spellDamage} damage.";
 
                         Console.WriteLine(message);
                         AddCombatLog(message);
@@ -1350,8 +1446,8 @@ namespace TextBasedGame
 
                         if (casting <= 55)
                         {
-                            playerDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = rand.Next(15, 35) + (playerSpellDmg * 2);
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1362,11 +1458,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1398,8 +1494,8 @@ namespace TextBasedGame
 
                         if (casting <= 45)
                         {
-                            playerDamage = rand.Next(20, 45) + (playerSpellDmg * 2);
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = rand.Next(20, 45) + (playerSpellDmg * 2);
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1410,11 +1506,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1446,8 +1542,8 @@ namespace TextBasedGame
 
                         if (casting <= 35)
                         {
-                            playerDamage = (rand.Next(10, 30)) + (5 * playerSpellDmg);
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = (rand.Next(10, 30)) + (5 * playerSpellDmg);
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1458,11 +1554,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1494,8 +1590,8 @@ namespace TextBasedGame
 
                         if (casting <= 20)
                         {
-                            playerDamage = (15 * playerSpellDmg) - rand.Next(0, (3 * playerSpellDmg));
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = (15 * playerSpellDmg) - rand.Next(0, (3 * playerSpellDmg));
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1506,11 +1602,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1542,8 +1638,8 @@ namespace TextBasedGame
 
                         if (casting <= 10)
                         {
-                            playerDamage = playerSpellDmg * (rand.Next(10, 21));
-                            finalMagicDamage = Math.Max(0, playerDamage - enemyMagicResist);
+                            spellDamage = playerSpellDmg * (rand.Next(10, 21));
+                            finalMagicDamage = Math.Max(0, spellDamage - enemyMagicResist);
                             enemyHealth -= finalMagicDamage;
 
                             string message =
@@ -1554,11 +1650,11 @@ namespace TextBasedGame
                         }
                         else
                         {
-                            playerDamage = rand.Next(8, 25) - playerMagicResist;
-                            playerHealth -= playerDamage;
+                            spellDamage = Math.Max(0, rand.Next(8, 25) - playerMagicResist);
+                            playerHealth -= spellDamage;
 
                             string message =
-                                $"The spell miscasts! You take {playerDamage} damage.";
+                                $"The spell miscasts! You take {spellDamage} damage.";
 
                             Console.WriteLine(message);
                             AddCombatLog(message);
@@ -1772,7 +1868,6 @@ namespace TextBasedGame
                     switch (combatChoice)
                     {
                         case 'a':
-                            playerDamage = rand.Next(playerMeleeDmg + 5, playerMeleeDmg + 15);
                             playerTurnCompleted = AttackCommand(ref playerDamage, ref enemyName, ref enemyHealth, enemy);
                             break;
 
@@ -1962,9 +2057,33 @@ namespace TextBasedGame
             }
         }
 
+        //load enemies according to finished main quests
+        static int GetEnemyStage()
+        {
+            if (completedQuests.Contains("main_quest_03"))
+                return 3;
+            if (completedQuests.Contains("main_quest_02"))
+                return 2;
+            if (completedQuests.Contains("main_quest_01"))
+                return 1;
+            return 0;
+        }
+
         //Check for enemy encounter
         static void CheckForEncounter()
         {
+
+            //load enemy loader
+            int stage = GetEnemyStage();
+            int startIndex = stage * 5;
+            int endIndex = Math.Min(startIndex + 5, enemyCount);
+
+            if (startIndex >= endIndex)
+            {
+                Console.WriteLine("No enemies available for this stage.");
+                return;
+            }
+
             if ((playerX == 2 && playerY == 3) || (playerX == 0 && playerY == 4))
             {
                 return;
@@ -1973,14 +2092,8 @@ namespace TextBasedGame
 
             if (encounterChance <= 30)
             {
-                if(enemyCount == 0)
-                {
-                    Console.WriteLine("No enemies were loaded");
-                    Console.ReadLine();
-                    return;
-                }
 
-                int index = rand.Next(0, enemyCount);
+                int index = rand.Next(startIndex, endIndex);
                 Enemies encounteredEnemy = enemies[index];
 
                 Console.WriteLine($"\nA {encounteredEnemy.enemyName} suddenly appears!");
@@ -2124,12 +2237,17 @@ namespace TextBasedGame
             Console.Clear();
             Console.WriteLine("\n========== MERCHANTS SHOP ==========");
             Console.WriteLine($"1. Healing Potion: {healingPotionPrice}G");
-            Console.WriteLine($"2. Rusty Armour: {rustyArmourPrice}G");
-            Console.WriteLine($"3. [LV5] Steel Sword: {steelSwordPrice}G");
-            Console.WriteLine($"4. [LV5] Steel Armour: {steelArmourPrice}G");
+            Console.WriteLine($"2. Mana Potion: {manaPotionPrice}G");
+            Console.WriteLine($"3. Rusty Armour: {rustyArmourPrice}G");
+            Console.WriteLine($"4. Leather Armour: {leatherArmourPrice}G");
+            Console.WriteLine($"5. [LV5] Greater Healing Potion: {healingGreaterPotionPrice}G");
+            Console.WriteLine($"6. [LV5] Greater Mana Potion: {manaGreaterPotionPrice}G");
+            Console.WriteLine($"7. [LV5] Steel Sword: {steelSwordPrice}G");
+            Console.WriteLine($"8. [LV5] Steel Armour: {steelArmourPrice}G");
+            Console.WriteLine($"9. [LV5] Studded Leather Armour: {studdedArmourPrice}G");
             if (shellFound == true)
             {
-                Console.WriteLine("9. Offer shell");
+                Console.WriteLine("0. Offer shell");
             }
 
             Console.WriteLine("\n[NUM] Purchase Item");
@@ -2153,20 +2271,38 @@ namespace TextBasedGame
                         break;
 
                     case '2':
-                        CheckGold("Rusty Armour", rustyArmourPrice, 0);
+                        CheckGold("Mana Potion", manaPotionPrice, 0);
                         break;
 
                     case '3':
-                        CheckGold("Steel Sword", steelSwordPrice, steelSwordLV);
+                        CheckGold("Rusty Armour", rustyArmourPrice, 0);
                         break;
 
                     case '4':
-                        CheckGold("Steel Armour", steelArmourPrice, steelArmourLV);
+                        CheckGold("Leather Armour", leatherArmourPrice, 0);
+                        break;
+                    case '5':
+                        CheckGold("Greater Healing Potion", healingGreaterPotionPrice, greaterPotionLV);
+                        break;
+
+                    case '6':
+                        CheckGold("Greater Mana Potion", manaGreaterPotionPrice, greaterPotionLV);
+                        break;
+
+                    case '7':
+                        CheckGold("Steel Sword", steelSwordPrice, steelLV);
+                        break;
+
+                    case '8':
+                        CheckGold("Steel Armour", steelArmourPrice, steelLV);
                         break;
 
                     case '9':
-                        SellShell(ref angeredMerchant);
+                        CheckGold("Studded Leather Armour", studdedArmourPrice, steelLV);
+                        break;
 
+                    case '0':
+                        SellShell(ref angeredMerchant);
                         break;
 
                     default:
@@ -2248,15 +2384,18 @@ namespace TextBasedGame
                     playerGold -= price;
                     Console.WriteLine($"\nYou bought the {item}! You now have {playerGold} gold.");
                     AddItem(item);
+                    PauseStory();
                 }
                 else
                 {
                     Console.WriteLine("\nYou do not have enough gold to buy this.");
+                    PauseStory();
                 }
             }
             else
             {
                 Console.WriteLine("\nYou are not a high enough level to buy this. The merchant only sells his wares to those who deserve them.");
+                PauseStory();
             }
         }
 
@@ -2690,6 +2829,7 @@ namespace TextBasedGame
             {
                 // Melee Weapon pool
                 case 1:
+                    Console.WriteLine("\nYou find a melee weapon");
                     select = rand.Next(1, 11);
                     switch (select)
                     {
@@ -2709,6 +2849,7 @@ namespace TextBasedGame
                     break;
                 // Armour pool
                 case 2:
+                    Console.WriteLine("\nYou find a set of armour");
                     select = rand.Next(1, 10);
                     switch (select)
                     {
@@ -2729,6 +2870,7 @@ namespace TextBasedGame
                     break;
                 // Range Weapon pool
                 case 3:
+                    Console.WriteLine("\nYou find a ranged weapon");
                     select = rand.Next(1, 11);
                     switch (select)
                     {
@@ -2748,6 +2890,7 @@ namespace TextBasedGame
                     break;
                 // Magic Item pool
                 case 4:
+                    Console.WriteLine("You find a magic item, unlocking new spells");
                     select = rand.Next(1, 12);
                     switch (select)
                     {
@@ -2771,6 +2914,7 @@ namespace TextBasedGame
                     break;
                 // Potion pool
                 case 5:
+                    Console.WriteLine("\nYou find a potion");
                     select = rand.Next(1, 11);
                     switch (select)
                     {
@@ -2895,6 +3039,7 @@ namespace TextBasedGame
                     // What happens when equipping weapons, calculates stat change as well.
                     case "Rusty Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
                         playerMeleeDmg -= playerWpnStat;
                         playerWpnStat = rustySwordDMG;
                         playerMeleeDmg += playerWpnStat;
@@ -2902,24 +3047,97 @@ namespace TextBasedGame
 
                     case "Steel Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
                         playerMeleeDmg -= playerWpnStat;
                         playerWpnStat = steelSwordDMG;
                         playerMeleeDmg += playerWpnStat;
                         break;
 
+                    case "Spellfire Sword":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = spellSwordDMG;
+                        playerMeleeDmg += playerWpnStat;
+                        break;
+                    case "Throne-Cleaver":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = throneCleaveDMG;
+                        playerMeleeDmg += playerWpnStat;
+                        break;
+
+                    case "Old Bow":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = oldBowDMG;
+                        playerWpnHitStat = oldBowHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
+
+                    case "Steelframe Bow":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = steelframeDMG;
+                        playerWpnHitStat = steelframeHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
+
+                    case "Spellfire Bow":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = spellBowDMG;
+                        playerWpnHitStat = spellBowHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
+
+                    case "Wither-String":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = witherStringDMG;
+                        playerWpnHitStat = witherStringHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
                     // What happens when equipping armours, calculates stat change as well.
                     case "Rusty Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
                         playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
                         playerAmrStat = rustyArmourDEF;
                         playerPhysicalResist += playerAmrStat;
+                        break;
+
+                    case "Leather Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
+                        playerAmrDge = leatherArmourDGE;
+                        playerDodge += playerAmrDge;
                         break;
 
                     case "Steel Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
                         playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
                         playerAmrStat = steelArmourDEF;
                         playerPhysicalResist += playerAmrStat;
+                        break;
+
+                    case "Studded Leather Armour":
+                        equipAmr(ref useChoice, ref slotEmpty);
+                        playerPhysicalResist -= playerAmrStat;
+                        playerDodge -= playerAmrDge;
+                        playerAmrDge = studLeathArmourDGE;
+                        playerDodge += playerAmrDge;
                         break;
 
                     // What happens when using a healing potion
