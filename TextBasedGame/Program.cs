@@ -2265,6 +2265,145 @@ namespace TextBasedGame
         {
             switch ((playerX, playerY))
             {
+                // WITCH'S HUT (0,4)
+                case (0, 4):
+                    {
+                        Console.WriteLine("\nYou approach the Witch's Hut.");
+
+                        if (acceptedQuests.Contains("side_merchant_02"))
+                        {
+                            Console.WriteLine("The witch accepts the merchant's delivery.");
+                            GainXP(30);
+
+                            if (CompleteQuest("side_merchant_02"))
+                            {
+                                Console.WriteLine("Quest completed: The Merchant's Delivery!");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("An old witch watches you from the doorway.");
+                        }
+                        break;
+                        //Later add witch dialogue
+                    }
+
+                // DARK CAVE (1,4)
+                case (1, 4):
+                    Console.WriteLine("\nYou investigate the dark cave.");
+                    Console.WriteLine("Strange noises echo through the tunnels.");
+                    PauseStory();
+                    break;
+
+                // BEACH (2,4)
+                case (2, 4):
+                    Console.WriteLine("\nYou search the beach...");
+                    if (shellFound == false)
+                    {
+                        Console.WriteLine("\nYou found a unique looking shell! You can hear the sounds of the ocean when you hold it up to your ear...");
+                        Console.WriteLine("Someone might want to buy this.");
+                        if (inventoryCount == inventoryMaxSize)
+                        {
+                            Console.WriteLine("\nBut wait! Your pockets are too full to carry the shell.");
+                            PauseStory();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            AddItem("Unique Shell");
+                            shellFound = true;
+                            PauseStory();
+                        }
+                    }
+                    else if (shellFound == true)
+                    {
+                        Console.WriteLine("\nIt seems there aren't any more cool shells to find...");
+                        PauseStory();
+                    }
+                    break;
+
+                // THE LIGHT KINGDOM (3,4)
+                case (3, 4):
+                    Console.WriteLine("\nFrom the large fields in front, you stand and stare upon the great Light Kingdom.");
+                    Console.WriteLine("Its sheer size and sense of importance to this world overwhelms you. How many stories are out there? How much does this world contain?");
+                    Console.WriteLine("These questions are irrelevant to your purpose. Best to keep marching on your quest.");
+                    PauseStory();
+                    break;
+
+                // EVIL TWINS (4,4)
+                case (4, 4):
+                    Console.WriteLine("\nYou hear rustling from the twisting brambles");
+                    Console.ReadLine();
+                    if (acceptedQuests.Contains("main_quest_01"))
+                    {
+                        Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
+                        Console.ReadLine();
+                        bool bossDefeated = BossLoader(0);
+
+                        if (bossDefeated)
+                        {
+                            Console.WriteLine("The Undead twins lie defeated");
+                            Console.ReadLine();
+                            GainXP(100);
+                            CompleteQuest("main_quest_01");
+                            AddItem("Rusted Key");
+                            AddItem("Twin's Journal");
+                            JournalHint();
+                            CompleteQuest("main_quest_01");
+                        }
+
+                        bool given1 = GiveQuest("main_quest_02");
+                        if (given1)
+                        {
+                            Console.WriteLine("New Quest: The Broken Paladin");
+                        }
+                        bool given2 = GiveQuest("main_quest_03");
+                        if (given2)
+                        {
+                            Console.WriteLine("New Quest: The Devil's Dealer");
+                        }
+                        if (completedQuests.Contains("main_quest_01"))
+                        {
+                            Console.WriteLine("The brambles are now silent");
+                        }
+                    }
+                    else if ((completedQuests.Contains("main_quest_01")) && ((InvCheck("Rusted Key") == false)))
+                    {
+                        Console.WriteLine("The Rusted key lies on the ground where you left it");
+                        AddItem("Rusted Key");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You found nothing!");
+                    }
+                    break;
+
+                // ROYAL ARMY (0,3)
+                case (0, 3):
+                    Console.WriteLine("\nYou approach the Royal Army's camp.");
+                    Console.WriteLine("Soldiers patrol the area.");
+
+                    // Later: TalkToCommander();
+                    break;
+
+                // TEMPLE OF SPAGHETTI GOD (1,3)
+                case (1, 3):
+                    bool access = FinalBossReq();
+                    if (access == true)
+                    {
+                        Console.ReadLine();
+                        Console.WriteLine("THE GOD!");
+                        bool bossDefeated = BossLoader(3);
+                        if (bossDefeated)
+                        {
+                            Console.WriteLine("???");
+                            Console.ReadLine();
+                            CompleteQuest("main_quest_04");
+                            gameFinished = true;
+                        }
+                    }
+                    break;
+
                 // MARKET (2,3)
                 case (2, 3):
                     {
@@ -2321,38 +2460,31 @@ namespace TextBasedGame
                         break;
                     }
 
-                // BEACH (2,4)
-                case (2, 4):
-                    Console.WriteLine("\nYou search the beach...");
-                    if (shellFound == false)
-                    {
-                        Console.WriteLine("\nYou found a unique looking shell! You can hear the sounds of the ocean when you hold it up to your ear...");
-                        Console.WriteLine("Someone might want to buy this.");
-                        if (inventoryCount == inventoryMaxSize)
-                        {
-                            Console.WriteLine("\nBut wait! Your pockets are too full to carry the shell.");
-                            PauseStory();
-                        }
-                        else
-                        {
-                            Console.WriteLine();
-                            AddItem("Unique Shell");
-                            shellFound = true;
-                            PauseStory();
-                        }
-                    }
-                    else if (shellFound == true)
-                    {
-                        Console.WriteLine("\nIt seems there aren't any more cool shells to find...");
-                        PauseStory();
-                    }
+                // WILDERNESS (3,3) & (1,2)
+                case (3, 3):
+                case (1, 2):
+                    Console.WriteLine("\nThe wilderness stretches far beyond.");
+                    Console.WriteLine("Wildlife and foliage populate these vast lands.");
+                    Console.WriteLine("It feels as though this area could be treacherous.");
+                    PauseStory();
                     break;
 
-                // THE LIGHT KINGDOM (3,4)
-                case (3, 4):
-                    Console.WriteLine("\nFrom the large fields in front, you stand and stare upon the great Light Kingdom.");
-                    Console.WriteLine("Its sheer size and sense of importance to this world overwhelms you. How many stories are out there? How much does this world contain?");
-                    Console.WriteLine("These questions are irrelevant to your purpose. Best to keep marching on your quest.");
+                // ANCIENT GROUNDS (4,3)
+                case (4, 3):
+                    Console.WriteLine("\nThe resting grounds of the ancient ones.");
+                    Console.WriteLine("You can feel a rumbling coming from deep beneath the soil...");
+                    Console.WriteLine("Then nothing.");
+                    Console.WriteLine("It's almost as though the story behind these sacred tombs are meant for you in a different life.");
+                    PauseStory();
+                    break;
+
+                // THE LOST GIANT (0,2)
+                case (0, 2):
+                    Console.WriteLine("\nYou investigate the grounds...");
+                    Console.WriteLine("...");
+                    Console.WriteLine("That was until you saw the lost giant.");
+                    Console.WriteLine("...");
+                    Console.WriteLine("You immediately stop investigating the grounds.");
                     PauseStory();
                     break;
 
@@ -2386,95 +2518,44 @@ namespace TextBasedGame
                     PauseStory();
                     break;
 
-
-                // WITCH'S HUT (0,4)
-                case (0, 4):
-                    {
-                        Console.WriteLine("\nYou approach the Witch's Hut.");
-
-                        if (acceptedQuests.Contains("side_merchant_02"))
-                        {
-                            Console.WriteLine("The witch accepts the merchant's delivery.");
-                            GainXP(30);
-
-                            if (CompleteQuest("side_merchant_02"))
-                            {
-                                Console.WriteLine("Quest completed: The Merchant's Delivery!");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("An old witch watches you from the doorway.");
-                        }
-                        break;
-                        //Later add witch dialogue
-                    }
-
-
-                // DARK CAVE (1,4)
-                case (1, 4):
-                    Console.WriteLine("\nYou investigate the dark cave.");
-                    Console.WriteLine("Strange noises echo through the tunnels.");
+                // CRUSADERS (3,2)
+                case (3, 2):
+                    Console.WriteLine("\nThe holy crusaders; believed to hail from Renard's keep.");
+                    Console.WriteLine("You get the feeling that it'd be best to leave them alone, at least for now.");
+                    PauseStory();
                     break;
 
-
-                // ROYAL ARMY (0,3)
-                case (0, 3):
-                    Console.WriteLine("\nYou approach the Royal Army's camp.");
-                    Console.WriteLine("Soldiers patrol the area.");
-
-                    // Later: TalkToCommander();
+                // THE LOST CITY (4,2)
+                case (4, 2):
+                    Console.WriteLine("\nYou investigate the entrance to the lost city...");
+                    Console.WriteLine("It seems the bridge to take you into the city is broken.");
+                    Console.WriteLine("Perhaps this could become accessible if the great developers of legend find a purpose to rebuild it.");
+                    Console.WriteLine("(You wonder who the hell the \"great developers of legend\" are)");
+                    PauseStory();
                     break;
 
-                //UNDEAD TWINS BOSS FIGHT (evil twins)
-                case (4, 4):
-                    Console.WriteLine("\nYou hear rustling from the twisting brambles");
-                    Console.ReadLine();
-                    if (acceptedQuests.Contains("main_quest_01"))
-                    {
-                        Console.WriteLine("Suddenly, a pair of undead rush you from the brambles!");
-                        Console.ReadLine();
-                        bool bossDefeated = BossLoader(0);
-                        
-                        if(bossDefeated)
-                        {
-                            Console.WriteLine("The Undead twins lie defeated");
-                            Console.ReadLine();
-                            GainXP(100);
-                            CompleteQuest("main_quest_01");
-                            AddItem("Rusted Key");
-                            AddItem("Twin's Journal");
-                            JournalHint();
-                            CompleteQuest("main_quest_01");
-                        }
-
-                        bool given1 = GiveQuest("main_quest_02");
-                        if (given1)
-                        {
-                            Console.WriteLine("New Quest: The Broken Paladin");
-                        }
-                        bool given2 = GiveQuest("main_quest_03");
-                        if (given2)
-                        {
-                            Console.WriteLine("New Quest: The Devil's Dealer");
-                        }
-                        if (completedQuests.Contains("main_quest_01"))
-                        {
-                            Console.WriteLine("The brambles are now silent");
-                        }
-                    }
-                    else if ((completedQuests.Contains("main_quest_01")) && ((InvCheck("Rusted Key") == false)))
-                    {
-                        Console.WriteLine("The Rusted key lies on the ground where you left it");
-                        AddItem("Rusted Key");
-                    }
-                    else
-                    {
-                        Console.WriteLine("You found nothing!");
-                    }
+                // GATE TO HELL (0,1)
+                case (0, 1):
+                    Console.WriteLine("\nYou investigate the gate to hell...");
+                    Console.WriteLine("Sounds of utter pain, suffering and screaming echo from deep below.");
+                    Console.WriteLine("All you can see through the gate is steps descending into the earth, with a deep red glow emanating from the depths.");
+                    Console.WriteLine("You think to yourself that it'd be best to leave this alone.");
+                    PauseStory();
                     break;
 
-                //PALADIN BOSS FIGHT (light knight camp)
+                // ALL SEEING EYE (1,1)
+                case (1, 1):
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // HOLY RIVER (2,1)
+                case (2, 1):
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // CAMP OF LIGHT KNIGHTS (3,1)
                 case (3, 1):
                     if (acceptedQuests.Contains("main_quest_02"))
                     {
@@ -2496,7 +2577,25 @@ namespace TextBasedGame
 
                     break;
 
-                //WARLOCK BOSS FIGHT (casino)
+                // JUNKYARD (4,1)
+                case (4, 1):
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // SANDS OF LOST ONES (0,0)
+                case (0, 0):
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // RENARD'S KEEP (1,0)
+                case (1, 0):
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // CASINO (2,0)
                 case (2, 0):
                     if (acceptedQuests.Contains("main_quest_03"))
                     {
@@ -2522,26 +2621,22 @@ namespace TextBasedGame
                     }
                     break;
 
-                //FINAL BOSS (temple)
-                case (1, 3):
-                    bool access = FinalBossReq();
-                    if (access == true)
-                    {
-                        Console.ReadLine();
-                        Console.WriteLine("THE GOD!");
-                        bool bossDefeated = BossLoader(3);
-                        if (bossDefeated)
-                        {
-                            Console.WriteLine("???");
-                            Console.ReadLine();
-                            CompleteQuest("main_quest_04");
-                            gameFinished = true;
-                        }
-                    }
-                    break;
-                // ALL OTHER LOCATIONS
-                default:
+                // SONG OF SIREN (3,0)
+                case (3, 0):
                     Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // GNOME ISLAND (4,0)
+                case (4, 0):
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    PauseStory();
+                    break;
+
+                // FAILSAFE (probably cant show up)
+                default:
+                    Console.WriteLine("\nYou tripped over, idiot. Investigation ruined.");
+                    PauseStory();
                     break;
             }
         }
