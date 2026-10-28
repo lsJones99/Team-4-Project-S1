@@ -2746,6 +2746,7 @@ namespace TextBasedGame
                                 Console.WriteLine("It is very rejuvinating! +10 Max HP");
                                 playerMaxHealth += 10;
                                 playerHealth += 10;
+                                goneSwimming = true;
                             }
                             else
                             {
