@@ -614,6 +614,9 @@ namespace TextBasedGame
             CenterText("The streets are quiet, and your mind is occupied with thoughts of assignments and upcoming deadlines.");
             Console.ReadLine();
 
+            CenterText("You bought yourself a spaghetti for takeaway");
+            Console.ReadLine();
+
             CenterText("Without warning, a blinding light surrounds you.");
             Console.ReadLine();
 
@@ -662,7 +665,7 @@ namespace TextBasedGame
             CenterText("Before you can ask anything else, the voice disappears.");
             Console.ReadLine();
 
-            CenterText("\"Your journey is your own now.Choose your path wisely.\"");
+            CenterText("\"Your journey is your own now. Choose your path wisely.\"");
             Console.ReadLine();
 
             CenterText("Silence returns to the forest");
@@ -681,6 +684,8 @@ namespace TextBasedGame
         //Outro
         static void Outro()
         {
+            Console.Clear();
+
             CenterText($"Godghetti, the mighty Spaghetti God, has finally fallen.");
             Console.ReadLine();
 
