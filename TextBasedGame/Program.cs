@@ -2136,6 +2136,13 @@ namespace TextBasedGame
                     }
                     break;
 
+                // THE LIGHT KINGDOM (3,4)
+                case (3, 4):
+                    Console.WriteLine("\nFrom the large fields in front, you stand and stare upon the great Light Kingdom.");
+                    Console.WriteLine("Its sheer size and sense of importance to this world overwhelms you. How many stories are out there? How much does this world contain?");
+                    Console.WriteLine("These questions are irrelevant to your purpose. Best to keep marching on your quest.");
+                    PauseStory();
+                    break;
 
                 // DARK FOREST (2,2)
                 case (2, 2):
@@ -2164,6 +2171,7 @@ namespace TextBasedGame
                             AddItem("Staff of Fireball");
                             break;
                     }
+                    PauseStory();
                     break;
 
 
@@ -2621,10 +2629,6 @@ namespace TextBasedGame
                         PauseStory();
                         break;
 
-<<<<<<< HEAD
-                    case "Unique Shell":
-                        Console.WriteLine("The sounds of the ocean are beautiful... Someone may be willing to purchase this.");
-=======
                     case "Mana Potion":
                         playerMana = playerMana + 10;
                         slotEmpty = true;
@@ -2658,7 +2662,11 @@ namespace TextBasedGame
                             playerMana = playerMaxMana;
                         }
                         Console.WriteLine($"Your MP is now {playerMana}/{playerMaxMana}.");
->>>>>>> 7502155756809a4ec6c969b58a966748aaebe761
+                        PauseStory();
+                        break;
+
+                    case "Unique Shell":
+                        Console.WriteLine("The sounds of the ocean are beautiful... Someone may be willing to purchase this.");
                         PauseStory();
                         break;
 
