@@ -66,18 +66,35 @@ namespace TextBasedGame
         
         //Shop
         static int healingPotionPrice = 4;
+        static int manaPotionPrice = 6;
+        static int greaterPotionLV = 4;
+        static int healingGreaterPotionPrice = 12;
+        static int manaGreaterPotionPrice = 18;
         static int rustyArmourPrice = 8;
+        static int leatherArmourPrice = 7;
         static int steelSwordPrice = 20;
-        static int steelSwordLV = 5;
+        static int steelLV = 5;
         static int steelArmourPrice = 20;
-        static int steelArmourLV = 5;
+        static int studdedArmourPrice = 18;
         static bool angeredMerchant = false;
 
         //Items
         static int rustySwordDMG = 3;
         static int rustyArmourDEF = 3;
+        static int leatherArmourDGE = 5;
+        static int oldBowDMG = 3 + playerRangeDmg;
+        static int oldBowHIT = playerRangeHit;
         static int steelSwordDMG = 8;
         static int steelArmourDEF = 8;
+        static int studLeathArmourDGE = 15;
+        static int steelframeDMG = 8 + playerRangeDmg;
+        static int steelframeHIT = playerRangeHit;
+        static int spellSwordDMG = 2 + playerSpellDmg;
+        static int spellBowDMG = 2 + playerSpellDmg;
+        static int spellBowHIT = playerRangeHit;
+        static int throneCleaveDMG = 14;
+        static int witherStringDMG = 14;
+        static int witherStringHIT = playerRangeHit;
         static bool shellFound = false;
 
         //Quest
@@ -2124,12 +2141,17 @@ namespace TextBasedGame
             Console.Clear();
             Console.WriteLine("\n========== MERCHANTS SHOP ==========");
             Console.WriteLine($"1. Healing Potion: {healingPotionPrice}G");
-            Console.WriteLine($"2. Rusty Armour: {rustyArmourPrice}G");
-            Console.WriteLine($"3. [LV5] Steel Sword: {steelSwordPrice}G");
-            Console.WriteLine($"4. [LV5] Steel Armour: {steelArmourPrice}G");
+            Console.WriteLine($"2. Mana Potion: {manaPotionPrice}G");
+            Console.WriteLine($"3. Rusty Armour: {rustyArmourPrice}G");
+            Console.WriteLine($"4. Leather Armour: {leatherArmourPrice}G");
+            Console.WriteLine($"5. [LV5] Greater Healing Potion: {healingGreaterPotionPrice}G");
+            Console.WriteLine($"6. [LV5] Greater Mana Potion: {manaGreaterPotionPrice}G");
+            Console.WriteLine($"7. [LV5] Steel Sword: {steelSwordPrice}G");
+            Console.WriteLine($"8. [LV5] Steel Armour: {steelArmourPrice}G");
+            Console.WriteLine($"9. [LV5] Studded Leather Armour: {studdedArmourPrice}G");
             if (shellFound == true)
             {
-                Console.WriteLine("9. Offer shell");
+                Console.WriteLine("0. Offer shell");
             }
 
             Console.WriteLine("\n[NUM] Purchase Item");
@@ -2153,20 +2175,38 @@ namespace TextBasedGame
                         break;
 
                     case '2':
-                        CheckGold("Rusty Armour", rustyArmourPrice, 0);
+                        CheckGold("Mana Potion", manaPotionPrice, 0);
                         break;
 
                     case '3':
-                        CheckGold("Steel Sword", steelSwordPrice, steelSwordLV);
+                        CheckGold("Rusty Armour", rustyArmourPrice, 0);
                         break;
 
                     case '4':
-                        CheckGold("Steel Armour", steelArmourPrice, steelArmourLV);
+                        CheckGold("Leather Armour", leatherArmourPrice, 0);
+                        break;
+                    case '5':
+                        CheckGold("Greater Healing Potion", healingGreaterPotionPrice, greaterPotionLV);
+                        break;
+
+                    case '6':
+                        CheckGold("Greater Mana Potion", manaGreaterPotionPrice, greaterPotionLV);
+                        break;
+
+                    case '7':
+                        CheckGold("Steel Sword", steelSwordPrice, steelLV);
+                        break;
+
+                    case '8':
+                        CheckGold("Steel Armour", steelArmourPrice, steelLV);
                         break;
 
                     case '9':
-                        SellShell(ref angeredMerchant);
+                        CheckGold("Studded Leather Armour", studdedArmourPrice, steelLV);
+                        break;
 
+                    case '0':
+                        SellShell(ref angeredMerchant);
                         break;
 
                     default:
@@ -2248,15 +2288,18 @@ namespace TextBasedGame
                     playerGold -= price;
                     Console.WriteLine($"\nYou bought the {item}! You now have {playerGold} gold.");
                     AddItem(item);
+                    PauseStory();
                 }
                 else
                 {
                     Console.WriteLine("\nYou do not have enough gold to buy this.");
+                    PauseStory();
                 }
             }
             else
             {
                 Console.WriteLine("\nYou are not a high enough level to buy this. The merchant only sells his wares to those who deserve them.");
+                PauseStory();
             }
         }
 
