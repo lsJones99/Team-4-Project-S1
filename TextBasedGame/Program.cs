@@ -151,7 +151,7 @@ namespace TextBasedGame
 
         //load available enemies
         //small enemies
-        static Enemies[] enemies = new Enemies[4];
+        static Enemies[] enemies = new Enemies[20];
         static int enemyCount = 0;
 
         //bosses
@@ -2057,9 +2057,33 @@ namespace TextBasedGame
             }
         }
 
+        //load enemies according to finished main quests
+        static int GetEnemyStage()
+        {
+            if (completedQuests.Contains("main_quest_03"))
+                return 3;
+            if (completedQuests.Contains("main_quest_02"))
+                return 2;
+            if (completedQuests.Contains("main_quest_01"))
+                return 1;
+            return 0;
+        }
+
         //Check for enemy encounter
         static void CheckForEncounter()
         {
+
+            //load enemy loader
+            int stage = GetEnemyStage();
+            int startIndex = stage * 5;
+            int endIndex = Math.Min(startIndex + 5, enemyCount);
+
+            if (startIndex >= endIndex)
+            {
+                Console.WriteLine("No enemies available for this stage.");
+                return;
+            }
+
             if ((playerX == 2 && playerY == 3) || (playerX == 0 && playerY == 4))
             {
                 return;
@@ -2068,14 +2092,8 @@ namespace TextBasedGame
 
             if (encounterChance <= 30)
             {
-                if(enemyCount == 0)
-                {
-                    Console.WriteLine("No enemies were loaded");
-                    Console.ReadLine();
-                    return;
-                }
 
-                int index = rand.Next(0, enemyCount);
+                int index = rand.Next(startIndex, endIndex);
                 Enemies encounteredEnemy = enemies[index];
 
                 Console.WriteLine($"\nA {encounteredEnemy.enemyName} suddenly appears!");

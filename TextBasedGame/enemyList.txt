@@ -1,3 +1,20 @@
 1,Skeleton,40,5,10,1,0,5,20,5
 2,Ghoul,55,7,13,2,2,10,30,8
 3,Zombie,70,4,8,3,5,0,25,6
+4,Rotting Rat,25,3,6,0,0,15,12,3
+5,Cursed Spirit,35,4,7,0,1,5,18,4
+6,Dark Cultist,75,9,14,2,4,10,45,10
+7,Bone Knight,95,10,16,5,2,5,55,12
+8,Plague Hound,65,12,18,1,1,20,50,10
+9,Restless Wraith,80,8,14,1,6,15,50,12
+10,Grave Guardian,115,9,15,6,3,0,65,15
+11,Corrupted Paladin,140,14,22,7,5,5,85,20
+12,Shadow Assassin,100,17,25,2,3,25,90,22
+13,Arcane Sentinel,125,13,20,5,9,5,95,24
+14,Blood Reaver,120,16,24,4,4,15,90,22
+15,Iron Revenant,160,12,20,9,6,0,105,25
+16,Abyssal Knight,200,20,30,10,8,10,140,35
+17,Void Stalker,150,23,34,4,9,30,145,38
+18,Chaos Sorcerer,165,18,29,5,14,15,150,40
+19,Fallen Seraph,190,21,32,8,12,20,165,45
+20,Doom Bringer,240,24,36,12,10,5,190,50
