@@ -61,13 +61,9 @@ namespace TextBasedGame
         static int markerScreenY;
         static bool keyall = false;
 
-
         //Randomizer
         static Random rand = new Random();
-        static int randomEnemyEncounter = 0;
-        static int escapeChance = 0;
         
-
         //Shop
         static int healingPotionPrice = 4;
         static int rustyArmourPrice = 8;
@@ -75,13 +71,14 @@ namespace TextBasedGame
         static int steelSwordLV = 5;
         static int steelArmourPrice = 20;
         static int steelArmourLV = 5;
+        static bool angeredMerchant = false;
 
         //Items
         static int rustySwordDMG = 3;
         static int rustyArmourDEF = 3;
         static int steelSwordDMG = 8;
         static int steelArmourDEF = 8;
-
+        static bool shellFound = false;
 
         //Quest
         static bool activequest = false;
@@ -223,9 +220,8 @@ namespace TextBasedGame
                 Outro();
             }
             
-            Console.ReadLine();
             Console.Clear();
-            Console.WriteLine("\n\nThank you for playing.");
+            Console.WriteLine("\nThank you for playing.");
             Console.ReadLine();
         }
         // Saving progress
@@ -855,7 +851,6 @@ namespace TextBasedGame
 
                 case 'i':
                     Investigate(ref gameFinished);
-                    PauseStory();
                     break;
 
                 case 'v':
@@ -1157,7 +1152,7 @@ namespace TextBasedGame
             int baseHitChance = 75, finalHitChance;
 
             //variables for crit chance
-            int baseCritChance = 5, finalCritChance;
+            int finalCritChance;
 
             //variable for actual damage
             int finalAttackDamage;
@@ -1754,7 +1749,6 @@ namespace TextBasedGame
                 playerTurnCompleted = false;
 
                 //magic local variables
-                int valid = 0;
                 string userselect;
 
                 Console.Clear();
@@ -2133,6 +2127,10 @@ namespace TextBasedGame
             Console.WriteLine($"2. Rusty Armour: {rustyArmourPrice}G");
             Console.WriteLine($"3. [LV5] Steel Sword: {steelSwordPrice}G");
             Console.WriteLine($"4. [LV5] Steel Armour: {steelArmourPrice}G");
+            if (shellFound == true)
+            {
+                Console.WriteLine("9. Offer shell");
+            }
 
             Console.WriteLine("\n[NUM] Purchase Item");
             Console.WriteLine("[ANY OTHER INPUT] Leave");
@@ -2141,12 +2139,11 @@ namespace TextBasedGame
 
             if (inventoryCount == inventoryMaxSize)
             {
-                Console.WriteLine("\nYour inventory is full! You cannot buy anything.");
+                Console.WriteLine("\nYour inventory is full! Come back when you've got space.");
                 PauseStory();
             }
             else
             {
-
                 char marketChoice = Console.ReadKey(true).KeyChar;
 
                 switch (marketChoice)
@@ -2167,9 +2164,78 @@ namespace TextBasedGame
                         CheckGold("Steel Armour", steelArmourPrice, steelArmourLV);
                         break;
 
+                    case '9':
+                        SellShell(ref angeredMerchant);
+
+                        break;
+
                     default:
                         break;
                 }
+            }
+        }
+
+        static void SellShell(ref bool angeredMerchant)
+        {
+            if (angeredMerchant == false)
+            {
+                Console.WriteLine("\nYou offer the unique shell to the merchant...");
+                Console.WriteLine("\nMerchant: Hmmm... I'll give you 6 gold for it.");
+                Console.WriteLine("\n[y] Sell shell for 6 gold");
+                Console.WriteLine("[n] Haggle for a better price");
+                char shellChoice = Console.ReadKey(true).KeyChar;
+                
+                switch (shellChoice)
+                {
+                    case 'y':
+                        Console.WriteLine("\nYou sold the shell for 6 gold!");
+                        playerGold += 6;
+                        PauseStory();
+                        break;
+
+                    case 'n':
+                        Console.Clear();
+                        Console.WriteLine("\n========== MERCHANTS SHOP ==========");
+                        Console.WriteLine("Merchant: Grr.. Fine, 8 gold. Take it or leave it.");
+                        Console.WriteLine("\n[y] Sell shell for 8 gold");
+                        Console.WriteLine("[n] Haggle for a better price again");
+                        char shellChoice2 = Console.ReadKey(true).KeyChar;
+
+                        switch (shellChoice2)
+                        {
+                            case 'y':
+                                Console.WriteLine("\nYou sold the shell for 8 gold!");
+                                playerGold += 8;
+                                PauseStory();
+                                break;
+
+                            case 'n':
+                                Console.Clear();
+                                Console.WriteLine("\n========== MERCHANTS SHOP ==========");
+                                Console.WriteLine("Merchant: You know what?! I don't want it anymore. Get this shell out of my face, fool!");
+                                Console.WriteLine("\nIt seems the Merchant has a short temper and has been haggled too much, now he won't buy the shell.");
+                                PauseStory();
+                                angeredMerchant = true;
+                                break;
+
+                            default:
+                                Console.WriteLine("\nUnrecognised input.");
+                                PauseStory();
+                                break;
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("\nUnrecognised input.");
+                        PauseStory();
+                        break;
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("\nMerchant: You had your chance. Get out of here with that stupid shell! I'm not trading with someone so foolish.");
+                PauseStory();
             }
         }
 
@@ -2255,9 +2321,37 @@ namespace TextBasedGame
                         break;
                     }
 
+                // BEACH (2,4)
+                case (2, 4):
+                    Console.WriteLine("\nYou search the beach...");
+                    if (shellFound == false)
+                    {
+                        Console.WriteLine("\nYou found a unique looking shell! You can hear the sounds of the ocean when you hold it up to your ear...");
+                        Console.WriteLine("Someone might want to buy this.");
+                        if (inventoryCount == inventoryMaxSize)
+                        {
+                            Console.WriteLine("\nBut wait! Your pockets are too full to carry the shell.");
+                            PauseStory();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            AddItem("Unique Shell");
+                            shellFound = true;
+                            PauseStory();
+                        }
+                    }
+                    else if (shellFound == true)
+                    {
+                        Console.WriteLine("\nIt seems there aren't any more cool shells to find...");
+                        PauseStory();
+                    }
+                    break;
+
+
                 // DARK FOREST (2,2)
                 case (2, 2):
-                    Console.WriteLine("You search the Dark Forest...");
+                    Console.WriteLine("\nYou search the Dark Forest...");
 
                     int result = rand.Next(1, 5);
 
@@ -2276,6 +2370,7 @@ namespace TextBasedGame
                         case 3:
                             Console.WriteLine("You found nothing.");
                             break;
+
                         case 4:
                             Console.WriteLine("staffFireball test item");
                             AddItem("Staff of Fireball");
@@ -2287,7 +2382,7 @@ namespace TextBasedGame
                 // WITCH'S HUT (0,4)
                 case (0, 4):
                     {
-                        Console.WriteLine("You approach the Witch's Hut.");
+                        Console.WriteLine("\nYou approach the Witch's Hut.");
 
                         if (acceptedQuests.Contains("side_merchant_02"))
                         {
@@ -2308,26 +2403,24 @@ namespace TextBasedGame
                     }
 
 
-
-
                 // DARK CAVE (1,4)
                 case (1, 4):
-                    Console.WriteLine("You investigate the dark cave.");
+                    Console.WriteLine("\nYou investigate the dark cave.");
                     Console.WriteLine("Strange noises echo through the tunnels.");
                     break;
 
 
                 // ROYAL ARMY (0,3)
                 case (0, 3):
-                    Console.WriteLine("You approach the Royal Army's camp.");
+                    Console.WriteLine("\nYou approach the Royal Army's camp.");
                     Console.WriteLine("Soldiers patrol the area.");
 
                     // Later: TalkToCommander();
                     break;
 
-                //UNDEAD TWINS BOSS FIGHT
+                //UNDEAD TWINS BOSS FIGHT (evil twins)
                 case (4, 4):
-                    Console.WriteLine("You hear rustling from the twisting brambles");
+                    Console.WriteLine("\nYou hear rustling from the twisting brambles");
                     Console.ReadLine();
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
@@ -2373,11 +2466,11 @@ namespace TextBasedGame
                     }
                     break;
 
-                //PALADIN BOSS FIGHT
+                //PALADIN BOSS FIGHT (light knight camp)
                 case (3, 1):
                     if (acceptedQuests.Contains("main_quest_02"))
                     {
-                        Console.WriteLine("The Paladin ambushes you!");
+                        Console.WriteLine("\nThe Paladin ambushes you!");
                         Console.ReadLine();
                         bool bossDefeated = BossLoader(1);
                         if (bossDefeated)
@@ -2395,11 +2488,11 @@ namespace TextBasedGame
 
                     break;
 
-                //WARLOCK BOSS FIGHT
+                //WARLOCK BOSS FIGHT (casino)
                 case (2, 0):
                     if (acceptedQuests.Contains("main_quest_03"))
                     {
-                        Console.WriteLine("The Warlock curses you!");
+                        Console.WriteLine("\nThe Warlock curses you!");
                         Console.ReadLine();
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
@@ -2421,7 +2514,7 @@ namespace TextBasedGame
                     }
                     break;
 
-                //FINAL BOSS
+                //FINAL BOSS (temple)
                 case (1, 3):
                     bool access = FinalBossReq();
                     if (access == true)
@@ -2440,7 +2533,7 @@ namespace TextBasedGame
                     break;
                 // ALL OTHER LOCATIONS
                 default:
-                    Console.WriteLine("There is nothing special to investigate here yet.");
+                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
                     break;
             }
         }
@@ -2661,7 +2754,8 @@ namespace TextBasedGame
                         break;
                     }
                     Console.Clear();
-                    Console.Write("Use another item? (y/n): ");
+                    Console.WriteLine("\n---------- INVENTORY ----------");
+                    Console.Write("\nUse another item? (y/n): ");
                     string useAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
                     useAnother = useAnswer.StartsWith("y");
                 }
@@ -2669,7 +2763,6 @@ namespace TextBasedGame
             // Using items
             static void UseOneItem()
             {
-                bool reuseable = false;
                 bool slotEmpty = false;
                 Console.Clear();
                 Console.WriteLine("\n---------- INVENTORY ----------");
@@ -2739,6 +2832,12 @@ namespace TextBasedGame
                         PauseStory();
                         break;
 
+
+                    case "Unique Shell":
+                        Console.WriteLine("The sounds of the ocean are beautiful... Someone may be willing to purchase this.");
+                        PauseStory();
+                        break;
+
                     case "Mana Potion":
                         playerMana = playerMana + 10;
                         slotEmpty = true;
@@ -2780,6 +2879,8 @@ namespace TextBasedGame
                         break;
 
                     default:
+                        Console.WriteLine("There is no action to do with this item here.");
+                        PauseStory();
                         break;
                 }
 
@@ -3458,7 +3559,7 @@ namespace TextBasedGame
                 }
                 else
                 {
-                    Console.WriteLine("One of the locks looks similar to the Rusted Key you left on the Dark Twins...");
+                    Console.WriteLine("One of the locks looks similar to the Rusted Key you left near the Dark Twins...");
                     bool given = GiveQuest("main_quest_04");
                     return false;
                 }
