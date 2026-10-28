@@ -98,6 +98,7 @@ namespace TextBasedGame
         static int witherStringDMG = 14;
         static int witherStringHIT = 4 + playerRangeHit;
         static bool shellFound = false;
+        static bool goneSwimming = false;
 
         //Quest
         static bool activequest = false;
@@ -220,7 +221,7 @@ namespace TextBasedGame
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             bool gameRunning = true;
 
-            Console.WriteLine("\nThis game is best played maximised.");
+            Console.WriteLine("\nThis game is best played maximised [F11].");
             PauseStory();
 
             if (File.Exists(saveFile) == false)
@@ -328,7 +329,6 @@ namespace TextBasedGame
             if (ReadGameSave(saveFile))
             {
                 Console.WriteLine("--- Settings Loaded from File ---");
-                Thread.Sleep(3000);
             }
         }
         // Saves player information AND quest progress
@@ -389,7 +389,11 @@ namespace TextBasedGame
 
                 $"acceptedQuests={string.Join(",", acceptedQuests)}",
                 $"completedQuests={string.Join(",", completedQuests)}",
-                $"trackedQuest={trackedQuest}"
+                $"trackedQuest={trackedQuest}",
+
+                $"shellFound={shellFound}",
+                $"angeredMerchant={angeredMerchant}",
+                $"goneSwimming={goneSwimming}"
             };
 
             File.WriteAllLines(path, linesToSave);
@@ -547,6 +551,15 @@ namespace TextBasedGame
 
                 else if (key == "trackedQuest")
                     trackedQuest = value;
+
+                else if (key == "shellFound")
+                    bool.TryParse(value, out shellFound);
+
+                else if (key == "angeredMerchant")
+                    bool.TryParse(value, out angeredMerchant);
+
+                else if (key == "goneSwimming")
+                    bool.TryParse(value, out goneSwimming);
             }
 
             // Make sure the loaded inventory has enough slots
@@ -2247,7 +2260,7 @@ namespace TextBasedGame
             Console.WriteLine($"9. [LV5] Studded Leather Armour: {studdedArmourPrice}G");
             if (shellFound == true)
             {
-                Console.WriteLine("0. Offer shell");
+                Console.WriteLine("\n[S] Offer shell");
             }
 
             Console.WriteLine("\n[NUM] Purchase Item");
@@ -2262,7 +2275,7 @@ namespace TextBasedGame
             }
             else
             {
-                char marketChoice = Console.ReadKey(true).KeyChar;
+                char marketChoice = char.ToLower(Console.ReadKey(true).KeyChar);
 
                 switch (marketChoice)
                 {
@@ -2301,7 +2314,7 @@ namespace TextBasedGame
                         CheckGold("Studded Leather Armour", studdedArmourPrice, steelLV);
                         break;
 
-                    case '0':
+                    case 's':
                         SellShell(ref angeredMerchant);
                         break;
 
@@ -2317,9 +2330,9 @@ namespace TextBasedGame
             {
                 Console.WriteLine("\nYou offer the unique shell to the merchant...");
                 Console.WriteLine("\nMerchant: Hmmm... I'll give you 6 gold for it.");
-                Console.WriteLine("\n[y] Sell shell for 6 gold");
-                Console.WriteLine("[n] Haggle for a better price");
-                char shellChoice = Console.ReadKey(true).KeyChar;
+                Console.WriteLine("\n[Y] Sell shell for 6 gold");
+                Console.WriteLine("[N] Haggle for a better price");
+                char shellChoice = char.ToLower(Console.ReadKey(true).KeyChar);
                 
                 switch (shellChoice)
                 {
@@ -2333,9 +2346,9 @@ namespace TextBasedGame
                         Console.Clear();
                         Console.WriteLine("\n========== MERCHANTS SHOP ==========");
                         Console.WriteLine("Merchant: Grr.. Fine, 8 gold. Take it or leave it.");
-                        Console.WriteLine("\n[y] Sell shell for 8 gold");
-                        Console.WriteLine("[n] Haggle for a better price again");
-                        char shellChoice2 = Console.ReadKey(true).KeyChar;
+                        Console.WriteLine("\n[Y] Sell shell for 8 gold");
+                        Console.WriteLine("[N] Haggle for a better price again");
+                        char shellChoice2 = char.ToLower(Console.ReadKey(true).KeyChar);
 
                         switch (shellChoice2)
                         {
@@ -2349,7 +2362,7 @@ namespace TextBasedGame
                                 Console.Clear();
                                 Console.WriteLine("\n========== MERCHANTS SHOP ==========");
                                 Console.WriteLine("Merchant: You know what?! I don't want it anymore. Get this shell out of my face, fool!");
-                                Console.WriteLine("\nIt seems the Merchant has a short temper and has been haggled too much, now he won't buy the shell.");
+                                Console.WriteLine("\nIt seems the Merchant has a short temper and has been haggled too much, now he wont buy the shell.");
                                 PauseStory();
                                 angeredMerchant = true;
                                 break;
@@ -2423,6 +2436,8 @@ namespace TextBasedGame
                         {
                             Console.WriteLine("An old witch watches you from the doorway.");
                         }
+                        Console.WriteLine();
+                        PauseStory();
                         break;
                         //Later add witch dialogue
                     }
@@ -2451,6 +2466,7 @@ namespace TextBasedGame
                             Console.WriteLine();
                             AddItem("Unique Shell");
                             shellFound = true;
+                            Console.WriteLine();
                             PauseStory();
                         }
                     }
@@ -2466,12 +2482,13 @@ namespace TextBasedGame
                     Console.WriteLine("\nFrom the large fields in front, you stand and stare upon the great Light Kingdom.");
                     Console.WriteLine("Its sheer size and sense of importance to this world overwhelms you. How many stories are out there? How much does this world contain?");
                     Console.WriteLine("These questions are irrelevant to your purpose. Best to keep marching on your quest.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // EVIL TWINS (4,4)
                 case (4, 4):
-                    Console.WriteLine("\nYou hear rustling from the twisting brambles");
+                    Console.WriteLine("\nYou hear rustling from some twisting brambles...");
                     Console.ReadLine();
                     if (acceptedQuests.Contains("main_quest_01"))
                     {
@@ -2515,12 +2532,17 @@ namespace TextBasedGame
                     {
                         Console.WriteLine("You found nothing!");
                     }
+                    Console.WriteLine();
+                    PauseStory();
                     break;
 
                 // ROYAL ARMY (0,3)
                 case (0, 3):
                     Console.WriteLine("\nYou approach the Royal Army's camp.");
                     Console.WriteLine("Soldiers patrol the area.");
+
+                    Console.WriteLine();
+                    PauseStory();
 
                     // Later: TalkToCommander();
                     break;
@@ -2605,6 +2627,7 @@ namespace TextBasedGame
                     Console.WriteLine("\nThe wilderness stretches far beyond.");
                     Console.WriteLine("Wildlife and foliage populate these vast lands.");
                     Console.WriteLine("It feels as though this area could be treacherous.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
@@ -2614,16 +2637,18 @@ namespace TextBasedGame
                     Console.WriteLine("You can feel a rumbling coming from deep beneath the soil...");
                     Console.WriteLine("Then nothing.");
                     Console.WriteLine("It's almost as though the story behind these sacred tombs are meant for you in a different life.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // THE LOST GIANT (0,2)
                 case (0, 2):
                     Console.WriteLine("\nYou investigate the grounds...");
-                    Console.WriteLine("...");
+                    Console.WriteLine(". . .");
                     Console.WriteLine("That was until you saw the lost giant.");
-                    Console.WriteLine("...");
+                    Console.WriteLine(". . .");
                     Console.WriteLine("You immediately stop investigating the grounds.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
@@ -2661,6 +2686,7 @@ namespace TextBasedGame
                 case (3, 2):
                     Console.WriteLine("\nThe holy crusaders; believed to hail from Renard's keep.");
                     Console.WriteLine("You get the feeling that it'd be best to leave them alone, at least for now.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
@@ -2670,6 +2696,7 @@ namespace TextBasedGame
                     Console.WriteLine("It seems the bridge to take you into the city is broken.");
                     Console.WriteLine("Perhaps this could become accessible if the great developers of legend find a purpose to rebuild it.");
                     Console.WriteLine("(You wonder who the hell the \"great developers of legend\" are)");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
@@ -2679,19 +2706,60 @@ namespace TextBasedGame
                     Console.WriteLine("Sounds of utter pain, suffering and screaming echo from deep below.");
                     Console.WriteLine("All you can see through the gate is steps descending into the earth, with a deep red glow emanating from the depths.");
                     Console.WriteLine("You think to yourself that it'd be best to leave this alone.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // ALL SEEING EYE (1,1)
                 case (1, 1):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    Console.WriteLine("\nYou investigate the all seeing eye...");
+                    Console.WriteLine("... and the all seeing eyes investigates you.");
+                    Console.WriteLine("It sees deep into your soul, your mind, your heart.");
+                    Console.WriteLine("It knows about you, about your quest.");
+                    Console.WriteLine("It sees the future. A future where you conquer this world and what it has to offer.");
+                    Console.WriteLine("Words resonate throughout your mind. \"Good luck\".");
+                    Console.WriteLine("You don't know how, but you are sure these words are from the eye.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // HOLY RIVER (2,1)
                 case (2, 1):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
-                    PauseStory();
+                    Console.Clear();
+                    Console.WriteLine("\n============ HOLY RIVER ============");
+                    Console.WriteLine("\nYou investigate the holy river...");
+                    Console.WriteLine("Its purifying waters are awfully inviting.");
+                    Console.WriteLine("Take a swim in the holy river?");
+                    Console.WriteLine("\n[Y] Swim");
+                    Console.WriteLine("[ANY OTHER INPUT] Don't swim");
+
+                    char swimChoice = char.ToLower(Console.ReadKey(true).KeyChar);
+
+                    switch (swimChoice)
+                    {
+                        case 'y':
+                            if (goneSwimming == false)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("\n============ HOLY RIVER ============");
+                                Console.WriteLine("\nYou go for a swim in the holy river...");
+                                Console.WriteLine("It is very rejuvinating! +10 Max HP");
+                                playerMaxHealth += 10;
+                                playerHealth += 10;
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                Console.WriteLine("\n============ HOLY RIVER ============");
+                                Console.WriteLine("\nYou've already gone swimming.");
+                            }
+                            Console.WriteLine();
+                            PauseStory();
+                            break;
+
+                        default:
+                            break;
+                    }
                     break;
 
                 // CAMP OF LIGHT KNIGHTS (3,1)
@@ -2708,29 +2776,50 @@ namespace TextBasedGame
                             CompleteQuest("main_quest_02");
                         }
                     }
-                    if ((completedQuests.Contains("main_quest_02")) && (InvCheck("Adorned Key") == false))
+                    else if ((completedQuests.Contains("main_quest_02")) && (InvCheck("Adorned Key") == false))
                     {
                         Console.WriteLine("The Adorned key lies on the ground where you left it");
                         AddItem("Adorned Key");
+                        PauseStory();
                     }
-
+                    else
+                    {
+                        Console.WriteLine("\nYou investigate the camp...");
+                        Console.WriteLine("The camp is filled with knights of light.");
+                        Console.WriteLine("There is a large paladin, seemingly the boss of the knights.");
+                        Console.WriteLine("You don't know why, but you feel as though this location will be important.");
+                        Console.WriteLine();
+                        PauseStory();
+                    }
                     break;
 
                 // JUNKYARD (4,1)
                 case (4, 1):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    Console.WriteLine("\nYou investigate the junkyard...");
+                    Console.WriteLine("Nothing but trash and equipment damaged beyond repair.");
+                    Console.WriteLine("It reeks. You'd like to get out of here sooner rather than later.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // SANDS OF LOST ONES (0,0)
                 case (0, 0):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    Console.WriteLine("\nYou investigate the sands of the lost ones...");
+                    Console.WriteLine("Doesn't seem to be much here.");
+                    Console.WriteLine("Nothing but sand for as long as the eye can see.");
+                    Console.WriteLine("Wait, which direction did you come from?");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // RENARD'S KEEP (1,0)
                 case (1, 0):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    Console.WriteLine("\nYou try to investigate Renard's keep...");
+                    Console.WriteLine("However, there are two guards at the entrance denying you from entering.");
+                    Console.WriteLine("Guard 1: Unless you have special access from Renard, you must leave.");
+                    Console.WriteLine("Guard 2: Get out of here, punk.");
+                    Console.WriteLine("Rude...");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
@@ -2745,30 +2834,51 @@ namespace TextBasedGame
                         {
                             GainXP(200);
                             Console.WriteLine("You have defeated the Warlock!");
-                            Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you");
+                            Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you.");
                             AddItem("Twisted Key");
-                            Console.WriteLine("You begin to suspect that defeating this particular warlock may be harder than you first thought. But you have the key you need");
+                            Console.WriteLine("You begin to suspect that defeating this particular warlock may've been harder than you first thought. But you have the key you need.");
                             GainXP(200);
                             CompleteQuest("main_quest_03");
 
                         }
                     }
-                    if ((completedQuests.Contains("main_quest_03")) && (InvCheck("Twisted Key") == false))
+                    else if ((completedQuests.Contains("main_quest_03")) && (InvCheck("Twisted Key") == false))
                     {
-                        Console.WriteLine("A Twisted key lies on the ground where you left it");
+                        Console.WriteLine("\nA Twisted key lies on the ground where you left it.");
                         AddItem("Twisted Key");
+                        PauseStory();
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nUpon entering the casino, there's a certain individual that stands out to you.");
+                        Console.WriteLine("A massive warlock stands next to a roulette table, seemingly tranced by the risk of winning or losing it all.");
+                        Console.WriteLine("You don't know why, but you feel as though he may be a person of interest further in your quest...");
+                        PauseStory();
+                        Console.WriteLine();
                     }
                     break;
 
                 // SONG OF SIREN (3,0)
                 case (3, 0):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    Console.WriteLine("\nBy the ocean, you hear something...");
+                    Console.WriteLine("It seems to be beautiful singing coming from atop a rock.");
+                    Console.WriteLine("You feel yourself being dragged to the cliff face above the jagged rocks that seperate you and the ocean.");
+                    Console.WriteLine("Right before you step off the edge, you snap out of your trance.");
+                    Console.WriteLine("Better leave fast, you're unsure if you snapped out of it by mental fortitude or sheer luck.");
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
                 // GNOME ISLAND (4,0)
                 case (4, 0):
-                    Console.WriteLine("\nThere is nothing special to investigate here yet.");
+                    Console.WriteLine("\nYou investigate around the gnome island...");
+                    Console.WriteLine("Whilst you sneak around the mushroom houses and trees, you spot a building named \"The Treasurey\".");
+                    Console.WriteLine("Before you can take another step closer, multitudes of little gnomes ambush from every direction!");
+                    Console.WriteLine("...");
+                    Console.WriteLine("Their little attacks with their little weapons do next to nothing. (-1 HP)");
+                    Console.WriteLine("You'd feel sinful pillaging such defenseless creatures. You decide to leave without taking anything.");
+                    playerHealth -= 1;
+                    Console.WriteLine();
                     PauseStory();
                     break;
 
@@ -3317,33 +3427,33 @@ namespace TextBasedGame
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
                                 |          /\          |        /^^^^\        |        \ | /         |      |^^| |^^|       |      .-.   .-.       |
                                 |       __/~~\__       |       /  __  \       |     --- (O) ---      |     _|[]|_|[]|_      |     (o o) (o o)      |
-                                |       |  []  |       |     /___/  \___\     |     ~~~/|~~~~~~      |     |___GATE__|      |      \_/   \_/       |
-                                |    The witch hut     |      Dark cave       |        Beach         |  The light kingdom   |      Evil twin       |
+                                |       |  []  |       |     /___/  \___\     |     ~~~~~~~~~~~      |     |___GATE__|      |      \_/   \_/       |
+                                |       Witch Hut      |      Dark Cave       |        Beach         |  The Light Kingdom   |      Evil Twins      |
                                 |                      |                      |                      |                      |                      |
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
                                 |        /\  /\        |       .-====-.       |       _ _ _ _        |       /\   /\        |       __    __       |
                                 |       /##\/##\       |       | ~~~~ |       |      /_/_/_/_\       |      /  \ /  \       |      |  |__|  |      |
                                 |       \__||__/       |       |__(O)_|       |      |$|$|$|$|       |        ||  ||        |      |__|  |__|      |
-                                |    The royal army    |    Temple of the     |      The market      |      Wilderness      |   Ancient grounds    |
+                                |    The Royal Army    |    Temple of The     |      The Market      |      Wilderness      |   Ancient Grounds    |
                                 |                      |    Spaghetti God     |                      |                      |                      |
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
                                 |        .-O-.         |       /\   /\        |      /\/\ /\/\       |        +   +         |     |^^|   |^^|      |
                                 |       /|###|\        |      /  \ /  \       |      /\/\\/\/\       |       /|\ /|\        |     |  |___|  |      |
                                 |        /   \         |        ||  ||        |       ||   ||        |       / \ / \        |     |__|   |__|      |
-                                |    The lost Giant    |      Wilderness      |     Dark forest      |      Crusaders       |    The lost city     |
+                                |    The Lost Giant    |      Wilderness      |     Dark Forest      |      Crusaders       |    The Lost City     |
                                 |                      |                      |                      |                      |                      |
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
-                                |       /\_/\_/\       |       .-----.        |      ~~~  ~~~~       |        /\  /\        |      [##]  ___       |
-                                |       | 666 |        |      <  (O)  >       |      ~~~\ /~~~       |       /++\/++\       |      _||_ /__/       |
-                                |       |_/\/_|        |       '-----'        |      ~~~~~V~~~~      |       |__||__|       |     (____) /_o_      |
-                                |     Gate to Hell     |  The all seeing Eye  |    The holy river    |  Camp of the Light   |       Junkyard       |
-                                |                      |                      |                      |       knights        |                      |
+                                |       /\_/\_/\       |       .-----.        |      ~~\  \~~~       |        /\  /\        |      [##]  ___       |
+                                |       |  666 |       |      <  (O)  >       |      ~~~\  \~~~      |       /++\/++\       |      _||_ /__/       |
+                                |       |_/\/\_|       |       '-----'        |      ~~~~\  \~~~     |       |__||__|       |     (____) /_o_      |
+                                |     Gate to Hell     |  The All Seeing Eye  |    The Holy River    |  Camp of the Light   |       Junkyard       |
+                                |                      |                      |                      |       Knights        |                      |
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+
-                                |      .  .  :  .      |      |^^^|^^^|       |      .--------.      |     ~~~ \o/ ~~~      |      ~~~ /\ ~~~      |
-                                |       .  __  .       |      | [] [] |       |      | 777 $$$|      |     ~~~~ | ~~~~      |      ~~ /__\ ~~      |
-                                |      ~~  ~~  ~~      |      |___[]__|       |      '--------'      |     ~~~~ / \ ~~~     |      ~~~ || ~~~      |
-                                |  Sands of lost ones  |    Renard's keep     |        Casino        |    song of siren     |     Gnome Island     |
-                                |                      |                      |                      |                      |                      |
+                                |      .  .  :  .      |      |^^^|^^^|       |      .---------.     |     ~~~  \o/ ~~~     |      ~~~ /\ ~~~      |
+                                |       .  __  .       |      | [] [] |       |      | 777 $$$ |     |     ~~~~  | ~~~~     |      ~~ /__\ ~~      |
+                                |      ~~  ~~  ~~      |      |___[]__|       |      '---------'     |     ~~~~ / \ ~~~     |      ~~~ || ~~~      |
+                                |  Sands of the Lost   |    Renard's keep     |        Casino        |    Song of Siren     |     Gnome Island     |
+                                |         Ones         |                      |                      |                      |                      |
                                 +----------------------+----------------------+----------------------+----------------------+----------------------+";
 
             string[] mapLines = mapArt.Split('\n');
@@ -3861,7 +3971,7 @@ namespace TextBasedGame
         }
         public static bool FinalBossReq()
         {
-            Console.WriteLine("The temple lies silent, a large black crystaline door calls from the back of the temple...");
+            Console.WriteLine("\nThe temple lies silent, a large black crystaline door calls from the back of the temple...");
             bool key1 = InvCheck("Rusted Key");
             bool key2 = InvCheck("Adorned Key");
             bool key3 = InvCheck("Twisted Key");
@@ -3887,8 +3997,9 @@ namespace TextBasedGame
             }
             else
             {
-                Console.WriteLine("Nothing happens");
-                Console.ReadLine();
+                Console.WriteLine("Nothing happens.");
+                Console.WriteLine();
+                PauseStory();
                 return false;
             }
         }
