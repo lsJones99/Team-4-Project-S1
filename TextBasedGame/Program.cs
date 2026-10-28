@@ -90,13 +90,13 @@ namespace TextBasedGame
         static int steelArmourDEF = 8;
         static int studLeathArmourDGE = 15;
         static int steelframeDMG = 8 + playerRangeDmg;
-        static int steelframeHIT = playerRangeHit;
+        static int steelframeHIT = 1 + playerRangeHit;
         static int spellSwordDMG = 2 + playerSpellDmg;
         static int spellBowDMG = 2 + playerSpellDmg;
-        static int spellBowHIT = playerRangeHit;
+        static int spellBowHIT = 2 + playerRangeHit;
         static int throneCleaveDMG = 14;
         static int witherStringDMG = 14;
-        static int witherStringHIT = playerRangeHit;
+        static int witherStringHIT = 4 + playerRangeHit;
         static bool shellFound = false;
 
         //Quest
@@ -2717,6 +2717,7 @@ namespace TextBasedGame
             {
                 // Melee Weapon pool
                 case 1:
+                    Console.WriteLine("\nYou find a melee weapon");
                     select = rand.Next(1, 11);
                     switch (select)
                     {
@@ -2736,6 +2737,7 @@ namespace TextBasedGame
                     break;
                 // Armour pool
                 case 2:
+                    Console.WriteLine("\nYou find a set of armour");
                     select = rand.Next(1, 10);
                     switch (select)
                     {
@@ -2756,6 +2758,7 @@ namespace TextBasedGame
                     break;
                 // Range Weapon pool
                 case 3:
+                    Console.WriteLine("\nYou find a ranged weapon");
                     select = rand.Next(1, 11);
                     switch (select)
                     {
@@ -2775,6 +2778,7 @@ namespace TextBasedGame
                     break;
                 // Magic Item pool
                 case 4:
+                    Console.WriteLine("You find a magic item, unlocking new spells");
                     select = rand.Next(1, 12);
                     switch (select)
                     {
@@ -2798,6 +2802,7 @@ namespace TextBasedGame
                     break;
                 // Potion pool
                 case 5:
+                    Console.WriteLine("\nYou find a potion");
                     select = rand.Next(1, 11);
                     switch (select)
                     {
@@ -2922,6 +2927,7 @@ namespace TextBasedGame
                     // What happens when equipping weapons, calculates stat change as well.
                     case "Rusty Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
                         playerMeleeDmg -= playerWpnStat;
                         playerWpnStat = rustySwordDMG;
                         playerMeleeDmg += playerWpnStat;
@@ -2929,11 +2935,66 @@ namespace TextBasedGame
 
                     case "Steel Sword":
                         equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
                         playerMeleeDmg -= playerWpnStat;
                         playerWpnStat = steelSwordDMG;
                         playerMeleeDmg += playerWpnStat;
                         break;
 
+                    case "Spellfire Sword":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = spellSwordDMG;
+                        playerMeleeDmg += playerWpnStat;
+                        break;
+                    case "Throne-Cleaver":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = throneCleaveDMG;
+                        playerMeleeDmg += playerWpnStat;
+                        break;
+
+                    case "Old Bow":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = oldBowDMG;
+                        playerWpnHitStat = oldBowHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
+
+                    case "Steelframe Bow":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = steelframeDMG;
+                        playerWpnHitStat = steelframeHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
+
+                    case "Spellfire Bow":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = spellBowDMG;
+                        playerWpnHitStat = spellBowHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
+
+                    case "Wither-String":
+                        equipWpn(ref useChoice, ref slotEmpty);
+                        playerMeleeHit -= playerWpnHitStat;
+                        playerMeleeDmg -= playerWpnStat;
+                        playerWpnStat = witherStringDMG;
+                        playerWpnHitStat = witherStringHIT;
+                        playerMeleeDmg += playerWpnStat;
+                        playerMeleeHit += playerWpnHitStat;
+                        break;
                     // What happens when equipping armours, calculates stat change as well.
                     case "Rusty Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
