@@ -2508,7 +2508,6 @@ namespace TextBasedGame
                             Console.WriteLine("The Undead twins lie defeated");
                             Console.ReadLine();
                             GainXP(100);
-                            CompleteQuest("main_quest_01");
                             AddItem("Rusted Key");
                             AddItem("Twin's Journal");
                             JournalHint();
@@ -2836,14 +2835,14 @@ namespace TextBasedGame
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
                         {
-                            GainXP(200);
+                            
                             Console.WriteLine("You have defeated the Warlock!");
+                            GainXP(200);
                             Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you.");
                             AddItem("Twisted Key");
                             Console.WriteLine("You begin to suspect that defeating this particular warlock may've been harder than you first thought. But you have the key you need.");
                             Console.WriteLine();
                             PauseStory();
-                            GainXP(200);
                             CompleteQuest("main_quest_03");
 
                         }
