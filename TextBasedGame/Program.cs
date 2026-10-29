@@ -92,6 +92,7 @@ namespace TextBasedGame
         static int witherStringHIT = 4;
         static bool shellFound = false;
         static bool goneSwimming = false;
+        static bool hellVentured = false;
 
         //Quest
         static bool activequest = false;
@@ -388,7 +389,8 @@ namespace TextBasedGame
 
                 $"shellFound={shellFound}",
                 $"angeredMerchant={angeredMerchant}",
-                $"goneSwimming={goneSwimming}"
+                $"goneSwimming={goneSwimming}",
+                $"hellVentured={hellVentured}"
             };
 
             File.WriteAllLines(path, linesToSave);
@@ -530,7 +532,7 @@ namespace TextBasedGame
                     int.TryParse(value, out playerWpnHitStat);
 
                 else if (key == "playerWpnHitStatOld")
-                    int.TryParse(value,out playerWpnHitStatOld);
+                    int.TryParse(value, out playerWpnHitStatOld);
 
                 else if (key == "playerAmrStat")
                     int.TryParse(value, out playerAmrStat);
@@ -561,6 +563,9 @@ namespace TextBasedGame
 
                 else if (key == "goneSwimming")
                     bool.TryParse(value, out goneSwimming);
+
+                else if (key == "hellVentured")
+                    bool.TryParse(value, out hellVentured);
             }
 
             // Make sure the loaded inventory has enough slots
@@ -1588,7 +1593,7 @@ namespace TextBasedGame
                     Console.WriteLine("Invalid spell selection.");
                     return false;
                 case 'd':
-                    bool orbDisintegrate = InvCheck("Orb of Disintegrate");
+                    bool orbDisintegrate = InvCheck("Orb of Disintegration");
                     while (orbDisintegrate == true)
                     {
                         if (playerMana < 14)
@@ -2520,6 +2525,7 @@ namespace TextBasedGame
                             GainXP(100);
                             AddItem("Rusted Key");
                             AddItem("Twin's Journal");
+                            AddItem("Steeframe Bow");
                             JournalHint();
                             CompleteQuest("main_quest_01");
                         }
@@ -2730,6 +2736,16 @@ namespace TextBasedGame
                     Console.WriteLine("Sounds of utter pain, suffering and screaming echo from deep below.");
                     Console.WriteLine("All you can see through the gate is steps descending into the earth, with a deep red glow emanating from the depths.");
                     Console.WriteLine("You think to yourself that it'd be best to leave this alone.");
+                    if (hellVentured == false)
+                    {
+                        Console.WriteLine("As you turn to leave, you spy a Bow left on the first step.\nCan't hurt to grab it");
+                        AddItem("Wither-String");
+                        hellVentured = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You've ventured as far as you should dare already after all...");
+                    }
                     Console.WriteLine();
                     PauseStory();
                     break;
@@ -2798,6 +2814,7 @@ namespace TextBasedGame
                         {
                             GainXP(150);
                             AddItem("Adorned Key");
+                            AddItem("Throne-cleaver");
                             CompleteQuest("main_quest_02");
                         }
                     }
@@ -2862,6 +2879,7 @@ namespace TextBasedGame
                             GainXP(200);
                             Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you.");
                             AddItem("Twisted Key");
+                            AddItem("Orb of Disintegration");
                             Console.WriteLine("You begin to suspect that defeating this particular warlock may've been harder than you first thought. But you have the key you need.");
                             Console.WriteLine();
                             PauseStory();
@@ -2921,21 +2939,21 @@ namespace TextBasedGame
             Console.Clear();
             CenterText("---- Journal of Alabaster and Ronnie ----");
             CenterText("");
-            CenterText("We're off to go and slay that lich, getting paid well for it too");
+            CenterText("We're off to go and slay that 'god', monster more like it, getting paid well for it at least,");
             CenterText("not just us though, Wizard hired some others as well.");
             CenterText("");
             CenterText("A Paladin from that light order bunch, keeps giving us the side eye");
             CenterText("and some Warlock who can't stop complaining about a run of bad bets.");
             CenterText("");
-            CenterText("Said to face the lich at that old temple, but told us to find some keys first");
+            CenterText("Said to face the 'god' at that old temple, but told us to find some keys first");
             CenterText("in case things went bad, but we'll be fine, just some old bag of bones with magic");
             CenterText("What's the worst that could happen?");
             CenterText("---- The next serveral pages are ragged and torn ----");
             CenterText("");
-            CenterText("We all made it out, locked that bag of bones in there");
+            CenterText("We all made it out, locked that tangled mess in there");
             CenterText("Can still hear them cackling though, in my head, Ronnie can too...");
             CenterText("");
-            CenterText("Don't know what the lich did but the others are out of it as well");
+            CenterText("Don't know what that monster did but the others are out of it as well");
             CenterText("");
             CenterText("Gotta leave before this cackling gets worse, was my skin always this grey...?");
             CenterText("");
