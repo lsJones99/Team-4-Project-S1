@@ -1,4 +1,4 @@
-1,The Undead Twins,120,8,14,2,2,5,100,50
-2,The Paladin,200,13,20,5,3,5,175,90
-3,The Warlock,260,17,26,4,7,10,275,140
+1,Cursed Undead Duo,120,8,14,2,2,5,100,50
+2,Faithless Paladin,200,13,20,5,3,5,175,90
+3,Luckless Warlock,260,17,26,4,7,10,275,140
 4,Godghetti,350,23,34,7,7,10,450,250
