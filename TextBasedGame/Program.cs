@@ -58,7 +58,7 @@ namespace TextBasedGame
 
         //Randomizer
         static Random rand = new Random();
-        
+
         //Shop
         static int healingPotionPrice = 4;
         static int manaPotionPrice = 6;
@@ -213,6 +213,9 @@ namespace TextBasedGame
             Load();
 
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            TryUnlockFinalBossQuest();
+
             bool gameRunning = true;
 
             Console.WriteLine("\nThis game is best played maximised [F11].");
@@ -229,11 +232,12 @@ namespace TextBasedGame
                 gameRunning = Menu(ref gameFinished);
             }
 
-            if(playerHealth > 0 && gameFinished == true)
+            if (playerHealth > 0 && gameFinished == true)
             {
                 Outro();
             }
-            
+
+
             Console.Clear();
             Console.WriteLine("\nThank you for playing.");
             Console.ReadLine();
@@ -1281,7 +1285,7 @@ namespace TextBasedGame
             Console.WriteLine("You chose attack!");
             Console.ReadLine();
             finalHitChance = Math.Min(100, baseHitChance + playerMeleeHit);
-            
+
             int hitRoll = rand.Next(1, 101);
 
             if (hitRoll <= finalHitChance)
@@ -1289,7 +1293,8 @@ namespace TextBasedGame
                 //enemy dodge
                 enemyDodge = Math.Clamp(enemy.enemyDodgeChance, 0, 100);
                 int enemyDodgeRoll = rand.Next(1, 101);
-                if(enemyDodgeRoll <= enemyDodge) {
+                if (enemyDodgeRoll <= enemyDodge)
+                {
                     Console.WriteLine($"The {enemy.enemyName} dodges your attack!");
                     AddCombatLog($"The {enemy.enemyName} dodges your attack!");
                 }
@@ -1305,7 +1310,7 @@ namespace TextBasedGame
                     //if attack is critical
                     if (isCritical)
                     {
-                        finalAttackDamage *=2;
+                        finalAttackDamage *= 2;
                     }
 
                     //calculate damage base on player and enemy stats
@@ -1327,9 +1332,9 @@ namespace TextBasedGame
 
                     //add mana after attacking
                     playerMana = Math.Min(playerMana + (playerDamage / 10), playerMaxMana);
-                    
+
                 }
-                
+
             }
 
             else
@@ -2376,7 +2381,7 @@ namespace TextBasedGame
                 Console.WriteLine("\n[Y] Sell shell for 6 gold");
                 Console.WriteLine("[N] Haggle for a better price");
                 char shellChoice = char.ToLower(Console.ReadKey(true).KeyChar);
-                
+
                 switch (shellChoice)
                 {
                     case 'y':
@@ -2590,20 +2595,57 @@ namespace TextBasedGame
                     break;
 
                 // TEMPLE OF SPAGHETTI GOD (1,3)
+
                 case (1, 3):
-                    bool access = FinalBossReq();
-                    if (access == true)
+                    if (!FinalBossReq())
                     {
-                        Console.ReadLine();
-                        Console.WriteLine("THE GOD!");
-                        bool bossDefeated = BossLoader(3);
-                        if (bossDefeated)
+                        PauseStory();
+                        break;
+                    }
+
+                    if (!completedQuests.Contains("main_quest_04"))
+                    {
+                        if (CompleteQuest("main_quest_04"))
                         {
-                            Console.WriteLine("???");
-                            Console.ReadLine();
-                            CompleteQuest("main_quest_04");
-                            gameFinished = true;
+                            Console.WriteLine("Quest completed: Unlock the Threshold!");
                         }
+                    }
+
+                    if (completedQuests.Contains("main_quest_05"))
+                    {
+                        Console.WriteLine("The Spaghetti God has already been defeated.");
+                        PauseStory();
+                        break;
+                    }
+
+                    if (!acceptedQuests.Contains("main_quest_05"))
+                    {
+                        if (GiveQuest("main_quest_05"))
+                        {
+                            TrackQuest("main_quest_05");
+                            Console.WriteLine("NEW MAIN QUEST: Untangle");
+                            Console.WriteLine("Defeat Godghetti, the Spaghetti God!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something is not right! Might have something to do.");
+                            PauseStory();
+                            break;
+                        }
+                    }
+
+                    Console.WriteLine("Beyond the threshold, a terrible presence stirs...");
+                    Console.WriteLine("Godghetti awaits!");
+                    PauseStory();
+
+                    bool FinalbossDefeated = BossLoader(3);
+
+                    if (FinalbossDefeated)
+                    {
+                        CompleteQuest("main_quest_05");
+                        Console.WriteLine("Quest completed: Untangle!");
+                        PauseStory();
+                        gameFinished = true;
                     }
                     break;
 
@@ -2894,7 +2936,7 @@ namespace TextBasedGame
                         bool bossDefeated = BossLoader(2);
                         if (bossDefeated)
                         {
-                            
+
                             Console.WriteLine("You have defeated the Warlock!");
                             GainXP(200);
                             Console.WriteLine("As their form dissolves into smoke and shadow, a key is left behind as laughter echoes around you.");
@@ -2989,6 +3031,14 @@ namespace TextBasedGame
                 inventoryCount++;
 
                 Console.WriteLine($"{item} was added to your inventory.");
+
+                if (item == "Rusted Key" ||
+                    item == "Adorned Key" ||
+                    item == "Twisted Key")
+                {
+                    TryUnlockFinalBossQuest();
+                }
+
             }
             else
             {
@@ -3008,13 +3058,19 @@ namespace TextBasedGame
                     select = rand.Next(1, 11);
                     switch (select)
                     {
-                        case 1: case 2: case 3: case 4:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
                             AddItem("Rusty Sword");
                             break;
-                        case 5: case 6: case 7:
+                        case 5:
+                        case 6:
+                        case 7:
                             AddItem("Steel Sword");
                             break;
-                        case 8: case 9:
+                        case 8:
+                        case 9:
                             AddItem("Spellfire Sword");
                             break;
                         case 10:
@@ -3028,16 +3084,22 @@ namespace TextBasedGame
                     select = rand.Next(1, 10);
                     switch (select)
                     {
-                        case 1: case 2: case 3:
+                        case 1:
+                        case 2:
+                        case 3:
                             AddItem("Rusty Armour");
                             break;
-                        case 4: case 5: case 6:
+                        case 4:
+                        case 5:
+                        case 6:
                             AddItem("Leather Armour");
                             break;
-                        case 7: case 8:
+                        case 7:
+                        case 8:
                             AddItem("Steel Armour");
                             break;
-                        case 9: case 10:
+                        case 9:
+                        case 10:
                             AddItem("Studded Leather Armour");
                             break;
 
@@ -3049,13 +3111,17 @@ namespace TextBasedGame
                     select = rand.Next(1, 11);
                     switch (select)
                     {
-                        case 1: case 2: case 3:
+                        case 1:
+                        case 2:
+                        case 3:
                             AddItem("Old Bow");
                             break;
-                        case 4: case 5:
+                        case 4:
+                        case 5:
                             AddItem("Steelframe Bow");
                             break;
-                        case 6: case 8:
+                        case 6:
+                        case 8:
                             AddItem("Spellfire Bow");
                             break;
                         case 9:
@@ -3069,16 +3135,22 @@ namespace TextBasedGame
                     select = rand.Next(1, 12);
                     switch (select)
                     {
-                        case 1: case 2: case 3:
+                        case 1:
+                        case 2:
+                        case 3:
                             AddItem("Staff of Fireball");
                             break;
-                        case 4: case 5: case 6:
+                        case 4:
+                        case 5:
+                        case 6:
                             AddItem("Wand of Lightning");
                             break;
-                        case 7: case 8:
+                        case 7:
+                        case 8:
                             AddItem("Scroll of Blight");
                             break;
-                        case 9: case 10:
+                        case 9:
+                        case 10:
                             AddItem("Orb of Disintegration");
                             break;
                         case 11:
@@ -3093,16 +3165,22 @@ namespace TextBasedGame
                     select = rand.Next(1, 11);
                     switch (select)
                     {
-                        case 1: case 2: case 3:
+                        case 1:
+                        case 2:
+                        case 3:
                             AddItem("Healing Potion");
                             break;
-                        case 4: case 5: case 6:
+                        case 4:
+                        case 5:
+                        case 6:
                             AddItem("Mana Potion");
                             break;
-                        case 7: case 8:
+                        case 7:
+                        case 8:
                             AddItem("Greater Healing Potion");
                             break;
-                        case 9: case 10:
+                        case 9:
+                        case 10:
                             AddItem("Greater Mana Potion");
                             break;
                     }
@@ -3700,37 +3778,55 @@ namespace TextBasedGame
                         playerWpnHitStatOld = playerWpnHitStat;
                         break;
                     // What happens when equipping armours, calculates stat change as well.
+
                     case "Rusty Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
+
                         playerPhysicalResist -= playerAmrStat;
                         playerDodge -= playerAmrDge;
+
                         playerAmrStat = rustyArmourDEF;
+                        playerAmrDge = 0;
+
                         playerPhysicalResist += playerAmrStat;
                         break;
 
                     case "Leather Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
+
                         playerPhysicalResist -= playerAmrStat;
                         playerDodge -= playerAmrDge;
+
+                        playerAmrStat = 0;
                         playerAmrDge = leatherArmourDGE;
+
                         playerDodge += playerAmrDge;
                         break;
 
                     case "Steel Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
+
                         playerPhysicalResist -= playerAmrStat;
                         playerDodge -= playerAmrDge;
+
                         playerAmrStat = steelArmourDEF;
+                        playerAmrDge = 0;
+
                         playerPhysicalResist += playerAmrStat;
                         break;
 
                     case "Studded Leather Armour":
                         equipAmr(ref useChoice, ref slotEmpty);
+
                         playerPhysicalResist -= playerAmrStat;
                         playerDodge -= playerAmrDge;
+
+                        playerAmrStat = 0;
                         playerAmrDge = studLeathArmourDGE;
+
                         playerDodge += playerAmrDge;
                         break;
+
 
                     // What happens when using a healing potion
                     case "Healing Potion":
@@ -4007,7 +4103,7 @@ namespace TextBasedGame
             }
             while (!Console.KeyAvailable)
             {
-                
+
                 Console.SetCursorPosition(markerScreenX, markerScreenY);
 
                 if (visible)
@@ -4257,6 +4353,13 @@ namespace TextBasedGame
 
             WriteGameSave(saveFile);
 
+            //check for quests completed
+            if (questId == "main_quest_01" ||
+                questId == "main_quest_02" ||
+                questId == "main_quest_03")
+            {
+                TryUnlockFinalBossQuest();
+            }
             return true;
         }
 
@@ -4454,39 +4557,91 @@ namespace TextBasedGame
                 }
             }
         }
+
+        public static void TryUnlockFinalBossQuest()
+        {
+            // All three main bosses must be defeated
+            if (!completedQuests.Contains("main_quest_01") ||
+                !completedQuests.Contains("main_quest_02") ||
+                !completedQuests.Contains("main_quest_03"))
+                return;
+
+            // Player must possess all three keys
+            if (!InvCheck("Rusted Key") ||
+                !InvCheck("Adorned Key") ||
+                !InvCheck("Twisted Key"))
+                return;
+
+            // Do not restart completed quests
+            if (completedQuests.Contains("main_quest_04") ||
+                completedQuests.Contains("main_quest_05"))
+                return;
+
+            bool newlyAccepted = false;
+
+            if (!acceptedQuests.Contains("main_quest_04"))
+            {
+                newlyAccepted = GiveQuest("main_quest_04");
+
+                if (!newlyAccepted)
+                    return;
+            }
+
+            if (trackedQuest != "main_quest_04")
+            {
+                TrackQuest("main_quest_04");
+
+                Console.WriteLine("\n========== FINAL QUEST UNLOCKED ==========");
+
+                if (newlyAccepted)
+                    Console.WriteLine("NEW MAIN QUEST: Unlock the Threshold");
+                else
+                    Console.WriteLine("MAIN QUEST UPDATED: Unlock the Threshold");
+
+                Console.WriteLine("The three keys resonate with a strange power.");
+                Console.WriteLine("Travel to the Temple of the Spaghetti God at (1,3).");
+                Console.WriteLine("Your destination is marked [!] on the map.");
+            }
+        }
+
         public static bool FinalBossReq()
         {
-            Console.WriteLine("\nThe temple lies silent, a large black crystaline door calls from the back of the temple...");
+            Console.WriteLine("\nThe temple lies silent. A black crystalline door seals its deepest chamber.");
+
+            TryUnlockFinalBossQuest();
+
+            // Already unlocked doors remain open
+            if (completedQuests.Contains("main_quest_04"))
+            {
+                Console.WriteLine("The three locks stand open. The path to Godghetti lies ahead.");
+                return true;
+            }
+
             bool key1 = InvCheck("Rusted Key");
             bool key2 = InvCheck("Adorned Key");
             bool key3 = InvCheck("Twisted Key");
-            if (key1 == true && key2 == true && key3 == true)
+
+            if (!key1 || !key2 || !key3)
             {
-                Console.WriteLine("The door begins to crack open");
-                return true;
-            }
-            else if (completedQuests.Contains("main_quest_01"))
-            {
-                if (key1 == true)
-                {
-                    Console.WriteLine("A lock on the door thrums in the presence of the Rusted Key");
-                    bool given = GiveQuest("main_quest_04");
-                    return false;
-                }
-                else
-                {
-                    Console.WriteLine("One of the locks looks similar to the Rusted Key you left near the Dark Twins...");
-                    bool given = GiveQuest("main_quest_04");
-                    return false;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Nothing happens.");
-                Console.WriteLine();
-                PauseStory();
+                Console.WriteLine("Three locks guard the door. You are still missing:");
+
+                if (!key1) Console.WriteLine("- Rusted Key");
+                if (!key2) Console.WriteLine("- Adorned Key");
+                if (!key3) Console.WriteLine("- Twisted Key");
+
                 return false;
             }
+
+            if (!acceptedQuests.Contains("main_quest_04"))
+            {
+                Console.WriteLine("The keys are here, but your earlier quests remain unfinished.");
+                return false;
+            }
+
+            Console.WriteLine("The keys turn in unison. The door cracks open!");
+            return true;
         }
+
     }
+
 }
