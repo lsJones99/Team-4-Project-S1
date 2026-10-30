@@ -1,4 +1,5 @@
-
+using System.Globalization;
+using System.Net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2143,6 +2144,7 @@ namespace TextBasedGame
             if (completedQuests.Contains("main_quest_01"))
             {
                 Console.WriteLine("Merchant: Thank you for all your help!");
+
                 Console.WriteLine();
                 PauseStory();
                 return;
@@ -2225,11 +2227,30 @@ namespace TextBasedGame
 
                 if (choice == '1')
                 {
-                    if (Array.Exists(inventory, item => item == "Rusty Sword"))
+
+                    int swordIndex = Array.IndexOf(inventory, "Rusty Sword");
+
+                    if (swordIndex != -1)
                     {
-                        CompleteQuest("side_merchant_01");
+                        // Remove the Rusty Sword from inventory
+                        for (int i = swordIndex; i < inventoryCount - 1; i++)
+                        {
+                            inventory[i] = inventory[i + 1];
+                        }
+
+                        inventory[inventoryCount - 1] = null;
+                        inventoryCount--;
+
+                        // Reward the player
+                        playerGold += 10;
                         playerLevel = GainXP(20);
+
+                        // Complete and save the quest
+                        CompleteQuest("side_merchant_01");
+
                         Console.WriteLine("Quest completed: The Missing Sword!");
+                        Console.WriteLine("Merchant: Thank you for finding my sword!");
+                        Console.WriteLine("You received 10 gold!");
                         Console.WriteLine("Merchant: Come back. I have another job!");
                         Console.WriteLine();
                         PauseStory();
