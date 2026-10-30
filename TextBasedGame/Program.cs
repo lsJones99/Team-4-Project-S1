@@ -55,7 +55,6 @@ namespace TextBasedGame
         static int playerY = 2;
         static int markerScreenX;
         static int markerScreenY;
-        static bool keyall = false;
 
         //Randomizer
         static Random rand = new Random();
@@ -3114,56 +3113,450 @@ namespace TextBasedGame
             }
         }
 
-        // View inv & inv commands
-        static void ViewInventory()
+
+        // ITEM DESCRIPTIONS AND STATS
+        static (string Type, string Stats, string Description) GetItemDetails(string item)
+        {
+            switch (item)
+            {
+                // MELEE WEAPONS
+                case "Rusty Sword":
+                    return ("Melee Weapon",
+                        $"+{rustySwordDMG} Melee Damage\nHit Rating: Strength",
+                        "An old, weathered blade covered in rust. Its edge has seen better days, but it remains useful against weaker foes.");
+
+                case "Steel Sword":
+                    return ("Melee Weapon",
+                        $"+{steelSwordDMG} Melee Damage\nHit Rating: Strength\nShop Price: {steelSwordPrice}G",
+                        "A dependable sword forged from hardened steel. Its sharp edge and balanced weight make it a reliable companion.");
+
+                case "Spellfire Sword":
+                    return ("Enchanted Melee Weapon",
+                        $"Damage: {spellSwordDMG} + (2 x Arcane)\nCurrent Bonus: +{spellSwordDMG + 2 * playerArcane}\nHit Rating: Arcane",
+                        "A mysterious enchanted blade that channels its wielder's arcane energy into every strike.");
+
+                case "Throne-Cleaver":
+                case "Throne-cleaver":
+                    return ("Legendary Melee Weapon",
+                        $"+{throneCleaveDMG} Melee Damage\nHit Rating: Strength",
+                        "A mighty weapon once wielded by a legendary warrior. Its brutal edge was forged to bring even the mightiest rulers to their knees.");
+
+                // RANGED WEAPONS
+                case "Old Bow":
+                    return ("Ranged Weapon",
+                        $"Damage Bonus: {oldBowDMG} + Ranged Damage\nHit Bonus: +{oldBowHIT}",
+                        "A worn wooden bow with a fraying string. Though outdated, it remains effective in skilled hands.");
+
+                case "Steelframe Bow":
+                case "Steeframe Bow":
+                    return ("Ranged Weapon",
+                        $"Damage Bonus: {steelframeDMG} + Ranged Damage\nHit Bonus: +{steelframeHIT}",
+                        "A reinforced bow constructed from steel and timber, offering superior power and accuracy.");
+
+                case "Spellfire Bow":
+                    return ("Enchanted Ranged Weapon",
+                        $"Damage Bonus: {spellBowDMG} + (2 x Spell Damage)\nHit Bonus: +{spellBowHIT} + Arcane",
+                        "An enchanted bow that channels magical energy through its arrows, growing stronger with its wielder's arcane power.");
+
+                case "Wither-String":
+                    return ("Legendary Ranged Weapon",
+                        $"Damage Bonus: {witherStringDMG} + Ranged Damage\nHit Bonus: +{witherStringHIT}",
+                        "A sinister bow found near the underworld. Its unnatural string hums with the echoes of forgotten souls.");
+
+                // ARMOUR
+                case "Rusty Armour":
+                    return ("Heavy Armour",
+                        $"+{rustyArmourDEF} Physical Resistance\nPrice: {rustyArmourPrice}G",
+                        "A battered collection of iron plates covered in rust. Heavy and uncomfortable, but capable of absorbing a few blows.");
+
+                case "Leather Armour":
+                    return ("Light Armour",
+                        $"+{leatherArmourDGE}% Dodge Chance\nPrice: {leatherArmourPrice}G",
+                        "Lightweight leather armour designed for agility and freedom of movement rather than direct protection.");
+
+                case "Steel Armour":
+                    return ("Heavy Armour",
+                        $"+{steelArmourDEF} Physical Resistance\nPrice: {steelArmourPrice}G\nRequired Level: {steelLV}",
+                        "A sturdy suit of reinforced steel armour. Its thick plates provide excellent protection against physical attacks.");
+
+                case "Studded Leather Armour":
+                    return ("Light Armour",
+                        $"+{studLeathArmourDGE}% Dodge Chance\nPrice: {studdedArmourPrice}G\nRequired Level: {steelLV}",
+                        "Flexible leather reinforced with metal studs, designed for agile fighters who prefer avoiding attacks.");
+
+                // MAGIC ITEMS
+                case "Staff of Fireball":
+                    return ("Magical Staff",
+                        "Unlocks: Fireball\nMana Cost: 6 MP\nDamage: 15-34 + (2 x Spell Damage)\nBase Casting Chance: 55%",
+                        "An ancient staff containing a flickering flame. Its wielder may unleash devastating fire upon enemies.");
+
+                case "Wand of Lightning":
+                    return ("Magical Wand",
+                        "Unlocks: Lightning Bolt\nMana Cost: 8 MP\nDamage: 20-44 + (2 x Spell Damage)\nBase Casting Chance: 45%",
+                        "A slender wand crackling with electrical energy, capable of striking enemies with bolts of lightning.");
+
+                case "Scroll of Blight":
+                    return ("Forbidden Magic",
+                        "Unlocks: Blighting Winds\nMana Cost: 11 MP\nDamage: 10-29 + (5 x Spell Damage)\nBase Casting Chance: 35%",
+                        "A forbidden scroll bearing ancient curses. Its magic causes flesh to decay and life to wither.");
+
+                case "Orb of Disintegration":
+                case "Orb of Disintegrate":
+                    return ("Legendary Magic",
+                        "Unlocks: Disintegration Ray\nMana Cost: 14 MP\nDamage: 15 x Spell Damage minus a random amount\nBase Casting Chance: 20%",
+                        "A dark crystalline sphere pulsing with destructive energy, capable of reducing its victims to dust.");
+
+                case "Ring of Graviton":
+                    return ("Legendary Magic",
+                        "Unlocks: Gravity Collapse\nMana Cost: 17 MP\nDamage: 10-20 x Spell Damage\nBase Casting Chance: 10%",
+                        "A mysterious ring that manipulates gravity itself, crushing enemies beneath overwhelming force.");
+
+                // POTIONS
+                case "Healing Potion":
+                    return ("Consumable",
+                        $"Restores: 30 HP\nPrice: {healingPotionPrice}G",
+                        "A small vial of crimson liquid that heals minor wounds and restores vitality.");
+
+                case "Mana Potion":
+                    return ("Consumable",
+                        $"Restores: 10 MP\nPrice: {manaPotionPrice}G",
+                        "A shimmering blue potion that replenishes the magical energy of its drinker.");
+
+                case "Greater Healing Potion":
+                    return ("Consumable",
+                        $"Restores: 100 HP\nPrice: {healingGreaterPotionPrice}G\nRequired Level: {greaterPotionLV}",
+                        "A potent healing elixir capable of mending severe injuries and restoring considerable vitality.");
+
+                case "Greater Mana Potion":
+                    return ("Consumable",
+                        $"Restores: 25 MP\nPrice: {manaGreaterPotionPrice}G\nRequired Level: {greaterPotionLV}",
+                        "A concentrated magical potion that rapidly replenishes the drinker's arcane reserves.");
+
+                // QUEST ITEMS
+                case "Rusted Key":
+                    return ("Quest Item",
+                        "Used to unlock the final temple door.",
+                        "An ancient, heavily corroded key recovered from the Undead Twins. Despite its age, it appears strangely important.");
+
+                case "Adorned Key":
+                    return ("Quest Item",
+                        "Used to unlock the final temple door.",
+                        "An ornate key decorated with intricate golden markings, once carried by the fallen Paladin.");
+
+                case "Twisted Key":
+                    return ("Quest Item",
+                        "Used to unlock the final temple door.",
+                        "A malformed key radiating dark magical energy, recovered from the Warlock.");
+
+                case "Twin's Journal":
+                    return ("Quest Item",
+                        "Reveals hidden story information.",
+                        "A damaged journal containing the final writings of the Undead Twins. Its pages hint at the terrible events that consumed them.");
+
+                case "Unique Shell":
+                    return ("Valuable Item",
+                        "Merchant Value: 6-8 Gold",
+                        "A beautiful seashell discovered along the coast. Its unusual shape and gentle melody make it valuable to collectors.");
+
+                default:
+                    return ("Unknown Item",
+                        "No stats available.",
+                        "There is no description for this item yet.");
+            }
+        }
+
+        // WRAPS LONG TEXT TO FIT THE RIGHT PANEL
+        static List<string> InventoryWrap(string text, int width)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (string paragraph in text.Split('\n'))
+            {
+                string currentLine = "";
+
+                foreach (string word in paragraph.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (currentLine.Length > 0 &&
+                        currentLine.Length + word.Length + 1 > width)
+                    {
+                        lines.Add(currentLine);
+                        currentLine = "";
+                    }
+
+                    if (currentLine.Length > 0)
+                        currentLine += " ";
+
+                    currentLine += word;
+                }
+
+                lines.Add(currentLine);
+            }
+
+            return lines;
+        }
+
+
+        // UNEQUIP WEAPON
+        static void UnequipWeapon()
+        {
+            if (string.IsNullOrEmpty(playerWpn))
+                return;
+
+            if (inventoryCount >= inventoryMaxSize ||
+                inventoryCount >= inventory.Length)
+            {
+                Console.WriteLine("Inventory full! Cannot unequip weapon.");
+                PauseStory();
+                return;
+            }
+
+            string weapon = playerWpn;
+
+            // Return weapon to inventory
+            inventory[inventoryCount] = weapon;
+            inventoryCount++;
+
+            // Remove weapon stat bonuses
+            playerMeleeDmg -= playerWpnStatOld;
+            playerMeleeHit = playerStrength;
+
+            // Reset equipment stats
+            playerWpnStat = 0;
+            playerWpnStatOld = 0;
+            playerWpnHitStat = 0;
+            playerWpnHitStatOld = 0;
+
+            playerWpn = "";
+
+            Console.WriteLine($"You unequipped {weapon}.");
+            Console.WriteLine($"{weapon} was returned to your inventory.");
+            PauseStory();
+        }
+
+        // UNEQUIP ARMOUR
+        static void UnequipArmour()
+        {
+            if (string.IsNullOrEmpty(playerAmr))
+                return;
+
+            if (inventoryCount >= inventoryMaxSize ||
+                inventoryCount >= inventory.Length)
+            {
+                Console.WriteLine("Inventory full! Cannot unequip armour.");
+                PauseStory();
+                return;
+            }
+
+            string armour = playerAmr;
+
+            // Return armour to inventory
+            inventory[inventoryCount] = armour;
+            inventoryCount++;
+
+            // Remove armour stat bonuses
+            playerPhysicalResist -= playerAmrStat;
+            playerDodge -= playerAmrDge;
+
+            // Reset equipment stats
+            playerAmrStat = 0;
+            playerAmrDge = 0;
+
+            playerAmr = "";
+
+            Console.WriteLine($"You unequipped {armour}.");
+            Console.WriteLine($"{armour} was returned to your inventory.");
+            PauseStory();
+        }
+
+        // DISPLAYS INVENTORY ON LEFT AND ITEM DETAILS ON RIGHT
+        static void DrawInventoryPanel(int selected)
         {
             Console.Clear();
 
-            Console.WriteLine("\n---------- INVENTORY ----------");
+            bool hasWeapon = !string.IsNullOrEmpty(playerWpn);
+            bool hasArmour = !string.IsNullOrEmpty(playerAmr);
+
+            int total = inventoryCount +
+                        (hasWeapon ? 1 : 0) +
+                        (hasArmour ? 1 : 0);
+
+            string selectedItem = "";
+
+            List<string> left = new List<string>();
+
+            left.Add("========== INVENTORY ==========");
+            left.Add($"Slots: {inventoryCount}/{inventoryMaxSize}");
+            left.Add($"Gold: {playerGold}G");
+            left.Add("");
+            left.Add("BAG:");
 
             if (inventoryCount == 0)
-            {
-                Console.WriteLine("Your inventory is empty.");
-                Console.WriteLine("Press enter to continue");
-                Console.ReadLine();
-                return;
-            }
+                left.Add("Your inventory is empty.");
 
             for (int i = 0; i < inventoryCount; i++)
             {
-                Console.WriteLine($"{i + 1}. {inventory[i]}");
+                string pointer = selected == i ? ">" : " ";
+                left.Add($"{pointer} {i + 1}. {inventory[i]}");
             }
 
-            Console.WriteLine($"Inventory slots: {inventoryCount}/{inventoryMaxSize}");
+            left.Add("");
+            left.Add("EQUIPPED:");
 
-            Console.WriteLine($"\nEquipped Weapon: {playerWpn}");
-            Console.WriteLine($"Equipped Armour: {playerAmr}");
-
-            Console.WriteLine("\nWhat do you want to do?");
-            Console.WriteLine("\n[U] Use an item");
-            Console.WriteLine("[T] Throw out an item");
-            Console.WriteLine("[ANY OTHER INPUT] Return");
-
-            string inputChoice = Console.ReadLine()?.Trim().ToLower() ?? "";
-            if (string.IsNullOrWhiteSpace(inputChoice))
+            if (hasWeapon)
             {
-                return;
+                string pointer = selected == inventoryCount ? ">" : " ";
+                left.Add($"{pointer} W. {playerWpn}");
+            }
+            else
+                left.Add("W. None");
+
+            if (hasArmour)
+            {
+                int armourIndex = inventoryCount + (hasWeapon ? 1 : 0);
+                string pointer = selected == armourIndex ? ">" : " ";
+                left.Add($"{pointer} A. {playerAmr}");
+            }
+            else
+                left.Add("A. None");
+
+            // IDENTIFY THE HIGHLIGHTED ITEM
+            if (total > 0)
+            {
+                if (selected < inventoryCount)
+                    selectedItem = inventory[selected] ?? "";
+                else if (hasWeapon && selected == inventoryCount)
+                    selectedItem = playerWpn;
+                else
+                    selectedItem = playerAmr;
             }
 
-            char invChoice = inputChoice[0];
+            int windowWidth = Math.Max(20, Console.WindowWidth);
+            bool sideBySide = windowWidth >= 78;
+            int rightWidth = sideBySide ? windowWidth - 39 : Math.Max(15, windowWidth - 4);
 
-            switch (invChoice)
+            List<string> right = new List<string>();
+            right.Add("========== ITEM DETAILS ==========");
+            right.Add("");
+
+            if (total == 0)
             {
-                case 'u':
-                    UseItems();
-                    break;
+                right.Add("No item selected.");
+            }
+            else
+            {
+                var details = GetItemDetails(selectedItem);
 
-                case 't':
-                    ThrowItems();
-                    break;
+                right.AddRange(InventoryWrap(selectedItem, rightWidth));
+                right.Add(details.Type);
+                right.Add("");
+                right.Add("STATS / EFFECTS:");
+                right.AddRange(InventoryWrap(details.Stats, rightWidth));
+                right.Add("");
+                right.Add("DESCRIPTION:");
+                right.AddRange(InventoryWrap(details.Description, rightWidth));
+            }
 
-                default:
-                    break;
+            // DRAW SIDE BY SIDE
+            if (sideBySide)
+            {
+                int rows = Math.Max(left.Count, right.Count);
+
+                for (int i = 0; i < rows; i++)
+                {
+                    string l = i < left.Count ? left[i] : "";
+                    string r = i < right.Count ? right[i] : "";
+
+                    if (l.Length > 34)
+                        l = l.Substring(0, 31) + "...";
+
+                    if (r.Length > rightWidth)
+                        r = r.Substring(0, rightWidth);
+
+                    Console.WriteLine(l.PadRight(34) + " | " + r);
+                }
+            }
+            else
+            {
+                // FALLBACK FOR SMALL CONSOLE WINDOWS
+                foreach (string line in left)
+                    Console.WriteLine(line);
+
+                Console.WriteLine("-------------------");
+
+                foreach (string line in right)
+                    Console.WriteLine(line);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("[UP/DOWN] Select item");
+            Console.WriteLine("[U] Use or Equip");
+            Console.WriteLine("[T] Throw Item");
+            Console.WriteLine("[E] Unequip Selected Equipment");
+            Console.WriteLine("[X] Exit Inventory");
+        }
+
+        // View inv & inv commands
+        static void ViewInventory()
+        {
+            int selectedIndex = 0;
+
+            while (true)
+            {
+                int total = inventoryCount +
+                            (!string.IsNullOrEmpty(playerWpn) ? 1 : 0) +
+                            (!string.IsNullOrEmpty(playerAmr) ? 1 : 0);
+
+                if (total > 0)
+                    selectedIndex = Math.Clamp(selectedIndex, 0, total - 1);
+                else
+                    selectedIndex = 0;
+
+                DrawInventoryPanel(selectedIndex);
+
+                ConsoleKey key = Console.ReadKey(true).Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (selectedIndex > 0)
+                            selectedIndex--;
+                        break;
+
+                    case ConsoleKey.DownArrow:
+                        if (selectedIndex < total - 1)
+                            selectedIndex++;
+                        break;
+
+                    case ConsoleKey.U:
+                        if (inventoryCount > 0)
+                            UseItems();
+                        break;
+
+                    case ConsoleKey.T:
+                        if (inventoryCount > 0)
+                            ThrowItems();
+                        break;
+
+                    case ConsoleKey.E:
+                        if (selectedIndex < inventoryCount)
+                        {
+                            Console.WriteLine("Select an equipped item to unequip.");
+                            Console.ReadKey(true);
+                        }
+                        else if (!string.IsNullOrEmpty(playerWpn) &&
+                                 selectedIndex == inventoryCount)
+                        {
+                            UnequipWeapon();
+                        }
+                        else if (!string.IsNullOrEmpty(playerAmr))
+                        {
+                            UnequipArmour();
+                        }
+                        break;
+                    case ConsoleKey.X:
+                    case ConsoleKey.Escape:
+                        return;
+                }
             }
             // Use several items in a row
             static void UseItems()
@@ -3180,7 +3573,7 @@ namespace TextBasedGame
                     Console.WriteLine("\n---------- INVENTORY ----------");
                     Console.Write("\nUse another item?");
                     Console.Write("[Y] Yes");
-                    Console.Write("[ANY OTHER INPUT] No");
+                    Console.WriteLine("\nExit [ANY OTHER INPUT] No ");
                     string useAnswer = Console.ReadLine()?.Trim().ToLower() ?? "";
                     useAnother = useAnswer.StartsWith("y");
                 }
